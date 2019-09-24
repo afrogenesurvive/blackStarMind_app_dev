@@ -1,0 +1,7 @@
+{
+    "env": {
+        "MONGO_USER": "profblack",
+        "MONGO_PASSWORD": "7_CNu8#YXB.s5K",
+        "MONGO_DB": "test"
+    }
+}
