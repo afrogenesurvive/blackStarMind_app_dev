@@ -3,90 +3,72 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-  userEmail: {
+  email: {
     type: String,
     required: true
   },
-  userPassword: {
+  password: {
     type: String,
     required: true
   },
-  userName: {
+  name: {
     type: String,
     required: true
   },
-  userPhone: {
+  phone: {
     type: String,
     required: true
   },
-  userAddress: String,
-  userSocialMedia: [String],
-  userDemographics: [
-    {key:String,value:String}
+  address: String,
+  socialMedia: [String],
+  demographics: [
+    {key:String,value:String,description:String}
   ],
-  userBiographics: [
-    {key:String,value:String}
+  biographics: [
+    {key:String,value:String,description:String}
   ],
-  userPsychgraphics: [
-    {key:String,value:String}
+  psychgraphics: [
+    {key:String,value:String,description:String}
   ],
-  userConsumption: [
+  consumption: [
     {
       consumptionCategory: Sting,
       consumptionBrands: [String],
       consumptionCompanies: [String],
-      consumptionMotivations: [String],
+      consumptionMotivations: [String]
     }
   ],
-  userContentActions: [
+  contentActions: [
     {
       type: Schema.Types.ObjectId,
       ref: 'ContentAction'
     }
   ],
-  userContent: [
+  content: [
     {
       type: Schema.Types.ObjectId,
       ref: 'Content'
     }
   ],
-  userMarketActions: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'MarketAction'
-    }
-  ],
-  userProducts: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'Product'
-    }
-  ],
-  userGroups: [
+  groups: [
     {
       type: Schema.Types.ObjectId,
       ref: 'Group'
     }
   ],
-  userInteractions: [
+  interactions: [
     {
       type: Schema.Types.ObjectId,
       ref: 'Interaction'
     }
   ],
-  userTasks: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'Task'
-    }
-  ],
-  userSearches: [
+  searches: [
     {
       type: Schema.Types.ObjectId,
       ref: 'Search'
     }
   ],
-  userPerks: [
+  perks: [
     {
       type: Schema.Types.ObjectId,
       ref: 'Perk'

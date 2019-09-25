@@ -1,5 +1,5 @@
 {
-  "name": "graphql-react-event-booking",
+  "name": "black_star_mind_dev",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,15 +11,15 @@
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "body-parser": "^1.18.3",
+    "body-parser": "^1.19.0",
     "dataloader": "^1.4.0",
     "express": "^4.16.4",
-    "express-graphql": "^0.7.1",
-    "graphql": "^14.0.2",
-    "jsonwebtoken": "^8.4.0",
-    "mongoose": "^5.3.15"
+    "express-graphql": "^0.9.0",
+    "graphql": "^14.5.8",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.7.1"
   },
   "devDependencies": {
-    "nodemon": "^1.18.7"
+    "nodemon": "^1.19.2"
   }
 }

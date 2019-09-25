@@ -2,16 +2,41 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-const bookingSchema = new Schema(
+const interactionSchema = new Schema(
   {
-    event: {
-      type: Schema.Types.ObjectId,
-      ref: 'Event'
+    type: {
+      type: String,
+      required: true
     },
-    user: {
-      type: Schema.Types.ObjectId,
-      ref: 'User'
-    }
+    subtype: {
+      key: String,
+      value: String
+    },
+    date: {
+      type: Date,
+      required: true
+    },
+    description: String,
+    users: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+      }
+    ],
+    data: [
+      {
+        key01: String,
+        value01: String,
+        key02: String,
+        value02: String,
+        key03: String,
+        value03: String,
+        key04: [String],
+        value04: [String],
+        key05: [String],
+        value05: [String]
+      }
+    ]
   },
   { timestamps: true }
 );
