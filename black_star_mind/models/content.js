@@ -3,20 +3,16 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const contentSchema = new Schema({
-  contentTitle: {
+  title: {
     type: String,
     required: true
   },
-  contentDescription: {
+  domain: {
     type: String,
     required: true
   },
-  contentCategory: {
+  category: {
     type: String,
-    required: true
-  },
-  date: {
-    type: Date,
     required: true
   },
   creator: {
@@ -24,18 +20,57 @@ const contentSchema = new Schema({
       ref: 'User',
       required: true
   },
-  contentType: {
+  type: {
     medium: String,
     mediumSubtype: String
   },
-  contentTags: [String],
-  contentPerks: [
+  description: {
+    type: String,
+    required: true
+  },
+  data: [
+    {
+      key01: String,
+      value01: String,
+      key02: String,
+      value02: String,
+      key03: String,
+      value03: String,
+      key04: String,
+      value04: String,
+      key05: String,
+      value05: String,
+      key06: String,
+      value06: String,
+      key07: [String],
+      value07: [String],
+      key08: [String],
+      value08: [String],
+      key09: String,
+      value09: String,
+      key10: String,
+      value10: String
+    }
+  ],
+  actions: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'ContentAction'
+    }
+  ],
+  interactions: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Interaction'
+    }
+  ],
+  perks: [
     {
       type: Schema.Types.ObjectId,
       ref: 'Perks'
     }
   ],
-  contentData: 
+  tags: [String]
 },
   { timestamps: true }
 );
