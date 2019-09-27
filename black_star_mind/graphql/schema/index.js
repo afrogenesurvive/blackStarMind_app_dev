@@ -1,6 +1,61 @@
 const { buildSchema } = require('graphql');
 
 module.exports = buildSchema(`
+type User {
+    _id: ID!
+    email: String!
+    password: String!
+    name: String!
+    username: String!
+    phone: String
+    address: String
+    socialMedia: [String]
+    demographics: [String]
+    biographics: [String]
+    psychgraphics: [String]
+    consumption: [String]
+    actions: [Action]
+    content: [Content]
+    groups: [Group]
+    interactions: [Interaction]
+    searches: [Search]
+    perks: [Perk]
+}
+
+type AuthData {
+    userId: ID!
+    token: String!
+    tokenExpiration: Int!
+}
+
+type Group {
+    _id: ID!
+    createdAt: String!
+    updatedAt: String!
+    type: String!
+    subtype: String
+    name: String!
+    description: String!
+    users: [User!]
+    actions: [Action]
+    interactions: [Interaction]
+    tags: [String]
+}
+
+type Perk {
+  _id: ID!
+  name: String!
+  createdAt: String!
+  updatedAt: String!
+  description: String!
+  type: String!
+  subtype: String
+  data: [String]
+  users: [User]
+  groups: [Group]
+  content: [Content]
+}
+
 type Content {
     _id: ID!
     createdAt: String!
@@ -10,171 +65,145 @@ type Content {
     category: String!
     creator: User!
     description: String
-    data: [{
-    key01: String
-    value01: String
-    key02: String
-    value02: String
-    key03: String
-    value03: String
-    key04: String
-    value04: String
-    key05: String
-    value05: String
-    key06: String
-    value06: String
-    key07: [String]
-    value07: [String]
-    key08: [String]
-    value08: [String]
-    key09: String
-    value09: String
-    key10: String
-    value10: String
-      }]
-    actions: [ContentAction]
+    data: [String]
+    actions: [Action]
     interactions: [Interaction]
     perks: [Perk]
     tags: [String]
 }
 
-type ContentAction {
+type Action {
     _id: ID!
     type: String!
-    subtype: {key: String value: String}!
+    subtype: String
     createdAt: String!
     target: Content!
     users: [User!]
     description: String
+    data: [String]
 }
 
 type Interaction {
     _id: ID!
     type: String!
-    subtype: {key: String value: String}!
+    subtype: String
     createdAt: String!
     target: Content!
     users: [User]
     description: String
-    data: [{
-    key01: String
-    value01: String
-    key02: String
-    value02: String
-    key03: String
-    value03: String
-    key04: [String]
-    value04: [String]
-    key05: [String]
-    value05: [String]
-      }]
-}
-
-type Group {
-    _id: ID!
-    createdAt: String!
-    updatedAt: String!
-    type: String!
-    subtype: {key: String value: String}!
-    name: String!
-    description: String!
-    users: [User!]
-    actions: [ContentAction]
-    interactions: [Interaction]
-    tags: [String]
-}
-
-type Perk {
-  _id: ID!
-  name:
-  createdAt: String!
-  updatedAt: String!
-  description: String!
-  type: String!
-  subtype: {key: String value: String}!
-  data: [{
-  key01: String
-  value01: String
-  key02: String
-  value02: String
-  key03: [String]
-  value03: [String]
-    }]
-  users: [User]
-  groups: [Group]
-  content: [Content]
+    data: String
 }
 
 type Search {
   createdAt: String!
+  type: String!
   user: User!
   query: String!
-  response: [{title:String! url: String content: Content}]
-  actions: [ContentAction]
+  response: [String]
+  actions: [Action]
 }
 
-type User {
-  _id: ID!
-  email: String!
-  password: String!
-  name: String!
-  phone: String
-  address: String
-  socialMedia: [String]
-  demographics: [{key:String,value:String,description:String}]
-  biographics: [{key:String,value:String,description:String}]
-  psychgraphics: [{key:String,value:String,description:String}]
-  consumption: [{consumptionCategory: Sting,consumptionBrands: [String],consumptionCompanies: [String],consumptionMotivations: [String]}]
-  actions: [ContentAction]
-  content: [Content]
-  groups: [Group]
-  interactions: [Interaction]
-  searches: [Search]
-  perks: [Perk]
-}
 
-type AuthData {
-  userId: ID!
-  token: String!
-  tokenExpiration: Int!
-}
 
 input UserInput {
   email: String!
   password: String!
-}
-input ContentInput {
-  email: String!
-  password: String!
-}
-input GroupInput {
-  email: String!
-  password: String!
-}
-input PerkInput {
-  email: String!
-  password: String!
-}
-input SearchInput {
-  email: String!
-  password: String!
-}
-input ContentActionInput {
-  email: String!
-  password: String!
-}
-input InteractionInput {
-  email: String!
-  password: String!
+  name: String!
+  username: String!
+  phone: String
+  address: String
+  socialMedia: [String]
+  demographics: [String]
+  biographics: [String]
+  psychgraphics: [String]
+  consumption: [String]
+  actions: [String]
+  content: [String]
+  groups: [String]
+  interactions: [String]
+  searches: [String]
+  perks: [String]
 }
 
+input GroupInput {
+  type: String!
+  subtype: String
+  name: String!
+  description: String!
+  users: [String!]
+  actions: [String]
+  interactions: [String]
+  tags: [String]
+}
+
+input PerkInput {
+  name: String!
+  description: String!
+  type: String!
+  subtype: String
+  data: [String]
+  users: [String]
+  groups: [String]
+  content: [String]
+}
+
+input ContentInput {
+  title: String!
+  domain: String!
+  category: String!
+  creator: String
+  description: String
+  data: [String]
+  actions: [String]
+  interactions: [String]
+  perks: [String]
+  tags: [String]
+}
+
+input ActionInput {
+  type: String!
+  subtype: String
+  target: String
+  users: [String!]
+  description: String
+  data: String
+}
+
+input InteractionInput {
+  type: String!
+  subtype: String
+  target: String
+  users: [String!]
+  description: String
+  data: [String]
+}
+
+input SearchInput {
+  type: String!
+  user: String
+  query: String!
+  response: [String]
+  actions: [String]
+}
+
+
 type RootQuery {
-    users: [Event!]!
-    groups: [Booking!]!
-    content: [Booking!]!
-    actions: [Booking!]!
-    interactions: [Booking!]!
+    users: [User!]!
+    getUser(username: String!): User
+    groups: [Group!]!
+    content: [Content!]!
+    actions: [Action!]!
+    interactions: [Interaction!]!
+    searches: [Search!]!
+
     login(email: String!, password: String!): AuthData!
+
+    getGroup(groupId: ID!): Group
+    getContent(userId: ID!, contentId: ID!): Content
+    getPerk(perkId: ID!): Perk
+    getAction(actionId: ID!): Action
+    getInteraction(interactionId: ID!): Interaction
+    getSearch(searchId: ID!): Search
 }
 
 type RootMutation {
@@ -197,8 +226,8 @@ type RootMutation {
     createSearch(userID: ID!, searchInput: SearchInput): Search
     deleteSearch(searchId: ID!): Search
 
-    createContentAction(userID: ID!, contentId: ID!, contentActionInput: ContentActionInput): ContentAction
-    deleteContentAction(contentActionId: ID!): ContentAction
+    createAction(userID: ID!, contentId: ID!, actionInput: ActionInput): Action
+    deleteAction(actionId: ID!): Action
 
     createInteraction(userID: ID!, interactionInput: InteractionInput): Interaction
     deleteInteraction(interactionId: ID!): Interaction

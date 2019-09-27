@@ -15,11 +15,18 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
-  phone: {
+  username: {
     type: String,
     required: true
   },
-  address: String,
+  phone: {
+    type: String,
+    required: false
+  },
+  address: {
+    type: String,
+    required: false
+  },
   socialMedia: [String],
   demographics: [
     {key:String,value:String,description:String}
@@ -32,7 +39,7 @@ const userSchema = new Schema({
   ],
   consumption: [
     {
-      consumptionCategory: Sting,
+      consumptionCategory: String,
       consumptionBrands: [String],
       consumptionCompanies: [String],
       consumptionMotivations: [String]
@@ -41,7 +48,7 @@ const userSchema = new Schema({
   contentActions: [
     {
       type: Schema.Types.ObjectId,
-      ref: 'ContentAction'
+      ref: 'Action'
     }
   ],
   content: [
