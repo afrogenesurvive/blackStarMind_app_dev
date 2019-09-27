@@ -6,14 +6,10 @@ type User {
     email: String!
     password: String!
     name: String!
-    username: String!
+    username: String
     phone: String
     address: String
     socialMedia: [String]
-    demographics: [String]
-    biographics: [String]
-    psychgraphics: [String]
-    consumption: [String]
     actions: [Action]
     content: [Content]
     groups: [Group]
@@ -33,7 +29,6 @@ type Group {
     createdAt: String!
     updatedAt: String!
     type: String!
-    subtype: String
     name: String!
     description: String!
     users: [User!]
@@ -49,8 +44,6 @@ type Perk {
   updatedAt: String!
   description: String!
   type: String!
-  subtype: String
-  data: [String]
   users: [User]
   groups: [Group]
   content: [Content]
@@ -65,7 +58,6 @@ type Content {
     category: String!
     creator: User!
     description: String
-    data: [String]
     actions: [Action]
     interactions: [Interaction]
     perks: [Perk]
@@ -75,23 +67,19 @@ type Content {
 type Action {
     _id: ID!
     type: String!
-    subtype: String
     createdAt: String!
     target: Content!
     users: [User!]
     description: String
-    data: [String]
 }
 
 type Interaction {
     _id: ID!
     type: String!
-    subtype: String
     createdAt: String!
     target: Content!
     users: [User]
     description: String
-    data: String
 }
 
 type Search {
@@ -99,7 +87,6 @@ type Search {
   type: String!
   user: User!
   query: String!
-  response: [String]
   actions: [Action]
 }
 
@@ -113,26 +100,21 @@ input UserInput {
   phone: String
   address: String
   socialMedia: [String]
-  demographics: [String]
-  biographics: [String]
-  psychgraphics: [String]
-  consumption: [String]
-  actions: [String]
-  content: [String]
-  groups: [String]
-  interactions: [String]
-  searches: [String]
-  perks: [String]
+  actions: [Action]
+  content: [Content]
+  groups: [Group]
+  interactions: [Interaction]
+  searches: [Search]
+  perks: [Perk]
 }
 
 input GroupInput {
   type: String!
-  subtype: String
   name: String!
   description: String!
-  users: [String!]
-  actions: [String]
-  interactions: [String]
+  users: [User!]
+  actions: [Action]
+  interactions: [Interaction]
   tags: [String]
 }
 
@@ -140,56 +122,48 @@ input PerkInput {
   name: String!
   description: String!
   type: String!
-  subtype: String
-  data: [String]
-  users: [String]
-  groups: [String]
-  content: [String]
+  users: [User]
+  groups: [Group]
+  content: [Content]
 }
 
 input ContentInput {
   title: String!
   domain: String!
   category: String!
-  creator: String
+  creator: User!
   description: String
-  data: [String]
-  actions: [String]
-  interactions: [String]
-  perks: [String]
+  actions: [Action]
+  interactions: [Interaction]
+  perks: [Perk]
   tags: [String]
 }
 
 input ActionInput {
   type: String!
-  subtype: String
-  target: String
-  users: [String!]
+  target: Content!
+  users: [User!]
   description: String
-  data: String
 }
 
 input InteractionInput {
   type: String!
-  subtype: String
-  target: String
-  users: [String!]
+  target: Content!
+  users: [User!]
   description: String
-  data: [String]
 }
 
 input SearchInput {
   type: String!
-  user: String
+  user: User!
   query: String!
-  response: [String]
-  actions: [String]
+  actions: [Action]
 }
 
 
 type RootQuery {
     users: [User!]!
-    getUser(username: String!): User
+    getUser(userId: ID!): User
     groups: [Group!]!
     content: [Content!]!
     actions: [Action!]!

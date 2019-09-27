@@ -1,77 +1,83 @@
 const DataLoader = require('dataloader');
 
-const Event = require('../../models/event');
 const User = require('../../models/user');
+const Group = require('../../models/group');
+const Perk = require('../../models/perk');
+const Content = require('../../models/content');
+const Action = require('../../models/action');
+const Interaction = require('../../models/interaction');
+const Search = require('../../models/search');
+
 const { dateToString } = require('../../helpers/date');
 
-const eventLoader = new DataLoader(eventIds => {
-  return events(eventIds);
-});
-
 const userLoader = new DataLoader(userIds => {
-  return User.find({ _id: { $in: userIds } });
+  return users(userIds);
 });
 
-const events = async eventIds => {
+// const userLoader = new DataLoader(userIds => {
+//   return User.find({ _id: { $in: userIds } });
+// });
+
+const users = async userIds => {
   try {
-    const events = await Event.find({ _id: { $in: eventIds } });
-    events.sort((a, b) => {
+    const users = await User.find({ _id: { $in: userIds } });
+    users.sort((a, b) => {
       return (
-        eventIds.indexOf(a._id.toString()) - eventIds.indexOf(b._id.toString())
+        userIds.indexOf(a._id.toString()) - userIds.indexOf(b._id.toString())
       );
     });
-    return events.map(event => {
-      return transformEvent(event);
+    return users.map(user => {
+      return transformUser(user);
     });
   } catch (err) {
     throw err;
   }
 };
 
-const singleEvent = async eventId => {
-  try {
-    const event = await eventLoader.load(eventId.toString());
-    return event;
-  } catch (err) {
-    throw err;
-  }
-};
-
-const user = async userId => {
+const singleUser = async userId => {
   try {
     const user = await userLoader.load(userId.toString());
-    return {
-      ...user._doc,
-      _id: user.id,
-      createdEvents: () => eventLoader.loadMany(user._doc.createdEvents)
-    };
+    return user;
   } catch (err) {
     throw err;
   }
 };
 
-const transformEvent = event => {
+// const user = async userId => {
+//   try {
+//     const user = await userLoader.load(userId.toString());
+//     return {
+//       ...user._doc,
+//       _id: user.id,
+//       createdEvents: () => eventLoader.loadMany(user._doc.createdEvents)
+//     };
+//   } catch (err) {
+//     throw err;
+//   }
+// };
+
+const transformUser = user => {
   return {
-    ...event._doc,
-    _id: event.id,
-    date: dateToString(event._doc.date),
-    creator: user.bind(this, event.creator)
+    ...user._doc,
+    _id: user.id,
+    name: user.name,
+    username: user.username
   };
 };
 
-const transformBooking = booking => {
-  return {
-    ...booking._doc,
-    _id: booking.id,
-    user: user.bind(this, booking._doc.user),
-    event: singleEvent.bind(this, booking._doc.event),
-    createdAt: dateToString(booking._doc.createdAt),
-    updatedAt: dateToString(booking._doc.updatedAt)
-  };
-};
+// const transformBooking = booking => {
+//   return {
+//     ...booking._doc,
+//     _id: booking.id,
+//     user: user.bind(this, booking._doc.user),
+//     event: singleEvent.bind(this, booking._doc.event),
+//     createdAt: dateToString(booking._doc.createdAt),
+//     updatedAt: dateToString(booking._doc.updatedAt)
+//   };
+// };
 
-exports.transformEvent = transformEvent;
-exports.transformBooking = transformBooking;
+exports.transformUser = transformUser;
+// exports.transformBooking = transformBooking;
 
 // exports.user = user;
 // exports.events = events;

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-const contentActionSchema = new Schema(
+const actionSchema = new Schema(
   {
     type: {
       type: String,
@@ -31,9 +31,19 @@ const contentActionSchema = new Schema(
     description: {
       type: String,
       required: false
-    }
+    },
+    data: [
+      {
+        key01: String,
+        value01: String,
+        key02: String,
+        value02: String,
+        key03: [String],
+        value03: [String]
+      }
+    ]
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model('ContentAction', contentActionSchema);
+module.exports = mongoose.model('Action', actionSchema);

@@ -1,11 +1,22 @@
 const authResolver = require('./auth');
-const eventsResolver = require('./events');
-const bookingResolver = require('./booking');
+const userResolver = require('./user');
+// const groupResolver = require('./group');
+// const contentResolver = require('./content');
+// const perkResolver = require('./perk');
+// const actionResolver = require('./action');
+// const interactionResolver = require('./interaction');
+// const searchResolver = require('./search');
+
 
 const rootResolver = {
   ...authResolver,
-  ...eventsResolver,
-  ...bookingResolver
+  ...userResolver
+  // ...groupResolver,
+  // ...contentResolver,
+  // ...perkResolver,
+  // ...actionResolver,
+  // ...interactionResolver,
+  // ...searchResolver
 };
 
 module.exports = rootResolver;

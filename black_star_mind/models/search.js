@@ -8,6 +8,10 @@ const searchSchema = new Schema(
       type: Date,
       required: true
     },
+    type: {
+      type: String,
+      required: true
+    },
     user: {
       type: Schema.Types.ObjectId,
       ref: 'User'
