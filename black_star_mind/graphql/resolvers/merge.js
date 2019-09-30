@@ -13,6 +13,9 @@ const { dateToString } = require('../../helpers/date');
 const userLoader = new DataLoader(userIds => {
   return users(userIds);
 });
+const contentLoader = new DataLoader(contentIds => {
+  return contents(contentIds);
+});
 
 // const userLoader = new DataLoader(userIds => {
 //   return User.find({ _id: { $in: userIds } });
@@ -33,11 +36,34 @@ const users = async userIds => {
     throw err;
   }
 };
+const contents = async contentIds => {
+  try {
+    const contents = await Content.find({ _id: { $in: contentIds } });
+    contents.sort((a, b) => {
+      return (
+        contentIds.indexOf(a._id.toString()) - contentIds.indexOf(b._id.toString())
+      );
+    });
+    return contents.map(content => {
+      return transformContent(content);
+    });
+  } catch (err) {
+    throw err;
+  }
+};
 
 const singleUser = async userId => {
   try {
     const user = await userLoader.load(userId.toString());
     return user;
+  } catch (err) {
+    throw err;
+  }
+};
+const singleContent = async contentId => {
+  try {
+    const content = await contentLoader.load(contentId.toString());
+    return content;
   } catch (err) {
     throw err;
   }
@@ -64,6 +90,18 @@ const transformUser = user => {
     username: user.username
   };
 };
+const transformContent = content => {
+  return {
+    ...content._doc,
+    _id: content.id,
+    createdAt: content.createdAt,
+    updatedAt: content.updatedAt,
+    title: content.title,
+    domain: content.domain,
+    category: content.category,
+    creator: content.creator
+  };
+};
 
 // const transformBooking = booking => {
 //   return {
@@ -77,6 +115,7 @@ const transformUser = user => {
 // };
 
 exports.transformUser = transformUser;
+exports.transformContent = transformContent;
 // exports.transformBooking = transformBooking;
 
 // exports.user = user;
