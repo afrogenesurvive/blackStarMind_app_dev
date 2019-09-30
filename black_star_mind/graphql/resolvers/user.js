@@ -12,6 +12,7 @@ const Search = require('../../models/search');
 
 const { transformUser } = require('./merge');
 const { dateToString } = require('../../helpers/date');
+const { pocketVariables } = require('../../helpers/pocketVars');
 
 module.exports = {
   users: async (req) => {
@@ -136,6 +137,49 @@ module.exports = {
       throw err;
     }
   },
+  updateUserContent: async (args, req) => {
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
+    console.log(JSON.stringify(args));
+    try {
+      const user = await User.findOneAndUpdate({_id:args.userId},{$push: {content:args.contentRefInput}},{new: true});
+      // const user = await User.findById(userId);
+        return {
+            ...user._doc,
+            _id: user.id,
+            name: user.name,
+            username: user.username,
+            phone: user.phone,
+            demographics: user.demographics,
+            content: user.content
+        };
+    } catch (err) {
+      throw err;
+    }
+  },
+  updateUserAction: async (args, req) => {
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
+    console.log(JSON.stringify(args));
+    try {
+      const user = await User.findOneAndUpdate({_id:args.userId},{$push: {actions:args.actionRefInput}},{new: true});
+      // const user = await User.findById(userId);
+        return {
+            ...user._doc,
+            _id: user.id,
+            name: user.name,
+            username: user.username,
+            phone: user.phone,
+            demographics: user.demographics,
+            content: user.content,
+            actions: user.actions,
+        };
+    } catch (err) {
+      throw err;
+    }
+  },
   deleteUser: async (args, req) => {
     // if (!req.isAuth) {
     //   throw new Error('Unauthenticated!');
@@ -153,6 +197,7 @@ module.exports = {
     }
   },
   createUser: async args => {
+    console.log(JSON.stringify(args));
     try {
       const existingUser = await User.findOne({ email: args.userInput.email });
       if (existingUser) {

@@ -4,17 +4,9 @@ const Schema = mongoose.Schema;
 
 const groupSchema = new Schema(
   {
-    createdAt: {
-      type: String,
-      required: true
-    },
-    updatedAt: {
-      type: String,
-      required: true
-    },
     type: {
       type: String,
-      required: true
+      required: false
     },
     subtype: {
       key: String,
@@ -22,22 +14,40 @@ const groupSchema = new Schema(
     },
     name: {
       type: String,
-      required: true
+      required: false
     },
     description: {
       type: String,
-      required: true
+      required: false
+    },
+    creator: {
+      type: Schema.Types.ObjectId,ref: 'User'
     },
     users: [
       {
-        type: Schema.Types.ObjectId,
-        ref: 'User'
+        _id: String,
+        username: String
       }
     ],
+    // users: [
+    //   {
+    //     _id: {
+    //       type: Schema.Types.ObjectId,
+    //       ref: 'User'
+    //     },
+    //     username: String
+    //   }
+    // ],
     actions: [
       {
         type: Schema.Types.ObjectId,
         ref: 'Action'
+      }
+    ],
+    content: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Content'
       }
     ],
     interactions: [

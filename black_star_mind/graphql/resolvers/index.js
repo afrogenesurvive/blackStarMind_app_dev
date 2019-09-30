@@ -1,6 +1,6 @@
 const authResolver = require('./auth');
 const userResolver = require('./user');
-// const groupResolver = require('./group');
+const groupResolver = require('./group');
 // const contentResolver = require('./content');
 // const perkResolver = require('./perk');
 // const actionResolver = require('./action');
@@ -10,8 +10,8 @@ const userResolver = require('./user');
 
 const rootResolver = {
   ...authResolver,
-  ...userResolver
-  // ...groupResolver,
+  ...userResolver,
+  ...groupResolver
   // ...contentResolver,
   // ...perkResolver,
   // ...actionResolver,
