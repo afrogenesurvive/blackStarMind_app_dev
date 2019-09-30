@@ -2,6 +2,12 @@ const { buildSchema } = require('graphql');
 
 module.exports = buildSchema(`
 
+type UserRef {
+  _id: String
+  username: String
+}
+
+
 type UserGraphics {
   key: String!
   value: String!
@@ -13,11 +19,6 @@ type UserConsumption{
   consumptionBrands: [String],
   consumptionCompanies: [String],
   consumptionMotivations: [String]
-}
-
-type UserRef {
-  _id: String
-  username: String
 }
 
 type User {
@@ -47,6 +48,11 @@ type AuthData {
   tokenExpiration: Int!
 }
 
+type GroupRef {
+  _id: String!
+  name: String!
+}
+
 type GroupSubtype {
   key: String
   Value: String
@@ -54,14 +60,13 @@ type GroupSubtype {
 
 type Group {
   _id: ID!
-  createdAt: String!
-  updatedAt: String!
   type: String!
   subtype: GroupSubtype
-  name: String!
-  description: String!
-  users: [User!]
+  name: String
+  description: String
+  users: [UserRef]
   actions: [Action]
+  content: [Content]
   interactions: [Interaction]
   tags: [String]
 }
@@ -78,6 +83,11 @@ type Perk {
   users: [User]
   groups: [Group]
   content: [Content]
+}
+
+type ContentRef {
+  _id: String
+  title: String
 }
 
 type ContentData {
@@ -119,6 +129,11 @@ type Content {
   tags: [String]
 }
 
+type ActionRef {
+  _id: String
+  target: String
+}
+
 type Action {
   _id: ID!
   type: String!
@@ -150,6 +165,11 @@ type Search {
   actions: [Action]
 }
 
+input UserRefInput {
+  _id: String
+  username: String
+}
+
 input UserGraphicsInput {
   key: String!
   value: String!
@@ -172,15 +192,20 @@ input UserInput {
   address: String
   socialMedia: [String]
   demographics: [UserGraphicsInput]
-  biographics: [String]
-  psychographics: [String]
-  consumption: [String]
-  actions: [String]
-  content: [String]
-  groups: [String]
+  biographics: [UserGraphicsInput]
+  psychographics: [UserGraphicsInput]
+  consumption: [UserConsumptionInput]
+  actions: [ActionRefInput]
+  content: [ContentRefInput]
+  groups: [GroupRefInput]
   interactions: [String]
   searches: [String]
   perks: [String]
+}
+
+input GroupRefInput {
+  _id: String!
+  name: String!
 }
 
 input GroupSubtypeInput {
@@ -188,18 +213,15 @@ input GroupSubtypeInput {
   value: String!
 }
 
-input UserRefInput {
-  _id: String!
-  username: String!
-}
-
 input GroupInput {
-  type: String!
-  subtype: String
-  name: String!
-  description: String!
+  type: String
+  subtype: GroupSubtypeInput
+  name: String
+  description: String
+  creator: String
   users: [UserRefInput]
-  actions: [String]
+  actions: [ActionRefInput]
+  content: [ContentRefInput]
   interactions: [String]
   tags: [String]
 }
@@ -213,6 +235,11 @@ input PerkInput {
   users: [String]
   groups: [String]
   content: [String]
+}
+
+input ContentRefInput {
+  _id: String
+  title: String
 }
 
 input ContentDataInput {
@@ -244,17 +271,36 @@ input ContentInput {
   category: String!
   creator: String
   description: String
-  data: [String]
-  actions: [String]
+  data: [ContentDataInput]
+  actions: [ActionRefInput]
   interactions: [String]
   perks: [String]
   tags: [String]
 }
 
+input ActionRefInput {
+  _id: String
+  target: String
+}
+
+input ActionSubtypeInput {
+  key: String!
+  value: String!
+}
+
+input ActionDataInput {
+  key01: String,
+  value01: String,
+  key02: String,
+  value02: String,
+  key03: [String],
+  value03: [String]
+}
+
 input ActionInput {
   type: String!
-  subtype: String
-  target: String
+  subtype: ActionSubtypeInput
+  target: ContentRefInput
   users: [UserRefInput!]
   description: String
   data: String
@@ -279,54 +325,62 @@ input SearchInput {
 
 
 type RootQuery {
-    users: [User!]!
+    users: [User]
     getUserId(_id: ID!): User
     getUserUsername(username: String!): User
     getThisUser: User
 
-    groups: [Group!]!
+    groups: [Group]
     getGroupId(groupId: ID!,userId: ID): Group
     getGroupName(groupId: ID, groupName: String!): Group
-    getGroupUserId(groupId: ID, userRefInput: UserRefInput!): Group
-    getGroupUsername(groupId: ID, groupUsername: String!): Group
+    getGroupCreator(groupId: ID, groupCreator: String!): Group
+    getGroupUsername(groupId: ID, userRefInput: UserRefInput!): Group
 
-    content: [Content!]!
+    contents: [Content]
     getContentId(contentId: ID!,userId: ID): Content
     getContentDomain(contentId: ID, contentDomain: String!): Content
     getContentCategory(contentId: ID, contentCategory: String!): Content
     getContentTitle(contentId: ID, contentTitle: String!): Content
 
     actions: [Action!]!
+    getActionId(actionId: ID!): Action
+    getActionUsername(groupId: ID, username: String!): Action
+    getActionType(actionId: ID, actionType: String!): Action
+    getActionTarget(actionId: ID, actionTarget: String!): Action
+
     interactions: [Interaction!]!
     searches: [Search!]!
 
     login(email: String!, password: String!): AuthData!
 
     getPerk(perkId: ID!): Perk
-    getAction(actionId: ID!): Action
+
     getInteraction(interactionId: ID!): Interaction
     getSearch(searchId: ID!): Search
 }
 
 type RootMutation {
     createUser(userInput: UserInput): User
-    createUserGraphics(userId: ID!, userGraphicsInput: UserGraphicsInput): User
-    createUserConsumption(userId: ID!, userConsumptionInput: UserConsumptionInput): User
     updateUser(userId: ID!, userInput: UserInput): User
     updateUserGraphics(userId: ID!, userGraphicsInput: UserGraphicsInput): User
     updateUserConsumption(userId: ID!, userConsumptionInput: UserConsumptionInput): User
+    updateUserContent(userId: ID!, contentRefInput: ContentRefInput): User
+    updateUserGroup(userId: ID!, groupRefInput: GroupRefInput): User
+    updateUserAction(userId: ID!, actionRefInput: ActionRefInput): User
     deleteUser(userId: ID!): User
 
     createGroup(userId: ID!, groupInput: GroupInput): Group
-    createGroupUsers(groupId: ID!, userRefInput: UserRefInput): Group
+    updateGroupUsers(groupId: ID!, userRefInput: UserRefInput): Group
     updateGroup(groupId: ID, groupInput: GroupInput): Group
     updateGroupSubtype(groupId: ID!, groupSubtypeInput: GroupSubtypeInput): Group
+    updateGroupContent(groupId: ID!, contentRefInput: ContentRefInput): Group
+    updateGroupAction(groupId: ID!, actionRefInput: ActionRefInput): Group
     deleteGroup(groupId: ID!): Group
 
-    createContent(userId: ID!, contentInput: ContentInput): Content
-    createContentData(contentId: ID!, contentDataInput: ContentDataInput): Content
-    updateContentData(contentId: ID!, contentDataInput: ContentDataInput): Content
+    createContent(userId: ID!, userRefInput: UserRefInput, contentInput: ContentInput): Content
     updateContent(contentId: ID!, userId: ID!, contentInput: ContentInput): Content
+    updateContentData(contentId: ID!, contentDataInput: ContentDataInput): Content
+    updateContentAction(contentId: ID!, actionRefInput: ActionRefInput): Content
     deleteContent(contentId: ID!, userId: ID!): Content
 
     createPerk(perkInput: PerkInput): Perk
@@ -336,7 +390,12 @@ type RootMutation {
     createSearch(userID: ID!, searchInput: SearchInput): Search
     deleteSearch(searchId: ID!): Search
 
-    createAction(userID: ID!, contentId: ID!, actionInput: ActionInput): Action
+    createAction(userID: ID!, contentId: ID!, actionSubtypeInput: ActionSubtypeInput, contentRefInput: ContentRefInput, actionInput: ActionInput): Action
+    updateAction(actionId: ID!, userId: ID!, , actionInput: ActionInput): Action
+    updateActionSubtype(actionId: ID!, actionSubtypeInput: ActionSubtypeInput): Action
+    updateActionUsers(actionId: ID!, userRefInput: UserRefInput): Action
+    updateActionContent(actionId: ID!, userId: ID!, , contentRefInput: ContentInput): Action
+    updateActionData(actionId: ID!, userId: ID!, , actionDataInput: ActionDataInput): Action
     deleteAction(actionId: ID!): Action
 
     createInteraction(userID: ID!, interactionInput: InteractionInput): Interaction

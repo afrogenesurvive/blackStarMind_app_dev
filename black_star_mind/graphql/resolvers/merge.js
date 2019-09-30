@@ -16,6 +16,12 @@ const userLoader = new DataLoader(userIds => {
 const contentLoader = new DataLoader(contentIds => {
   return contents(contentIds);
 });
+const groupLoader = new DataLoader(groupIds => {
+  return groups(groupIds);
+});
+const actionLoader = new DataLoader(actionIds => {
+  return actions(actionIds);
+});
 
 // const userLoader = new DataLoader(userIds => {
 //   return User.find({ _id: { $in: userIds } });
@@ -51,6 +57,36 @@ const contents = async contentIds => {
     throw err;
   }
 };
+const groups = async groupIds => {
+  try {
+    const groups = await Group.find({ _id: { $in: groupIds } });
+    groups.sort((a, b) => {
+      return (
+        groupIds.indexOf(a._id.toString()) - groupIds.indexOf(b._id.toString())
+      );
+    });
+    return groups.map(group => {
+      return transformGroup(group);
+    });
+  } catch (err) {
+    throw err;
+  }
+};
+const actions = async actionIds => {
+  try {
+    const actions = await Action.find({ _id: { $in: actionIds } });
+    actions.sort((a, b) => {
+      return (
+        actionIds.indexOf(a._id.toString()) - actionIds.indexOf(b._id.toString())
+      );
+    });
+    return actions.map(action => {
+      return transformAction(action);
+    });
+  } catch (err) {
+    throw err;
+  }
+};
 
 const singleUser = async userId => {
   try {
@@ -64,6 +100,22 @@ const singleContent = async contentId => {
   try {
     const content = await contentLoader.load(contentId.toString());
     return content;
+  } catch (err) {
+    throw err;
+  }
+};
+const singleGroup = async groupId => {
+  try {
+    const group = await groupLoader.load(groupId.toString());
+    return group;
+  } catch (err) {
+    throw err;
+  }
+};
+const singleAction = async actionId => {
+  try {
+    const action = await actionLoader.load(actionId.toString());
+    return action;
   } catch (err) {
     throw err;
   }
@@ -96,27 +148,45 @@ const transformContent = content => {
     _id: content.id,
     createdAt: content.createdAt,
     updatedAt: content.updatedAt,
-    title: content.title,
-    domain: content.domain,
-    category: content.category,
-    creator: content.creator
+    type: content.type,
+    subtype: content.subtype,
+    name: content.name,
+    description: content.description,
+    users: content.users,
+    actions: content.actions
+  };
+};
+const transformGroup = group => {
+  return {
+    ...group._doc,
+    _id: group.id,
+    createdAt: group.createdAt,
+    updatedAt: group.updatedAt,
+    type: group.type,
+    subtype: group.subtype,
+    name: group.name,
+    description: group.description,
+    users: group.users,
+    actions: group.actions
+  };
+};
+const transformAction = action => {
+  return {
+    ...action._doc,
+    _id: action.id,
+    title: action.title,
+    domain: action.domain,
+    category: action.category,
+    creator: action.creator,
+    description: action.description
   };
 };
 
-// const transformBooking = booking => {
-//   return {
-//     ...booking._doc,
-//     _id: booking.id,
-//     user: user.bind(this, booking._doc.user),
-//     event: singleEvent.bind(this, booking._doc.event),
-//     createdAt: dateToString(booking._doc.createdAt),
-//     updatedAt: dateToString(booking._doc.updatedAt)
-//   };
-// };
 
 exports.transformUser = transformUser;
 exports.transformContent = transformContent;
-// exports.transformBooking = transformBooking;
+exports.transformGroup = transformGroup;
+exports.transformAction = transformAction;
 
 // exports.user = user;
 // exports.events = events;

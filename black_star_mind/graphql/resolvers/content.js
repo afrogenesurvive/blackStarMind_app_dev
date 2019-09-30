@@ -12,6 +12,7 @@ const Search = require('../../models/search');
 
 const { transformContent } = require('./merge');
 const { dateToString } = require('../../helpers/date');
+const { pocketVariables } = require('../../helpers/pocketVars');
 
 module.exports = {
   contents: async (req) => {
@@ -34,7 +35,7 @@ module.exports = {
     // console.log(args.username);
     try {
       // const user = await User.findOne(args.username);
-      const content = await Content.findById(args._id);
+      const content = await Content.findById(args.contentId);
         return {
             ...content._doc,
             _id: content.id,
@@ -133,13 +134,34 @@ module.exports = {
       throw err;
     }
   },
+  updateContentAction: async (args, req) => {
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
+    console.log(JSON.stringify(args));
+    try {
+      const content = await Content.findOneAndUpdate({_id:args.contentId},{$push: {actions:args.actionRefInput}},{new: true});
+      // const user = await User.findById(userId);
+        return {
+          ...content._doc,
+          _id: content.contentId,
+          title: content.title,
+          domain: content.domain,
+          category: content.category,
+          creator: content.creator,
+          actions: content.actions
+        };
+    } catch (err) {
+      throw err;
+    }
+  },
   deleteContent: async (args, req) => {
     // if (!req.isAuth) {
     //   throw new Error('Unauthenticated!');
     // }
     // console.log(JSON.stringify(args));
     try {
-      const content = await Content.findByIdAndRemove(args._id);
+      const content = await Content.findByIdAndRemove(args.contentId);
       // const user = await User.findById(userId);
         return {
             ...content._doc,
@@ -155,22 +177,23 @@ module.exports = {
       throw err;
     }
   },
-  createContent: async args => {
+  createContent: async (args) => {
     // if (!req.isAuth) {
     //   throw new Error('Unauthenticated!');
     // }
-    // console.log(JSON.stringify(args));
+    console.log(JSON.stringify(args));
     try {
       const existingContent = await Content.findOne({ title: args.contentInput.title });
       if (existingContent) {
         throw new Error('Title exists already.');
       }
-
+      console.log("herrrre");
       const content = new Content({
-        title: args.contentDataInput.title,
-        domain: args.contentDataInput.domain,
-        category: args.contentDataInput.category,
-        creator: args.contentDataInput.creator
+        title: args.contentInput.title,
+        domain: args.contentInput.domain,
+        category: args.contentInput.category,
+        creator: args.contentInput.creator
+        // creator: args.contentInput.creator
       });
 
       const result = await content.save();
@@ -185,6 +208,10 @@ module.exports = {
         category: result.category,
         creator: result.creator
       };
+      // pocketVariables.key01 = "contentId";
+      // pocketVariables.value01 = result.id;
+      return pocketVariables;
+      console.log("pocket vars:  " + pocketVariables);
     } catch (err) {
       throw err;
     }
