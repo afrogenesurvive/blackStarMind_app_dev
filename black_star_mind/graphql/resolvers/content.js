@@ -187,13 +187,12 @@ module.exports = {
       if (existingContent) {
         throw new Error('Title exists already.');
       }
-      console.log("herrrre");
       const content = new Content({
         title: args.contentInput.title,
         domain: args.contentInput.domain,
         category: args.contentInput.category,
-        creator: args.contentInput.creator
-        // creator: args.contentInput.creator
+        creator: args.contentInput.creator,
+        actions: args.contentInput.actions
       });
 
       const result = await content.save();
