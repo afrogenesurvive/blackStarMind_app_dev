@@ -52,28 +52,6 @@ module.exports = {
       throw err;
     }
   },
-  getGroupName: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
-    try {
-      const group = await Group.findOne({name: args.name});
-        return {
-            ...group._doc,
-            _id: group.id,
-            createdAt: group.createdAt,
-            updatedAt: group.updatedAt,
-            type: group.type,
-            subtype: group.subtype,
-            name: group.name,
-            description: group.description,
-            users: group.users,
-            actions: group.actions
-        };
-    } catch (err) {
-      throw err;
-    }
-  },
   getGroupCreator: async (args, req) => {
     // if (!req.isAuth) {
     //   throw new Error('Unauthenticated!');
@@ -100,10 +78,17 @@ module.exports = {
     // if (!req.isAuth) {
     //   throw new Error('Unauthenticated!');
     // }
+    // try {
+    //   const groups = await Group.find();
+    //   console.log(groups);
+    // } catch (err) {
+    //   throw(err)
+    // };
     try {
       const group = await Group.find({ 'users': { $elemMatch: {username: args.userRefInput.username } } });
       // const group = await Group.find({'users.username': {$lte: args.userRefInput.username}});
       // const group = await Group.find({'users.username': args.userRefInput.username});
+      console.log(group);
         return {
             ...group._doc,
             _id: group.id,

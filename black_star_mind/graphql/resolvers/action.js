@@ -10,7 +10,7 @@ const Action = require('../../models/action');
 const Interaction = require('../../models/interaction');
 const Search = require('../../models/search');
 
-const { transformContent } = require('./merge');
+const { transformAction } = require('./merge');
 const { dateToString } = require('../../helpers/date');
 const { pocketVariables } = require('../../helpers/pocketVars');
 
