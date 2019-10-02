@@ -4,7 +4,9 @@ const pocketVariables = {
     key02: null,
     value02: null,
     key03: null,
-    value03: null
+    value03: null,
+    key04: null,
+    value04: null
 }
 
 exports.pocketVariables = pocketVariables;

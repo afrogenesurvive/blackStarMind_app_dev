@@ -34,8 +34,29 @@ module.exports = {
     // }
     // console.log(args.username);
     try {
-      // const user = await User.findOne(args.username);
       const group = await Group.findById(args.groupId);
+        return {
+            ...group._doc,
+            _id: group.id,
+            createdAt: group.createdAt,
+            updatedAt: group.updatedAt,
+            type: group.type,
+            subtype: group.subtype,
+            name: group.name,
+            description: group.description,
+            users: group.users,
+            actions: group.actions
+        };
+    } catch (err) {
+      throw err;
+    }
+  },
+  getGroupName: async (args, req) => {
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
+    try {
+      const group = await Group.find({name: args.name});
         return {
             ...group._doc,
             _id: group.id,
@@ -74,7 +95,7 @@ module.exports = {
       throw err;
     }
   },
-  getGroupUsername: async (args, req) => {
+  // getGroupUser: async (args, req) => {
     // if (!req.isAuth) {
     //   throw new Error('Unauthenticated!');
     // }
@@ -84,27 +105,27 @@ module.exports = {
     // } catch (err) {
     //   throw(err)
     // };
-    try {
-      const group = await Group.find({ 'users': { $elemMatch: {username: args.userRefInput.username } } });
+    // try {
+    //   const group = await Group.find({ 'users': { $elemMatch: {username: args.userRefInput.username } } });
       // const group = await Group.find({'users.username': {$lte: args.userRefInput.username}});
       // const group = await Group.find({'users.username': args.userRefInput.username});
-      console.log(group);
-        return {
-            ...group._doc,
-            _id: group.id,
-            createdAt: group.createdAt,
-            updatedAt: group.updatedAt,
-            type: group.type,
-            subtype: group.subtype,
-            name: group.name,
-            description: group.description,
-            users: group.users,
-            actions: group.actions
-        };
-    } catch (err) {
-      throw err;
-    }
-  },
+  //     console.log(group);
+  //       return {
+  //           ...group._doc,
+  //           _id: group.id,
+  //           createdAt: group.createdAt,
+  //           updatedAt: group.updatedAt,
+  //           type: group.type,
+  //           subtype: group.subtype,
+  //           name: group.name,
+  //           description: group.description,
+  //           users: group.users,
+  //           actions: group.actions
+  //       };
+  //   } catch (err) {
+  //     throw err;
+  //   }
+  // },
   updateGroup: async (args, req) => {
     // if (!req.isAuth) {
     //   throw new Error('Unauthenticated!');
@@ -114,10 +135,8 @@ module.exports = {
       const group = await Group.findOneAndUpdate({_id:args.groupId},{
         // {
         type: args.groupInput.type,
-        subtype: args.groupSubtypeInput,
         name: args.groupInput.name,
-        description: args.groupInput.description,
-        users: args.userRefInput.users
+        description: args.groupInput.description
       // }
       },{new: true});
         return {
@@ -143,7 +162,6 @@ module.exports = {
     console.log(JSON.stringify(args));
     try {
       const group = await Group.findOneAndUpdate({_id:args.groupId},{subtype:args.groupSubtypeInput},{new: true});
-      // const user = await User.findById(userId);
         return {
           ...group._doc,
           _id: group.id,
@@ -160,14 +178,13 @@ module.exports = {
       throw err;
     }
   },
-  updateGroupUsers: async (args, req) => {
+  updateGroupUser: async (args, req) => {
     // if (!req.isAuth) {
     //   throw new Error('Unauthenticated!');
     // }
     console.log(JSON.stringify(args));
     try {
       const group = await Group.findOneAndUpdate({_id:args.groupId},{$push: {users:args.userRefInput}},{new: true});
-      // const user = await User.findById(userId);
         return {
           ...group._doc,
           _id: group.id,
@@ -178,6 +195,30 @@ module.exports = {
           name: group.name,
           description: group.description,
           users: group.users,
+          actions: group.actions
+        };
+    } catch (err) {
+      throw err;
+    }
+  },
+  updateGroupData: async (args, req) => {
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
+    console.log(JSON.stringify(args));
+    try {
+      const group = await Group.findOneAndUpdate({_id:args.groupId},{$push: {data:args.groupDataInput}},{new: true});
+        return {
+          ...group._doc,
+          _id: group.id,
+          createdAt: group.createdAt,
+          updatedAt: group.updatedAt,
+          type: group.type,
+          subtype: group.subtype,
+          name: group.name,
+          description: group.description,
+          users: group.users,
+          data: group.data,
           actions: group.actions
         };
     } catch (err) {
@@ -191,7 +232,6 @@ module.exports = {
     console.log(JSON.stringify(args));
     try {
       const group = await Group.findOneAndUpdate({_id:args.groupId},{$push: {content:args.contentRefInput}},{new: true});
-      // const user = await User.findById(userId);
         return {
           ...group._doc,
           _id: group.id,
@@ -202,6 +242,7 @@ module.exports = {
           name: group.name,
           description: group.description,
           users: group.users,
+          data: group.data,
           content: group.content,
           actions: group.actions
         };
@@ -216,7 +257,6 @@ module.exports = {
     console.log(JSON.stringify(args));
     try {
       const group = await Group.findOneAndUpdate({_id:args.groupId},{$push: {actions:args.actionRefInput}},{new: true});
-      // const user = await User.findById(userId);
         return {
           ...group._doc,
           _id: group.id,
@@ -234,14 +274,37 @@ module.exports = {
       throw err;
     }
   },
+  updateGroupTag: async (args, req) => {
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
+    console.log(JSON.stringify(args));
+    try {
+      const group = await Group.findOneAndUpdate({_id:args.groupId},{$push: {tags:args.tags}},{new: true});
+        return {
+          ...group._doc,
+          _id: group.id,
+          createdAt: group.createdAt,
+          updatedAt: group.updatedAt,
+          type: group.type,
+          subtype: group.subtype,
+          name: group.name,
+          description: group.description,
+          users: group.users,
+          content: group.content,
+          actions: group. actions,
+          tags: group. tags
+        };
+    } catch (err) {
+      throw err;
+    }
+  },
   deleteGroup: async (args, req) => {
     // if (!req.isAuth) {
     //   throw new Error('Unauthenticated!');
     // }
-    // console.log(JSON.stringify(args));
     try {
       const group = await Group.findByIdAndRemove(args.groupId);
-      // const user = await User.findById(userId);
         return {
           ...group._doc,
           _id: group.id,
@@ -273,9 +336,7 @@ module.exports = {
         type: args.groupInput.type,
         subtype: args.groupInput.subtype,
         name: args.groupInput.name,
-        description: args.groupInput.description,
-        users: args.groupInput.users
-        // users: args.userRefInput
+        description: args.groupInput.description
       });
 
       const result = await group.save();

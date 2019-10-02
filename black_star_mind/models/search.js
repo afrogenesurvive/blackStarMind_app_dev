@@ -4,10 +4,6 @@ const Schema = mongoose.Schema;
 
 const searchSchema = new Schema(
   {
-    createdAt: {
-      type: Date,
-      required: true
-    },
     type: {
       type: String,
       required: true

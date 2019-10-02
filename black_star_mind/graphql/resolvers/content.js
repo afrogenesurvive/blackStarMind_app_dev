@@ -34,7 +34,6 @@ module.exports = {
     // }
     // console.log(args.username);
     try {
-      // const user = await User.findOne(args.username);
       const content = await Content.findById(args.contentId);
         return {
             ...content._doc,
@@ -88,6 +87,73 @@ module.exports = {
       throw err;
     }
   },
+  getContentCategory: async (args, req) => {
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
+    try {
+      const content = await Content.findOne({category: args.category});
+        return {
+            ...content._doc,
+            _id: content.id,
+            title: content.title,
+            domain: content.domain,
+            category: content.category,
+            creator: content.creator
+        };
+    } catch (err) {
+      throw err;
+    }
+  },
+  getContentCreator: async (args, req) => {
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
+    try {
+      const content = await Content.findOne({category: args.category});
+        return {
+            ...content._doc,
+            _id: content.id,
+            title: content.title,
+            domain: content.domain,
+            category: content.category,
+            creator: content.creator
+        };
+    } catch (err) {
+      throw err;
+    }
+  },
+  // getContentUser: async (args, req) => {
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
+    // try {
+    //   const contents = await Content.find();
+    //   console.log(groups);
+    // } catch (err) {
+    //   throw(err)
+    // };
+    // try {
+    //   const content = await Content.find({ 'users': { $elemMatch: {username: args.userRefInput.username } } });
+      // const content = await Content.find({'users.username': {$lte: args.userRefInput.username}});
+      // const content = await Content.find({'users.username': args.userRefInput.username});
+  //     console.log(group);
+  //       return {
+  //           ...content._doc,
+  //           _id: content.id,
+  //           createdAt: content.createdAt,
+  //           updatedAt: content.updatedAt,
+  //           type: content.type,
+  //           subtype: content.subtype,
+  //           name: content.name,
+  //           description: content.description,
+  //           users: content.users,
+  //           actions: content.actions
+  //       };
+  //   } catch (err) {
+  //     throw err;
+  //   }
+  // },
   updateContent: async (args, req) => {
     // if (!req.isAuth) {
     //   throw new Error('Unauthenticated!');
@@ -114,6 +180,26 @@ module.exports = {
       throw err;
     }
   },
+  updateContentUser: async (args, req) => {
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
+    console.log(JSON.stringify(args));
+    try {
+      const content = await Content.findOneAndUpdate({_id:args.contentId},{$push: {users:args.userRefInput}},{new: true});
+        return {
+          ...content._doc,
+          _id: content.contentId,
+          title: content.title,
+          domain: content.domain,
+          category: content.category,
+          creator: content.creator,
+          users: content.users
+        };
+    } catch (err) {
+      throw err;
+    }
+  },
   updateContentData: async (args, req) => {
     // if (!req.isAuth) {
     //   throw new Error('Unauthenticated!');
@@ -121,14 +207,15 @@ module.exports = {
     console.log(JSON.stringify(args));
     try {
       const content = await Content.findOneAndUpdate({_id:args.contentId},{$push: {data:args.contentDataInput}},{new: true});
-      // const user = await User.findById(userId);
         return {
           ...content._doc,
           _id: content.contentId,
           title: content.title,
           domain: content.domain,
           category: content.category,
-          creator: content.creator
+          creator: content.creator,
+          users: content.users,
+          data: content.data
         };
     } catch (err) {
       throw err;
@@ -141,7 +228,6 @@ module.exports = {
     console.log(JSON.stringify(args));
     try {
       const content = await Content.findOneAndUpdate({_id:args.contentId},{$push: {actions:args.actionRefInput}},{new: true});
-      // const user = await User.findById(userId);
         return {
           ...content._doc,
           _id: content.contentId,
@@ -149,7 +235,32 @@ module.exports = {
           domain: content.domain,
           category: content.category,
           creator: content.creator,
+          users: content.users,
+          data: content.data,
           actions: content.actions
+        };
+    } catch (err) {
+      throw err;
+    }
+  },
+  updateContentTag: async (args, req) => {
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
+    console.log(JSON.stringify(args));
+    try {
+      const content = await Content.findOneAndUpdate({_id:args.contentId},{$push: {tags:args.tags}},{new: true});
+        return {
+          ...content._doc,
+          _id: content.contentId,
+          title: content.title,
+          domain: content.domain,
+          category: content.category,
+          creator: content.creator,
+          users: content.users,
+          data: content.data,
+          actions: content.actions,
+          tags: content.tags
         };
     } catch (err) {
       throw err;

@@ -15,11 +15,6 @@ const contentSchema = new Schema({
     type: String,
     required: true
   },
-  creator: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-      required: true
-  },
   type: {
     medium: String,
     mediumSubtype: String
@@ -28,6 +23,17 @@ const contentSchema = new Schema({
     type: String,
     required: true
   },
+  creator: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+  },
+  users: [
+    {
+      _id: String,
+      username: String
+    }
+  ],
   data: [
     {
       key01: String,
