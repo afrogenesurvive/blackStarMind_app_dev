@@ -15,177 +15,339 @@ const { dateToString } = require('../../helpers/date');
 const { pocketVariables } = require('../../helpers/pocketVars');
 
 module.exports = {
-  contents: async (req) => {
+  actions: async (req) => {
     // if (!req.isAuth) {
     //   throw new Error('Unauthenticated!');
     // }
     try {
-      const contents = await Content.find();
-      return contents.map(content => {
-        return transformContent(content);
+      const actions = await Action.find();
+      return actions.map(action => {
+        return transformAction(action);
       });
     } catch (err) {
       throw err;
     }
   },
-  getContentId: async (args, req) => {
+  getActionId: async (args, req) => {
     // if (!req.isAuth) {
     //   throw new Error('Unauthenticated!');
     // }
-    // console.log(args.username);
     try {
-      // const user = await User.findOne(args.username);
-      const content = await Content.findById(args.contentId);
+      const action = await Action.findById(args.actionId);
         return {
-            ...content._doc,
-            _id: content.id,
-            createdAt: content.createdAt,
-            updatedAt: content.updatedAt,
-            title: content.title,
-            domain: content.domain,
-            category: content.category,
-            creator: content.creator
+            ...action._doc,
+            _id: action.id,
+            createdAt: action.createdAt,
+            updatedAt: action.updatedAt,
+            type: action.type,
+            subtype: action.subtype,
+            target: action.target,
+            creator: action.creator,
+            users: action.users,
+            description: action.description,
+            data: action.data
         };
     } catch (err) {
       throw err;
     }
   },
-  getContentTitle: async (args, req) => {
+  getActionCreator: async (args, req) => {
     // if (!req.isAuth) {
     //   throw new Error('Unauthenticated!');
     // }
     try {
-      const content = await Content.findOne({title: args.title});
+      const action = await Action.findOne({creator: args.creator});
         return {
-            ...content._doc,
-            _id: content.id,
-            createdAt: content.createdAt,
-            updatedAt: content.updatedAt,
-            title: content.title,
-            domain: content.domain,
-            category: content.category,
-            creator: content.creator
+          ...action._doc,
+          _id: action.id,
+          createdAt: action.createdAt,
+          updatedAt: action.updatedAt,
+          type: action.type,
+          subtype: action.subtype,
+          target: action.target,
+          creator: action.creator,
+          users: action.users,
+          description: action.description,
+          data: action.data
         };
     } catch (err) {
       throw err;
     }
   },
-  getContentDomain: async (args, req) => {
+  getActionType: async (args, req) => {
     // if (!req.isAuth) {
     //   throw new Error('Unauthenticated!');
     // }
     try {
-      const content = await Content.findOne({domain: args.domain});
+      const action = await Action.findOne({type: args.type});
         return {
-            ...content._doc,
-            _id: content.id,
-            title: content.title,
-            domain: content.domain,
-            category: content.category,
-            creator: content.creator
+          ...action._doc,
+          _id: action.id,
+          createdAt: action.createdAt,
+          updatedAt: action.updatedAt,
+          type: action.type,
+          subtype: action.subtype,
+          target: action.target,
+          creator: action.creator,
+          users: action.users,
+          description: action.description,
+          data: action.data
         };
     } catch (err) {
       throw err;
     }
   },
-  updateContent: async (args, req) => {
+  getActionTarget: async (args, req) => {
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
+    try {
+      const action = await Action.findOne({target: args.target});
+        return {
+          ...action._doc,
+          _id: action.id,
+          createdAt: action.createdAt,
+          updatedAt: action.updatedAt,
+          type: action.type,
+          subtype: action.subtype,
+          target: action.target,
+          creator: action.creator,
+          users: action.users,
+          description: action.description,
+          data: action.data
+        };
+    } catch (err) {
+      throw err;
+    }
+  },
+  // getActionUser: async (args, req) => {
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
+    // try {
+    //   const actions = await Action.find();
+    //   console.log(groups);
+    // } catch (err) {
+    //   throw(err)
+    // };
+    // try {
+    //   const action = await Action.find({ 'users': { $elemMatch: {username: args.userRefInput.username } } });
+      // const action = await Action.find({'users.username': {$lte: args.userRefInput.username}});
+      // const action = await Action.find({'users.username': args.userRefInput.username});
+  //     console.log(group);
+  //       return {
+  //           ...action._doc,
+              // _id: action.id,
+              // createdAt: action.createdAt,
+              // updatedAt: action.updatedAt,
+              // type: action.type,
+              // subtype: action.subtype,
+              // target: action.target,
+              // creator: action.creator,
+              // users: action.users,
+              // description: action.description,
+              // data: action.data
+  //       };
+  //   } catch (err) {
+  //     throw err;
+  //   }
+  // },
+  updateAction: async (args, req) => {
     // if (!req.isAuth) {
     //   throw new Error('Unauthenticated!');
     // }
     console.log(JSON.stringify(args));
     try {
-      const content = await Content.findOneAndUpdate({_id:args.contentId},{
+      const content = await Action.findOneAndUpdate({_id:args.actionId},{
         // {
-        title: args.contentInput.title,
-        domain: args.contentInput.domain,
-        category: args.contentInput.category,
-        creator: args.contentInput.creator
+        type: args.actionInput.type,
+        target: args.actionInput.target,
+        creator: args.actionInput.creator,
+        description: args.actionInput.description,
       // }
       },{new: true});
         return {
-          ...content._doc,
-          _id: content.id,
-          title: content.title,
-          domain: content.domain,
-          category: content.category,
-          creator: content.creator
+          ...action._doc,
+          _id: action.id,
+          createdAt: action.createdAt,
+          updatedAt: action.updatedAt,
+          type: action.type,
+          target: action.target,
+          creator: action.creator,
+          description: action.description,
         };
     } catch (err) {
       throw err;
     }
   },
-  updateContentData: async (args, req) => {
+  updateActionSubtype: async (args, req) => {
     // if (!req.isAuth) {
     //   throw new Error('Unauthenticated!');
     // }
     console.log(JSON.stringify(args));
     try {
-      const content = await Content.findOneAndUpdate({_id:args.contentId},{$push: {data:args.contentDataInput}},{new: true});
-      // const user = await User.findById(userId);
+      const content = await Action.findOneAndUpdate({_id:args.actionId},{subtype: args.actionSubtypeInput},{new: true});
         return {
-          ...content._doc,
-          _id: content.contentId,
-          title: content.title,
-          domain: content.domain,
-          category: content.category,
-          creator: content.creator
+          ...action._doc,
+          _id: action.id,
+          createdAt: action.createdAt,
+          updatedAt: action.updatedAt,
+          type: action.type,
+          subtype: action.subtype,
+          target: action.target,
+          creator: action.creator,
+          description: action.description,
         };
     } catch (err) {
       throw err;
     }
   },
-  deleteContent: async (args, req) => {
+  updateActionTarget: async (args, req) => {
     // if (!req.isAuth) {
     //   throw new Error('Unauthenticated!');
     // }
-    // console.log(JSON.stringify(args));
+    console.log(JSON.stringify(args));
     try {
-      const content = await Content.findByIdAndRemove(args.contentId);
-      // const user = await User.findById(userId);
+      const content = await Action.findOneAndUpdate({_id:args.actionId},{target: args.contentRefInput},{new: true});
         return {
-            ...content._doc,
-            _id: content.id,
-            createdAt: content.createdAt,
-            updatedAt: content.updatedAt,
-            title: content.title,
-            domain: content.domain,
-            category: content.category,
-            creator: content.creator
+          ...action._doc,
+          _id: action.id,
+          createdAt: action.createdAt,
+          updatedAt: action.updatedAt,
+          type: action.type,
+          subtype: action.subtype,
+          target: action.target,
+          creator: action.creator,
+          description: action.description,
         };
     } catch (err) {
       throw err;
     }
   },
-  createContent: async (args) => {
+  updateActionUser: async (args, req) => {
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
+    console.log(JSON.stringify(args));
+    try {
+      const content = await Action.findOneAndUpdate({_id:args.actionId},{$push: {users:args.userRefInput}},{new: true});
+        return {
+          ...action._doc,
+          _id: action.id,
+          createdAt: action.createdAt,
+          updatedAt: action.updatedAt,
+          type: action.type,
+          subtype: action.subtype,
+          target: action.target,
+          creator: action.creator,
+          description: action.description,
+          users: action.users
+        };
+    } catch (err) {
+      throw err;
+    }
+  },
+  updateActionData: async (args, req) => {
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
+    console.log(JSON.stringify(args));
+    try {
+      const content = await Action.findOneAndUpdate({_id:args.actionId},{$push: {data:args.actionDataInput}},{new: true});
+        return {
+          ...action._doc,
+          _id: action.id,
+          createdAt: action.createdAt,
+          updatedAt: action.updatedAt,
+          type: action.type,
+          subtype: action.subtype,
+          target: action.target,
+          creator: action.creator,
+          description: action.description,
+          users: action.users,
+          data: action.data
+        };
+    } catch (err) {
+      throw err;
+    }
+  },
+  updateActionTag: async (args, req) => {
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
+    console.log(JSON.stringify(args));
+    try {
+      const content = await Action.findOneAndUpdate({_id:args.actionId},{$push: {tags:args.tags}},{new: true});
+        return {
+          ...action._doc,
+          _id: action.id,
+          createdAt: action.createdAt,
+          updatedAt: action.updatedAt,
+          type: action.type,
+          subtype: action.subtype,
+          target: action.target,
+          creator: action.creator,
+          description: action.description,
+          users: action.users,
+          data: action.data,
+          tags: action.tags
+        };
+    } catch (err) {
+      throw err;
+    }
+  },
+  deleteAction: async (args, req) => {
     // if (!req.isAuth) {
     //   throw new Error('Unauthenticated!');
     // }
     // console.log(JSON.stringify(args));
     try {
-      const existingContent = await Content.findOne({ title: args.contentInput.title });
-      if (existingContent) {
-        throw new Error('Title exists already.');
-      }
-
-      const content = new Content({
-        title: args.contentInput.title,
-        domain: args.contentInput.domain,
-        category: args.contentInput.category,
-        creator: args.contentInput.creator
+      const content = await Action.findByIdAndRemove(args.actionId);
+        return {
+          ...action._doc,
+          _id: action.id
+        };
+    } catch (err) {
+      throw err;
+    }
+  },
+  createAction: async (args) => {
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
+    console.log(JSON.stringify(args));
+    try {
+      // const existingContent = await Action.findOne({ title: args.actionInput.title });
+      // if (existingContent) {
+      //   throw new Error('Title exists already.');
+      // }
+      const action = new Action({
+        type: args.actionInput.type,
+        target: args.actionInput.target,
+        creator: args.actionInput.creator,
+        description: args.actionInput.description
       });
 
-      const result = await content.save();
+      const result = await action.save();
 
       return {
-        ...result._doc,
-        _id: result.id,
-        createdAt: result.createdAt,
-        updatedAt: result.updatedAt,
-        title: result.title,
-        domain: result.domain,
-        category: result.category,
-        creator: result.creator
+        ...action._doc,
+        _id: action.id,
+        createdAt: action.createdAt,
+        updatedAt: action.updatedAt,
+        type: action.type,
+        subtype: action.subtype,
+        target: action.target,
+        creator: action.creator,
+        description: action.description,
+        users: action.users,
+        data: action.data,
+        tags: action.tags
       };
+      // pocketVariables.key01 = "contentId";
+      // pocketVariables.value01 = result.id;
+      // return pocketVariables;
+      // console.log("pocket vars:  " + pocketVariables);
     } catch (err) {
       throw err;
     }

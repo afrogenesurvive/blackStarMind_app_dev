@@ -29,6 +29,16 @@ const groupSchema = new Schema(
         username: String
       }
     ],
+    data: [
+      {
+        key01: String,
+        value01: String,
+        key02: String,
+        value02: String,
+        key03: [String],
+        value03: [String]
+      }
+    ],
     // users: [
     //   {
     //     _id: {

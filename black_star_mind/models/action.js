@@ -12,22 +12,29 @@ const actionSchema = new Schema(
       key: String,
       value: String
     },
-    createdAt: {
-      type: Date,
-      required: true
-    },
     target: [
       {
         type: Schema.Types.ObjectId,
         ref: 'Content'
       }
     ],
+    creator: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
     users: [
       {
-        type: Schema.Types.ObjectId,
-        ref: 'User'
+        _id: String,
+        username: String
       }
     ],
+    // users: [
+    //   {
+    //     type: Schema.Types.ObjectId,
+    //     ref: 'User'
+    //   }
+    // ],
     description: {
       type: String,
       required: false

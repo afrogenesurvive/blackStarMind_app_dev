@@ -22,6 +22,9 @@ const groupLoader = new DataLoader(groupIds => {
 const actionLoader = new DataLoader(actionIds => {
   return actions(actionIds);
 });
+const perkLoader = new DataLoader(perkIds => {
+  return perks(perkIds);
+});
 
 // const userLoader = new DataLoader(userIds => {
 //   return User.find({ _id: { $in: userIds } });
@@ -87,6 +90,21 @@ const actions = async actionIds => {
     throw err;
   }
 };
+const perks = async perkIds => {
+  try {
+    const perks = await Perk.find({ _id: { $in: perkIds } });
+    perks.sort((a, b) => {
+      return (
+        perkIds.indexOf(a._id.toString()) - perkIds.indexOf(b._id.toString())
+      );
+    });
+    return perks.map(perk => {
+      return transformPerk(perk);
+    });
+  } catch (err) {
+    throw err;
+  }
+};
 
 const singleUser = async userId => {
   try {
@@ -116,6 +134,14 @@ const singleAction = async actionId => {
   try {
     const action = await actionLoader.load(actionId.toString());
     return action;
+  } catch (err) {
+    throw err;
+  }
+};
+const singlePerk = async perkId => {
+  try {
+    const perk = await perkLoader.load(perkId.toString());
+    return perk;
   } catch (err) {
     throw err;
   }
@@ -181,12 +207,27 @@ const transformAction = action => {
     description: action.description
   };
 };
+const transformPerk = perk => {
+  return {
+    ...perk._doc,
+    _id: perk._id,
+    name: perk.name,
+    description: perk.description,
+    type: perk.type,
+    subtype: perk.subtype,
+    data: perk.data,
+    users: perk.users,
+    groups: perk.groups,
+    content: perk.content
+  };
+};
 
 
 exports.transformUser = transformUser;
 exports.transformContent = transformContent;
 exports.transformGroup = transformGroup;
 exports.transformAction = transformAction;
+exports.transformPerk = transformPerk;
 
 // exports.user = user;
 // exports.events = events;

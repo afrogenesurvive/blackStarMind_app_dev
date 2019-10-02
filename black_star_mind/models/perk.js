@@ -7,14 +7,6 @@ const perkSchema = new Schema({
     type: String,
     required: true
   },
-  createdAt: {
-    type: String,
-    required: true
-  },
-  updatedAt: {
-    type: String,
-    required: true
-  },
   description: {
     type: String,
     required: true
@@ -27,6 +19,12 @@ const perkSchema = new Schema({
     key: String,
     value: String
   },
+  users: [
+    {
+      _id: String,
+      username: String
+    }
+  ],
   data: [
     {
       key01: String,
@@ -37,12 +35,13 @@ const perkSchema = new Schema({
       value03: [String]
     }
   ],
-  users: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'User'
-    }
-  ],
+
+  // users: [
+  //   {
+  //     type: Schema.Types.ObjectId,
+  //     ref: 'User'
+  //   }
+  // ],
   groups: [
     {
       type: Schema.Types.ObjectId,

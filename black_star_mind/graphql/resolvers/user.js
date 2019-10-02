@@ -32,9 +32,7 @@ module.exports = {
     // if (!req.isAuth) {
     //   throw new Error('Unauthenticated!');
     // }
-    // console.log(args.username);
     try {
-      // const user = await User.findOne(args.username);
       const user = await User.findById(req.userId);
         return {
             ...user._doc,
@@ -55,9 +53,7 @@ module.exports = {
     // if (!req.isAuth) {
     //   throw new Error('Unauthenticated!');
     // }
-    // console.log(args.username);
     try {
-      // const user = await User.findOne(args.username);
       const user = await User.findById(args.userId);
         return {
             ...user._doc,
@@ -73,15 +69,30 @@ module.exports = {
     // if (!req.isAuth) {
     //   throw new Error('Unauthenticated!');
     // }
-    // console.log(args.username);
     try {
       const user = await User.findOne({username: args.username});
-      // const user = await User.findById(userId);
         return {
             ...user._doc,
             _id: user.id,
             name: user.name,
             username: user.username
+        };
+    } catch (err) {
+      throw err;
+    }
+  },
+  getUserEmail: async (args, req) => {
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
+    try {
+      const user = await User.findOne({email: args.email})
+        return {
+            ...user._doc,
+            _id: user.id,
+            name: user.name,
+            username: user.username,
+            email: user.email
         };
     } catch (err) {
       throw err;
@@ -109,8 +120,26 @@ module.exports = {
             name: user.name,
             username: user.username,
             phone: user.phone,
-            demographics: user.demographics
-
+            address: user.address
+        };
+    } catch (err) {
+      throw err;
+    }
+  },
+  updateUserSocial: async (args, req) => {
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
+    console.log(JSON.stringify(args));
+    try {
+      const user = await User.findOneAndUpdate({_id:args.userId},{$push: {socialMedia:args.userSocial}},{new: true});
+        return {
+            ...user._doc,
+            _id: user.id,
+            name: user.name,
+            username: user.username,
+            email: user.email,
+            socialMedia: user.socialMedia
         };
     } catch (err) {
       throw err;
@@ -123,15 +152,53 @@ module.exports = {
     console.log(JSON.stringify(args));
     try {
       const user = await User.findOneAndUpdate({_id:args.userId},{$push: {demographics:args.userGraphicsInput}},{new: true});
-      // const user = await User.findById(userId);
         return {
             ...user._doc,
             _id: user.id,
             name: user.name,
             username: user.username,
-            phone: user.phone,
-            demographics: user.demographics
-
+            email: user.email,
+            demographics: user.demographics,
+            biographics: user.biographics,
+            psychographics: user.psychographics
+        };
+    } catch (err) {
+      throw err;
+    }
+  },
+  updateUserConsumption: async (args, req) => {
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
+    console.log(JSON.stringify(args));
+    try {
+      const user = await User.findOneAndUpdate({_id:args.userId},{$push: {consumption:args.userConsumptionInput}},{new: true});
+        return {
+            ...user._doc,
+            _id: user.id,
+            name: user.name,
+            username: user.username,
+            email: user.email,
+            consumption: user.consumption
+        };
+    } catch (err) {
+      throw err;
+    }
+  },
+  updateUserGroup: async (args, req) => {
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
+    console.log(JSON.stringify(args));
+    try {
+      const user = await User.findOneAndUpdate({_id:args.userId},{$push: {groups:args.userRefInput}},{new: true});
+        return {
+            ...user._doc,
+            _id: user.id,
+            name: user.name,
+            username: user.username,
+            email: user.email,
+            groups: user.groups
         };
     } catch (err) {
       throw err;
@@ -144,14 +211,12 @@ module.exports = {
     console.log(JSON.stringify(args));
     try {
       const user = await User.findOneAndUpdate({_id:args.userId},{$push: {content:args.contentRefInput}},{new: true});
-      // const user = await User.findById(userId);
         return {
             ...user._doc,
             _id: user.id,
             name: user.name,
             username: user.username,
-            phone: user.phone,
-            demographics: user.demographics,
+            email: user.email,
             content: user.content
         };
     } catch (err) {
@@ -165,15 +230,12 @@ module.exports = {
     console.log(JSON.stringify(args));
     try {
       const user = await User.findOneAndUpdate({_id:args.userId},{$push: {actions:args.actionRefInput}},{new: true});
-      // const user = await User.findById(userId);
         return {
             ...user._doc,
             _id: user.id,
             name: user.name,
             username: user.username,
-            phone: user.phone,
-            demographics: user.demographics,
-            content: user.content,
+            email: user.email,
             actions: user.actions,
         };
     } catch (err) {
@@ -190,7 +252,8 @@ module.exports = {
       // const user = await User.findById(userId);
         return {
             ...user._doc,
-            _id: user.id
+            _id: user.id,
+            username: user.username
         };
     } catch (err) {
       throw err;
