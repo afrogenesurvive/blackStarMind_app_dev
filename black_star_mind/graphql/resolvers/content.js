@@ -15,10 +15,10 @@ const { dateToString } = require('../../helpers/date');
 const { pocketVariables } = require('../../helpers/pocketVars');
 
 module.exports = {
-  contents: async (req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+  contents: async (args,req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     try {
       const contents = await Content.find();
       return contents.map(content => {
@@ -288,11 +288,18 @@ module.exports = {
       throw err;
     }
   },
-  createContent: async (args) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
-    console.log(JSON.stringify(args));
+  createContent: async (args,req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
+
+    pocketVariables.key01 = "userId";
+    pocketVariables.value01 = req.userId;
+    // return pocketVariables;
+
+    console.log("pocket vars:  " + pocketVariables.key01,pocketVariables.value01);
+    // console.log("req.userId  "+req.userId);
+    // console.log(JSON.stringify(args));
     try {
       const existingContent = await Content.findOne({ title: args.contentInput.title });
       if (existingContent) {
@@ -303,6 +310,7 @@ module.exports = {
         domain: args.contentInput.domain,
         category: args.contentInput.category,
         creator: args.contentInput.creator,
+        description: args.contentInput.description,
         actions: args.contentInput.actions
       });
 
@@ -318,10 +326,6 @@ module.exports = {
         category: result.category,
         creator: result.creator
       };
-      // pocketVariables.key01 = "contentId";
-      // pocketVariables.value01 = result.id;
-      return pocketVariables;
-      console.log("pocket vars:  " + pocketVariables);
     } catch (err) {
       throw err;
     }

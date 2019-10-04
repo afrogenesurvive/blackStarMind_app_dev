@@ -15,10 +15,11 @@ const { dateToString } = require('../../helpers/date');
 const { pocketVariables } = require('../../helpers/pocketVars');
 
 module.exports = {
-  users: async (req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+  users: async (args, req) => {
+
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     try {
       const users = await User.find();
       return users.map(user => {
@@ -27,32 +28,28 @@ module.exports = {
     } catch (err) {
       throw err;
     }
+    console.log("req =  " + req);
   },
-  getThisUser: async (req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+  getThisUser: async (args, req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     try {
       const user = await User.findById(req.userId);
         return {
             ...user._doc,
             _id: user.id,
-            email: user.email,
-            password: user.password,
             name: user.name,
-            username: user.username,
-            phone: user.phone,
-            address: user.address,
-            socialMedia: args.user.socialMedia
+            username: user.username
         };
     } catch (err) {
       throw err;
     }
   },
   getUserId: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     try {
       const user = await User.findById(args.userId);
         return {
@@ -66,9 +63,9 @@ module.exports = {
     }
   },
   getUserUsername: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     try {
       const user = await User.findOne({username: args.username});
         return {
@@ -82,9 +79,9 @@ module.exports = {
     }
   },
   getUserEmail: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     try {
       const user = await User.findOne({email: args.email})
         return {
@@ -99,15 +96,18 @@ module.exports = {
     }
   },
   updateUser: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     console.log(JSON.stringify(args));
     try {
+
+      const hashedPassword = await bcrypt.hash(args.userInput.password, 12);
+
       const user = await User.findOneAndUpdate({_id:args.userId},{
         // {
-        email: args.email,
-        password: args.userInput.password,
+        email: args.userInput.email,
+        password: hashedPassword,
         name: args.userInput.name,
         username: args.userInput.username,
         phone: args.userInput.phone,
@@ -127,9 +127,9 @@ module.exports = {
     }
   },
   updateUserSocial: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     console.log(JSON.stringify(args));
     try {
       const user = await User.findOneAndUpdate({_id:args.userId},{$push: {socialMedia:args.userSocial}},{new: true});
@@ -145,10 +145,10 @@ module.exports = {
       throw err;
     }
   },
-  updateUserGraphics: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+  updateUserDemographics: async (args, req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     console.log(JSON.stringify(args));
     try {
       const user = await User.findOneAndUpdate({_id:args.userId},{$push: {demographics:args.userGraphicsInput}},{new: true});
@@ -166,10 +166,52 @@ module.exports = {
       throw err;
     }
   },
+  updateUserBiographics: async (args, req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
+    console.log(JSON.stringify(args));
+    try {
+      const user = await User.findOneAndUpdate({_id:args.userId},{$push: {biographics:args.userGraphicsInput}},{new: true});
+        return {
+            ...user._doc,
+            _id: user.id,
+            name: user.name,
+            username: user.username,
+            email: user.email,
+            demographics: user.demographics,
+            biographics: user.biographics,
+            psychographics: user.psychographics
+        };
+    } catch (err) {
+      throw err;
+    }
+  },
+  updateUserPsychographics: async (args, req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
+    console.log(JSON.stringify(args));
+    try {
+      const user = await User.findOneAndUpdate({_id:args.userId},{$push: {psychgraphics:args.userGraphicsInput}},{new: true});
+        return {
+            ...user._doc,
+            _id: user.id,
+            name: user.name,
+            username: user.username,
+            email: user.email,
+            demographics: user.demographics,
+            biographics: user.biographics,
+            psychographics: user.psychographics
+        };
+    } catch (err) {
+      throw err;
+    }
+  },
   updateUserConsumption: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     console.log(JSON.stringify(args));
     try {
       const user = await User.findOneAndUpdate({_id:args.userId},{$push: {consumption:args.userConsumptionInput}},{new: true});
@@ -186,9 +228,9 @@ module.exports = {
     }
   },
   updateUserGroup: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     console.log(JSON.stringify(args));
     try {
       const user = await User.findOneAndUpdate({_id:args.userId},{$push: {groups:args.userRefInput}},{new: true});
@@ -205,9 +247,9 @@ module.exports = {
     }
   },
   updateUserContent: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     console.log(JSON.stringify(args));
     try {
       const user = await User.findOneAndUpdate({_id:args.userId},{$push: {content:args.contentRefInput}},{new: true});
@@ -224,9 +266,9 @@ module.exports = {
     }
   },
   updateUserAction: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     console.log(JSON.stringify(args));
     try {
       const user = await User.findOneAndUpdate({_id:args.userId},{$push: {actions:args.actionRefInput}},{new: true});
@@ -243,9 +285,9 @@ module.exports = {
     }
   },
   deleteUser: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     // console.log(JSON.stringify(args));
     try {
       const user = await User.findByIdAndRemove(args.userId);
@@ -260,7 +302,7 @@ module.exports = {
     }
   },
   createUser: async args => {
-    console.log(JSON.stringify(args));
+    // console.log(JSON.stringify(args));
     try {
       const existingUser = await User.findOne({ email: args.userInput.email });
       if (existingUser) {

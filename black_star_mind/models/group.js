@@ -21,7 +21,7 @@ const groupSchema = new Schema(
       required: false
     },
     creator: {
-      type: Schema.Types.ObjectId,ref: 'User'
+      type: String
     },
     users: [
       {
