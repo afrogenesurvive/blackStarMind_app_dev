@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken');
 
+const { pocketVariables } = require('../helpers/pocketVars');
+
 module.exports = (req, res, next) => {
   const authHeader = req.get('Authorization');
   if (!authHeader) {

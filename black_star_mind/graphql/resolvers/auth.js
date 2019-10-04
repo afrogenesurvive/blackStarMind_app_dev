@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken');
 
 const User = require('../../models/user');
 
+const { pocketVariables } = require('../../helpers/pocketVars');
+
 module.exports = {
   login: async ({ email, password }) => {
     const user = await User.findOne({ email: email });

@@ -21,13 +21,9 @@ const contentSchema = new Schema({
   },
   description: {
     type: String,
-    required: true
+    required: false
   },
-  creator: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-      required: true
-  },
+  creator: String,
   users: [
     {
       _id: String,
