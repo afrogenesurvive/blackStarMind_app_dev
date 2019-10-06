@@ -15,10 +15,10 @@ const { dateToString } = require('../../helpers/date');
 const { pocketVariables } = require('../../helpers/pocketVars');
 
 module.exports = {
-  actions: async (req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+  actions: async (args,req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     try {
       const actions = await Action.find();
       return actions.map(action => {
@@ -29,9 +29,9 @@ module.exports = {
     }
   },
   getActionId: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     try {
       const action = await Action.findById(args.actionId);
         return {
@@ -52,9 +52,9 @@ module.exports = {
     }
   },
   getActionCreator: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     try {
       const action = await Action.findOne({creator: args.creator});
         return {
@@ -75,9 +75,9 @@ module.exports = {
     }
   },
   getActionType: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     try {
       const action = await Action.findOne({type: args.type});
         return {
@@ -98,9 +98,9 @@ module.exports = {
     }
   },
   getActionTarget: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     try {
       const action = await Action.findOne({target: args.target});
         return {
@@ -153,9 +153,9 @@ module.exports = {
   //   }
   // },
   updateAction: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     console.log(JSON.stringify(args));
     try {
       const content = await Action.findOneAndUpdate({_id:args.actionId},{
@@ -181,9 +181,9 @@ module.exports = {
     }
   },
   updateActionSubtype: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     console.log(JSON.stringify(args));
     try {
       const content = await Action.findOneAndUpdate({_id:args.actionId},{subtype: args.actionSubtypeInput},{new: true});
@@ -203,9 +203,9 @@ module.exports = {
     }
   },
   updateActionTarget: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     console.log(JSON.stringify(args));
     try {
       const content = await Action.findOneAndUpdate({_id:args.actionId},{target: args.contentRefInput},{new: true});
@@ -225,9 +225,9 @@ module.exports = {
     }
   },
   updateActionUser: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     console.log(JSON.stringify(args));
     try {
       const content = await Action.findOneAndUpdate({_id:args.actionId},{$push: {users:args.userRefInput}},{new: true});
@@ -248,9 +248,9 @@ module.exports = {
     }
   },
   updateActionData: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     console.log(JSON.stringify(args));
     try {
       const content = await Action.findOneAndUpdate({_id:args.actionId},{$push: {data:args.actionDataInput}},{new: true});
@@ -272,9 +272,9 @@ module.exports = {
     }
   },
   updateActionTag: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     console.log(JSON.stringify(args));
     try {
       const content = await Action.findOneAndUpdate({_id:args.actionId},{$push: {tags:args.tags}},{new: true});
@@ -297,9 +297,9 @@ module.exports = {
     }
   },
   deleteAction: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     // console.log(JSON.stringify(args));
     try {
       const content = await Action.findByIdAndRemove(args.actionId);
@@ -311,11 +311,11 @@ module.exports = {
       throw err;
     }
   },
-  createAction: async (args) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
-    console.log(JSON.stringify(args));
+  createAction: async (args,req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
+    // console.log(JSON.stringify(args));
     try {
       // const existingContent = await Action.findOne({ title: args.actionInput.title });
       // if (existingContent) {
@@ -323,6 +323,7 @@ module.exports = {
       // }
       const action = new Action({
         type: args.actionInput.type,
+        subtype: args.actionInput.subtype,
         target: args.actionInput.target,
         creator: args.actionInput.creator,
         description: args.actionInput.description

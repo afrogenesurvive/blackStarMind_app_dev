@@ -19,9 +19,14 @@ module.exports = {
       { userId: user.id, email: user.email },
       '5CleanStream',
       {
-        expiresIn: '1h'
+        expiresIn: '5h'
       }
     );
-    return { userId: user.id, token: token, tokenExpiration: 1 };
+    
+    pocketVariables.user._id = user.id;
+    pocketVariables.user.email = user.email;
+    // console.log(JSON.stringify(pocketVariables));
+
+    return { userId: user.id, token: token, tokenExpiration: 5 };
   }
 };

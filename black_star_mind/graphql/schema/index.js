@@ -76,7 +76,7 @@ type Group {
   creator: String
   users: [UserRef]
   data: [GroupData]
-  actions: [ActionRef]
+  actions: [ActionRef!]
   content: [ContentRef]
   interactions: [Interaction]
   tags: [String]
@@ -114,7 +114,7 @@ type Perk {
 }
 
 type ContentRef {
-  _id: String!
+  _id: String
   title: String
 }
 
@@ -151,10 +151,10 @@ type Content {
   title: String
   domain: String
   category: String
-  type: ContentType
+  ContentType: ContentType
   creator: String
   description: String
-  users: UserRef
+  users: [UserRef]
   data: [ContentData]
   actions: [ActionRef]
   interactions: [Interaction]
@@ -163,8 +163,15 @@ type Content {
 }
 
 type ActionRef {
-  _id: String!
-  target: String
+  _id: String,
+  action: String,
+  targetId: String,
+  targetTitle: String
+}
+
+type ActionSubtype {
+  key: String
+  value: String
 }
 
  type ActionData {
@@ -179,8 +186,9 @@ type ActionRef {
 type Action {
   _id: ID!
   type: String
-  subtype: String
-  target: Content
+  subtype: ActionSubtype
+  target: ContentRef
+  creator: String
   users: [UserRef]
   description: String
   data: [ActionData]
@@ -321,7 +329,7 @@ input PerkInput {
 }
 
 input ContentRefInput {
-  _id: String!
+  _id: String
   title: String
 }
 
@@ -357,7 +365,7 @@ input ContentInput {
   title: String!
   domain: String!
   category: String!
-  type: ContentTypeInput
+  ContentType: ContentTypeInput
   creator: String
   description: String
   users: [UserRefInput]
@@ -369,13 +377,15 @@ input ContentInput {
 }
 
 input ActionRefInput {
-  _id: String!
-  target: String
+  _id: String,
+  action: String,
+  targetId: String,
+  targetTitle: String
 }
 
 input ActionSubtypeInput {
   key: String!
-  value: String!
+  value: String
 }
 
 input ActionDataInput {
@@ -447,10 +457,10 @@ type RootQuery {
 
     contents: [Content]
     getContentId(contentId: ID!,userId: ID): Content
-    getContentDomain(contentId: ID, domain: String!): Content
-    getContentCategory(contentId: ID, category: String!): Content
+    getContentDomain(contentId: ID, domain: String!): [Content]
+    getContentCategory(contentId: ID, category: String!): [Content]
     getContentTitle(contentId: ID, title: String!): Content
-    getContentCreator(contentId: ID, creator: String!): Content
+    getContentCreator(contentId: ID, creator: String!): [Content]
     getContentUser(contentId: ID, userRefInput: UserRefInput!): Content
 
     actions: [Action!]!
@@ -504,7 +514,7 @@ type RootMutation {
 
     createContent(userId: ID!, userRefInput: UserRefInput, contentInput: ContentInput): Content
     updateContent(contentId: ID!, userId: ID!, contentInput: ContentInput): Content
-    updateContentUser(contentId: ID!, userRefInput: [UserRefInput]): Group
+    updateContentUser(contentId: ID!, userRefInput: [UserRefInput]): Content
     updateContentData(contentId: ID!, contentDataInput: [ContentDataInput]): Content
     updateContentAction(contentId: ID!, actionRefInput: [ActionRefInput]): Content
     updateContentTag(contentId: ID!, tags: [String]): Content
@@ -526,7 +536,7 @@ type RootMutation {
     updateSearchResponse(searchId: ID!, searchResponseInput: [SearchResponseInput]): Search
     deleteSearch(searchId: ID!): Search
 
-    createAction(userID: ID!, contentId: ID, actionSubtypeInput: ActionSubtypeInput, contentRefInput: ContentRefInput, actionInput: ActionInput): Action
+    createAction(userId: ID!, actionInput: ActionInput): Action
     updateAction(actionId: ID!, userId: ID!, , actionInput: ActionInput): Action
     updateActionSubtype(actionId: ID!, actionSubtypeInput: ActionSubtypeInput): Action
     updateActionTarget(actionId: ID!, contentRefInput: ContentRefInput): Action

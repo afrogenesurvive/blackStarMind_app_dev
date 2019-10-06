@@ -29,10 +29,9 @@ module.exports = {
     }
   },
   getContentId: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
-    // console.log(args.username);
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     try {
       const content = await Content.findById(args.contentId);
         return {
@@ -70,19 +69,22 @@ module.exports = {
     }
   },
   getContentDomain: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     try {
-      const content = await Content.findOne({domain: args.domain});
-        return {
-            ...content._doc,
-            _id: content.id,
-            title: content.title,
-            domain: content.domain,
-            category: content.category,
-            creator: content.creator
-        };
+      const contents = await Content.find({domain: args.domain});
+      return contents.map(content => {
+        return transformContent(content);
+      });
+        // {
+        //     ...content._doc,
+        //     _id: content.id,
+        //     title: content.title,
+        //     domain: content.domain,
+        //     category: content.category,
+        //     creator: content.creator
+        // };
     } catch (err) {
       throw err;
     }
@@ -92,33 +94,60 @@ module.exports = {
     //   throw new Error('Unauthenticated!');
     // }
     try {
-      const content = await Content.findOne({category: args.category});
-        return {
-            ...content._doc,
-            _id: content.id,
-            title: content.title,
-            domain: content.domain,
-            category: content.category,
-            creator: content.creator
-        };
+      const contents = await Content.find({category: args.category});
+      return contents.map(content => {
+        return transformContent(content);
+      });
+        // {
+        //     ...content._doc,
+        //     _id: content.id,
+        //     title: content.title,
+        //     domain: content.domain,
+        //     category: content.category,
+        //     creator: content.creator
+        // };
     } catch (err) {
       throw err;
     }
   },
   getContentCreator: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     try {
-      const content = await Content.findOne({category: args.category});
-        return {
-            ...content._doc,
-            _id: content.id,
-            title: content.title,
-            domain: content.domain,
-            category: content.category,
-            creator: content.creator
-        };
+      const contents = await Content.find({creator: args.creator});
+      return contents.map(content => {
+        return transformContent(content);
+      });
+        // {
+        //     ...content._doc,
+        //     _id: content.id,
+        //     title: content.title,
+        //     domain: content.domain,
+        //     category: content.category,
+        //     creator: content.creator
+        // };
+    } catch (err) {
+      throw err;
+    }
+  },
+  getContentUser: async (args, req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
+    try {
+      const contents = await Content.find({'users.username': args.userRefInput.username});
+      return contents.map(content => {
+        return transformContent(content);
+      });
+        // {
+        //     ...content._doc,
+        //     _id: content.id,
+        //     title: content.title,
+        //     domain: content.domain,
+        //     category: content.category,
+        //     creator: content.creator
+        // };
     } catch (err) {
       throw err;
     }
@@ -136,7 +165,7 @@ module.exports = {
     // try {
     //   const content = await Content.find({ 'users': { $elemMatch: {username: args.userRefInput.username } } });
       // const content = await Content.find({'users.username': {$lte: args.userRefInput.username}});
-      // const content = await Content.find({'users.username': args.userRefInput.username});
+      // const content = await Content.findOne({'users.username': args.userRefInput.username});
   //     console.log(group);
   //       return {
   //           ...content._doc,
@@ -155,9 +184,9 @@ module.exports = {
   //   }
   // },
   updateContent: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     console.log(JSON.stringify(args));
     try {
       const content = await Content.findOneAndUpdate({_id:args.contentId},{
@@ -181,15 +210,15 @@ module.exports = {
     }
   },
   updateContentUser: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
-    console.log(JSON.stringify(args));
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
+    console.log(JSON.stringify(args.userRefInput));
     try {
       const content = await Content.findOneAndUpdate({_id:args.contentId},{$push: {users:args.userRefInput}},{new: true});
         return {
           ...content._doc,
-          _id: content.contentId,
+          _id: content._id,
           title: content.title,
           domain: content.domain,
           category: content.category,
@@ -201,9 +230,9 @@ module.exports = {
     }
   },
   updateContentData: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     console.log(JSON.stringify(args));
     try {
       const content = await Content.findOneAndUpdate({_id:args.contentId},{$push: {data:args.contentDataInput}},{new: true});
@@ -222,9 +251,9 @@ module.exports = {
     }
   },
   updateContentAction: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     console.log(JSON.stringify(args));
     try {
       const content = await Content.findOneAndUpdate({_id:args.contentId},{$push: {actions:args.actionRefInput}},{new: true});
@@ -244,9 +273,9 @@ module.exports = {
     }
   },
   updateContentTag: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     console.log(JSON.stringify(args));
     try {
       const content = await Content.findOneAndUpdate({_id:args.contentId},{$push: {tags:args.tags}},{new: true});
@@ -267,9 +296,9 @@ module.exports = {
     }
   },
   deleteContent: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     // console.log(JSON.stringify(args));
     try {
       const content = await Content.findByIdAndRemove(args.contentId);
@@ -292,14 +321,8 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
-
-    pocketVariables.key01 = "userId";
-    pocketVariables.value01 = req.userId;
-    // return pocketVariables;
-
-    console.log("pocket vars:  " + pocketVariables.key01,pocketVariables.value01);
-    // console.log("req.userId  "+req.userId);
-    // console.log(JSON.stringify(args));
+    pocketVariables.user._id = req.userId;
+    console.log("pocket vars:  " + pocketVariables.user._id);
     try {
       const existingContent = await Content.findOne({ title: args.contentInput.title });
       if (existingContent) {
@@ -311,6 +334,7 @@ module.exports = {
         category: args.contentInput.category,
         creator: args.contentInput.creator,
         description: args.contentInput.description,
+        ContentType: args.contentInput.ContentType,
         actions: args.contentInput.actions
       });
 
@@ -324,7 +348,8 @@ module.exports = {
         title: result.title,
         domain: result.domain,
         category: result.category,
-        creator: result.creator
+        creator: result.creator,
+        ContentType: result.ContentType
       };
     } catch (err) {
       throw err;
