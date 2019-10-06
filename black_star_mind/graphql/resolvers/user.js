@@ -231,9 +231,8 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
-    console.log(JSON.stringify(args));
     try {
-      const user = await User.findOneAndUpdate({_id:args.userId},{$push: {groups:args.userRefInput}},{new: true});
+      const user = await User.findOneAndUpdate({_id:args.userId},{$push: {groups:args.groupRefInput}},{new: true});
         return {
             ...user._doc,
             _id: user.id,
@@ -250,7 +249,6 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
-    console.log(JSON.stringify(args));
     try {
       const user = await User.findOneAndUpdate({_id:args.userId},{$push: {content:args.contentRefInput}},{new: true});
         return {
@@ -269,7 +267,7 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
-    console.log(JSON.stringify(args));
+    console.log(JSON.stringify(args.actionRefInput));
     try {
       const user = await User.findOneAndUpdate({_id:args.userId},{$push: {actions:args.actionRefInput}},{new: true});
         return {
@@ -278,7 +276,7 @@ module.exports = {
             name: user.name,
             username: user.username,
             email: user.email,
-            actions: user.actions,
+            actions: user.actions
         };
     } catch (err) {
       throw err;
