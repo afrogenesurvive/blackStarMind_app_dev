@@ -50,14 +50,16 @@ const groupSchema = new Schema(
     // ],
     actions: [
       {
-        type: Schema.Types.ObjectId,
-        ref: 'Action'
+        _id: String,
+        action: String,
+        targetId: String,
+        targetTitle: String
       }
     ],
     content: [
       {
-        type: Schema.Types.ObjectId,
-        ref: 'Content'
+        _id: String,
+        title: String
       }
     ],
     interactions: [

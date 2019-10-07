@@ -56,8 +56,10 @@ const contentSchema = new Schema({
   ],
   actions: [
     {
-      type: Schema.Types.ObjectId,
-      ref: 'Action'
+      _id: String,
+      action: String,
+      targetId: String,
+      targetTitle: String
     }
   ],
   interactions: [

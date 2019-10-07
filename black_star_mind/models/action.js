@@ -44,7 +44,8 @@ const actionSchema = new Schema(
         key03: [String],
         value03: [String]
       }
-    ]
+    ],
+    tags: [String]
   },
   { timestamps: true }
 );

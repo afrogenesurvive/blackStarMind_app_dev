@@ -98,24 +98,18 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      // const group = await Group.findOne({ users: { $elemMatch: {username: args.userRefInput.username } } });
-      // const group = await Group.findOne({ 'users.username': { $elemMatch: args.userRefInput.username } });
-      // const group = await Group.findOne({'users.username': {$lte: args.userRefInput.username}});
-      const group = await Group.findOne({'users.username': args.userRefInput.username});
-      // const group = await Group.findOne({users:{username: args.userRefInput.username}});
-      // console.log(group);
-        return {
-            ...group._doc,
-            _id: group.id,
-            createdAt: group.createdAt,
-            updatedAt: group.updatedAt,
-            type: group.type,
-            subtype: group.subtype,
-            name: group.name,
-            description: group.description,
-            users: group.users,
-            actions: group.actions
-        };
+      const groups = await Group.find({'users.username': args.userRefInput.username});
+      return groups.map(group => {
+        return transformGroup(group);
+      });
+        // {
+        //     ...content._doc,
+        //     _id: content.id,
+        //     title: content.title,
+        //     domain: content.domain,
+        //     category: content.category,
+        //     creator: content.creator
+        // };
     } catch (err) {
       throw err;
     }
@@ -229,7 +223,7 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
-    console.log(JSON.stringify(args));
+    // console.log(JSON.stringify(args));
     try {
       const group = await Group.findOneAndUpdate({_id:args.groupId},{$push: {content:args.contentRefInput}},{new: true});
         return {
@@ -254,7 +248,7 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
-    console.log(JSON.stringify(args));
+    // console.log(JSON.stringify(args));
     try {
       const group = await Group.findOneAndUpdate({_id:args.groupId},{$push: {actions:args.actionRefInput}},{new: true});
         return {
@@ -262,7 +256,7 @@ module.exports = {
           _id: group.id,
           createdAt: group.createdAt,
           updatedAt: group.updatedAt,
-          type: group.type,
+          action: group.action,
           subtype: group.subtype,
           name: group.name,
           description: group.description,
