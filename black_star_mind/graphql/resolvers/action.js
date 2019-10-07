@@ -56,20 +56,39 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const action = await Action.findOne({creator: args.creator});
-        return {
-          ...action._doc,
-          _id: action.id,
-          createdAt: action.createdAt,
-          updatedAt: action.updatedAt,
-          type: action.type,
-          subtype: action.subtype,
-          target: action.target,
-          creator: action.creator,
-          users: action.users,
-          description: action.description,
-          data: action.data
-        };
+      const actions = await Action.find({creator: args.creator});
+      return actions.map(action => {
+        return transformAction(action);
+      });
+        // {
+        //     ...content._doc,
+        //     _id: content.id,
+        //     title: content.title,
+        //     domain: content.domain,
+        //     category: content.category,
+        //     creator: content.creator
+        // };
+    } catch (err) {
+      throw err;
+    }
+  },
+  getActionUser: async (args, req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
+    try {
+      const actions = await Action.find({'users.username': args.userRefInput.username});
+      return actions.map(action => {
+        return transformAction(action);
+      });
+        // {
+        //     ...content._doc,
+        //     _id: content.id,
+        //     title: content.title,
+        //     domain: content.domain,
+        //     category: content.category,
+        //     creator: content.creator
+        // };
     } catch (err) {
       throw err;
     }
@@ -79,20 +98,18 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const action = await Action.findOne({type: args.type});
-        return {
-          ...action._doc,
-          _id: action.id,
-          createdAt: action.createdAt,
-          updatedAt: action.updatedAt,
-          type: action.type,
-          subtype: action.subtype,
-          target: action.target,
-          creator: action.creator,
-          users: action.users,
-          description: action.description,
-          data: action.data
-        };
+      const actions = await Action.find({type: args.type});
+      return actions.map(action => {
+        return transformAction(action);
+      });
+        // {
+        //     ...content._doc,
+        //     _id: content.id,
+        //     title: content.title,
+        //     domain: content.domain,
+        //     category: content.category,
+        //     creator: content.creator
+        // };
     } catch (err) {
       throw err;
     }
@@ -102,63 +119,29 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const action = await Action.findOne({target: args.target});
-        return {
-          ...action._doc,
-          _id: action.id,
-          createdAt: action.createdAt,
-          updatedAt: action.updatedAt,
-          type: action.type,
-          subtype: action.subtype,
-          target: action.target,
-          creator: action.creator,
-          users: action.users,
-          description: action.description,
-          data: action.data
-        };
+      const actions = await Action.find({target: args.contentRefInput});
+      return actions.map(action => {
+        return transformAction(action);
+      });
+        // {
+        //     ...content._doc,
+        //     _id: content.id,
+        //     title: content.title,
+        //     domain: content.domain,
+        //     category: content.category,
+        //     creator: content.creator
+        // };
     } catch (err) {
       throw err;
     }
   },
-  // getActionUser: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
-    // try {
-    //   const actions = await Action.find();
-    //   console.log(groups);
-    // } catch (err) {
-    //   throw(err)
-    // };
-    // try {
-    //   const action = await Action.find({ 'users': { $elemMatch: {username: args.userRefInput.username } } });
-      // const action = await Action.find({'users.username': {$lte: args.userRefInput.username}});
-      // const action = await Action.find({'users.username': args.userRefInput.username});
-  //     console.log(group);
-  //       return {
-  //           ...action._doc,
-              // _id: action.id,
-              // createdAt: action.createdAt,
-              // updatedAt: action.updatedAt,
-              // type: action.type,
-              // subtype: action.subtype,
-              // target: action.target,
-              // creator: action.creator,
-              // users: action.users,
-              // description: action.description,
-              // data: action.data
-  //       };
-  //   } catch (err) {
-  //     throw err;
-  //   }
-  // },
   updateAction: async (args, req) => {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
     console.log(JSON.stringify(args));
     try {
-      const content = await Action.findOneAndUpdate({_id:args.actionId},{
+      const action = await Action.findOneAndUpdate({_id:args.actionId},{
         // {
         type: args.actionInput.type,
         target: args.actionInput.target,
@@ -186,7 +169,7 @@ module.exports = {
     }
     console.log(JSON.stringify(args));
     try {
-      const content = await Action.findOneAndUpdate({_id:args.actionId},{subtype: args.actionSubtypeInput},{new: true});
+      const action = await Action.findOneAndUpdate({_id:args.actionId},{subtype: args.actionSubtypeInput},{new: true});
         return {
           ...action._doc,
           _id: action.id,
@@ -208,7 +191,7 @@ module.exports = {
     }
     console.log(JSON.stringify(args));
     try {
-      const content = await Action.findOneAndUpdate({_id:args.actionId},{target: args.contentRefInput},{new: true});
+      const action = await Action.findOneAndUpdate({_id:args.actionId},{target: args.contentRefInput},{new: true});
         return {
           ...action._doc,
           _id: action.id,
@@ -230,7 +213,7 @@ module.exports = {
     }
     console.log(JSON.stringify(args));
     try {
-      const content = await Action.findOneAndUpdate({_id:args.actionId},{$push: {users:args.userRefInput}},{new: true});
+      const action = await Action.findOneAndUpdate({_id:args.actionId},{$push: {users:args.userRefInput}},{new: true});
         return {
           ...action._doc,
           _id: action.id,
@@ -253,7 +236,7 @@ module.exports = {
     }
     console.log(JSON.stringify(args));
     try {
-      const content = await Action.findOneAndUpdate({_id:args.actionId},{$push: {data:args.actionDataInput}},{new: true});
+      const action = await Action.findOneAndUpdate({_id:args.actionId},{$push: {data:args.actionDataInput}},{new: true});
         return {
           ...action._doc,
           _id: action.id,
@@ -277,7 +260,7 @@ module.exports = {
     }
     console.log(JSON.stringify(args));
     try {
-      const content = await Action.findOneAndUpdate({_id:args.actionId},{$push: {tags:args.tags}},{new: true});
+      const action = await Action.findOneAndUpdate({_id:args.actionId},{$push: {tags:args.tags}},{new: true});
         return {
           ...action._doc,
           _id: action.id,
@@ -302,7 +285,7 @@ module.exports = {
     }
     // console.log(JSON.stringify(args));
     try {
-      const content = await Action.findByIdAndRemove(args.actionId);
+      const action = await Action.findByIdAndRemove(args.actionId);
         return {
           ...action._doc,
           _id: action.id
@@ -326,7 +309,9 @@ module.exports = {
         subtype: args.actionInput.subtype,
         target: args.actionInput.target,
         creator: args.actionInput.creator,
-        description: args.actionInput.description
+        description: args.actionInput.description,
+        users: args.actionInput.users,
+        data: args.actionInput.data
       });
 
       const result = await action.save();

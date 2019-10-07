@@ -192,6 +192,7 @@ type Action {
   users: [UserRef]
   description: String
   data: [ActionData]
+  tags: [String]
 }
 
 type Interaction {
@@ -452,7 +453,7 @@ type RootQuery {
     getGroupId(groupId: ID!,userId: ID): Group
     getGroupName(name: String!): Group
     getGroupCreator(groupId: ID, creator: String!): Group
-    getGroupUser(groupId: ID, userRefInput: UserRefInput!): Group
+    getGroupUser(groupId: ID, userRefInput: UserRefInput!): [Group]
 
 
     contents: [Content]
@@ -461,14 +462,14 @@ type RootQuery {
     getContentCategory(contentId: ID, category: String!): [Content]
     getContentTitle(contentId: ID, title: String!): Content
     getContentCreator(contentId: ID, creator: String!): [Content]
-    getContentUser(contentId: ID, userRefInput: UserRefInput!): Content
+    getContentUser(contentId: ID, userRefInput: UserRefInput!): [Content]
 
-    actions: [Action!]!
+    actions: [Action!]
     getActionId(actionId: ID!): Action
-    getActionCreator(groupId: ID, creator: String!): Action
-    getActionType(actionId: ID, type: String!): Action
-    getActionTarget(actionId: ID, target: String!): Action
-    getActionUser(actionId: ID, userRefInput: UserRefInput!): Action
+    getActionCreator(groupId: ID, creator: String!): [Action]
+    getActionType(actionId: ID, type: String!): [Action]
+    getActionTarget(actionId: ID, contentRefInput: ContentRefInput!): [Action]
+    getActionUser(actionId: ID, userRefInput: UserRefInput!): [Action]
 
     interactions: [Interaction!]!
 
@@ -518,7 +519,7 @@ type RootMutation {
     updateContentData(contentId: ID!, contentDataInput: [ContentDataInput]): Content
     updateContentAction(contentId: ID!, actionRefInput: [ActionRefInput]): Content
     updateContentTag(contentId: ID!, tags: [String]): Content
-    deleteContent(contentId: ID!, userId: ID!): Content
+    deleteContent(contentId: ID!, userId: ID): Content
 
     createPerk(perkInput: PerkInput): Perk
     updatePerk(perkId: ID!, perkInput: PerkInput): Perk

@@ -213,12 +213,12 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
-    console.log(JSON.stringify(args.userRefInput));
+    // console.log(JSON.stringify(args));
     try {
-      const content = await Content.findOneAndUpdate({_id:args.contentId},{$push: {users:args.userRefInput}},{new: true});
+      const content= await Content.findOneAndUpdate({_id:args.contentId},{$push: {users:args.userRefInput}},{new: true});
         return {
           ...content._doc,
-          _id: content._id,
+          _id: content.id,
           title: content.title,
           domain: content.domain,
           category: content.category,
@@ -238,7 +238,7 @@ module.exports = {
       const content = await Content.findOneAndUpdate({_id:args.contentId},{$push: {data:args.contentDataInput}},{new: true});
         return {
           ...content._doc,
-          _id: content.contentId,
+          _id: content.id,
           title: content.title,
           domain: content.domain,
           category: content.category,
@@ -259,7 +259,7 @@ module.exports = {
       const content = await Content.findOneAndUpdate({_id:args.contentId},{$push: {actions:args.actionRefInput}},{new: true});
         return {
           ...content._doc,
-          _id: content.contentId,
+          _id: content.id,
           title: content.title,
           domain: content.domain,
           category: content.category,
@@ -281,7 +281,7 @@ module.exports = {
       const content = await Content.findOneAndUpdate({_id:args.contentId},{$push: {tags:args.tags}},{new: true});
         return {
           ...content._doc,
-          _id: content.contentId,
+          _id: content.id,
           title: content.title,
           domain: content.domain,
           category: content.category,
