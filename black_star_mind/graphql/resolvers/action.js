@@ -61,12 +61,17 @@ module.exports = {
         return transformAction(action);
       });
         // {
-        //     ...content._doc,
-        //     _id: content.id,
-        //     title: content.title,
-        //     domain: content.domain,
-        //     category: content.category,
-        //     creator: content.creator
+        //    ...action._doc,
+            // _id: action.id,
+            // createdAt: action.createdAt,
+            // updatedAt: action.updatedAt,
+            // type: action.type,
+            // subtype: action.subtype,
+            // target: action.target,
+            // creator: action.creator,
+            // users: action.users,
+            // description: action.description,
+            // data: action.data
         // };
     } catch (err) {
       throw err;
@@ -81,14 +86,19 @@ module.exports = {
       return actions.map(action => {
         return transformAction(action);
       });
-        // {
-        //     ...content._doc,
-        //     _id: content.id,
-        //     title: content.title,
-        //     domain: content.domain,
-        //     category: content.category,
-        //     creator: content.creator
-        // };
+      // {
+      //    ...action._doc,
+          // _id: action.id,
+          // createdAt: action.createdAt,
+          // updatedAt: action.updatedAt,
+          // type: action.type,
+          // subtype: action.subtype,
+          // target: action.target,
+          // creator: action.creator,
+          // users: action.users,
+          // description: action.description,
+          // data: action.data
+      // };
     } catch (err) {
       throw err;
     }
@@ -102,14 +112,19 @@ module.exports = {
       return actions.map(action => {
         return transformAction(action);
       });
-        // {
-        //     ...content._doc,
-        //     _id: content.id,
-        //     title: content.title,
-        //     domain: content.domain,
-        //     category: content.category,
-        //     creator: content.creator
-        // };
+      // {
+      //    ...action._doc,
+          // _id: action.id,
+          // createdAt: action.createdAt,
+          // updatedAt: action.updatedAt,
+          // type: action.type,
+          // subtype: action.subtype,
+          // target: action.target,
+          // creator: action.creator,
+          // users: action.users,
+          // description: action.description,
+          // data: action.data
+      // };
     } catch (err) {
       throw err;
     }
@@ -123,14 +138,45 @@ module.exports = {
       return actions.map(action => {
         return transformAction(action);
       });
-        // {
-        //     ...content._doc,
-        //     _id: content.id,
-        //     title: content.title,
-        //     domain: content.domain,
-        //     category: content.category,
-        //     creator: content.creator
-        // };
+      // {
+      //    ...action._doc,
+          // _id: action.id,
+          // createdAt: action.createdAt,
+          // updatedAt: action.updatedAt,
+          // type: action.type,
+          // subtype: action.subtype,
+          // target: action.target,
+          // creator: action.creator,
+          // users: action.users,
+          // description: action.description,
+          // data: action.data
+      // };
+    } catch (err) {
+      throw err;
+    }
+  },
+  getActionTag: async (args, req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
+    try {
+      const contents = await Action.find({tags: args.tags});
+      return contents.map(content => {
+        return transformAction(content);
+      });
+      // {
+      //    ...action._doc,
+          // _id: action.id,
+          // createdAt: action.createdAt,
+          // updatedAt: action.updatedAt,
+          // type: action.type,
+          // subtype: action.subtype,
+          // target: action.target,
+          // creator: action.creator,
+          // users: action.users,
+          // description: action.description,
+          // data: action.data
+      // };
     } catch (err) {
       throw err;
     }
@@ -139,7 +185,6 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
-    console.log(JSON.stringify(args));
     try {
       const action = await Action.findOneAndUpdate({_id:args.actionId},{
         // {
@@ -167,7 +212,6 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
-    console.log(JSON.stringify(args));
     try {
       const action = await Action.findOneAndUpdate({_id:args.actionId},{subtype: args.actionSubtypeInput},{new: true});
         return {
@@ -189,7 +233,6 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
-    console.log(JSON.stringify(args));
     try {
       const action = await Action.findOneAndUpdate({_id:args.actionId},{target: args.contentRefInput},{new: true});
         return {
@@ -211,7 +254,6 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
-    console.log(JSON.stringify(args));
     try {
       const action = await Action.findOneAndUpdate({_id:args.actionId},{$push: {users:args.userRefInput}},{new: true});
         return {
@@ -234,7 +276,6 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
-    console.log(JSON.stringify(args));
     try {
       const action = await Action.findOneAndUpdate({_id:args.actionId},{$push: {data:args.actionDataInput}},{new: true});
         return {
@@ -258,7 +299,6 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
-    console.log(JSON.stringify(args));
     try {
       const action = await Action.findOneAndUpdate({_id:args.actionId},{$push: {tags:args.tags}},{new: true});
         return {
@@ -283,7 +323,6 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
-    // console.log(JSON.stringify(args));
     try {
       const action = await Action.findByIdAndRemove(args.actionId);
         return {
@@ -298,7 +337,6 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
-    // console.log(JSON.stringify(args));
     try {
       // const existingContent = await Action.findOne({ title: args.actionInput.title });
       // if (existingContent) {

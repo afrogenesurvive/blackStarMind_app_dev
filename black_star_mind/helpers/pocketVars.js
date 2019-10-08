@@ -5,13 +5,20 @@ const pocketVariables = {
       name: null,
       username: null
     },
+    thisUser: {
+      _id: null,
+      email: null,
+      name: null,
+      username: null
+    },
     content: {
       _id: null,
-      title: null
+      title: null,
+      creator: null
     },
     action: {
       _id: null,
-      action: null,
+      type: null,
       targetId: null,
       targetTitle: null
     }

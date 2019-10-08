@@ -7,10 +7,7 @@ const perkSchema = new Schema({
     type: String,
     required: true
   },
-  description: {
-    type: String,
-    required: true
-  },
+  description: String,
   type: {
     type: String,
     required: true
@@ -35,7 +32,6 @@ const perkSchema = new Schema({
       value03: [String]
     }
   ],
-
   // users: [
   //   {
   //     type: Schema.Types.ObjectId,
@@ -44,16 +40,17 @@ const perkSchema = new Schema({
   // ],
   groups: [
     {
-      type: Schema.Types.ObjectId,
-      ref: 'Group'
+      _id: String,
+      name: String
     }
   ],
   content: [
     {
-      type: Schema.Types.ObjectId,
-      ref: 'Content'
+      _id: String,
+      title: String
     }
-  ]
+  ],
+  tags: [String]
 });
 
 module.exports = mongoose.model('Perk', perkSchema);
