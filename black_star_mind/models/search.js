@@ -9,8 +9,8 @@ const searchSchema = new Schema(
       required: true
     },
     user: {
-      type: Schema.Types.ObjectId,
-      ref: 'User'
+      _id: String,
+      username: String
     },
     query: {
       target: String,
@@ -20,12 +20,18 @@ const searchSchema = new Schema(
       {
         title: String,
         url: String,
-        content: {
-          type: Schema.Types.ObjectId,
-          ref: 'Content'
-        }
+        content: String
       }
-    ]
+    ],
+    actions: [
+      {
+        _id: String,
+        action: String,
+        targetId: String,
+        targetTitle: String
+      }
+    ],
+    tags: [String]
   },
   { timestamps: true }
 );

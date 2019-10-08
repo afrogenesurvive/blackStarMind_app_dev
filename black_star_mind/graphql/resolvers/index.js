@@ -5,7 +5,7 @@ const contentResolver = require('./content');
 const perkResolver = require('./perk');
 const actionResolver = require('./action');
 // const interactionResolver = require('./interaction');
-// const searchResolver = require('./search');
+const searchResolver = require('./search');
 
 
 const rootResolver = {
@@ -14,9 +14,9 @@ const rootResolver = {
   ...groupResolver,
   ...contentResolver,
   ...perkResolver,
-  ...actionResolver
+  ...actionResolver,
   // ...interactionResolver,
-  // ...searchResolver
+  ...searchResolver
 };
 
 module.exports = rootResolver;

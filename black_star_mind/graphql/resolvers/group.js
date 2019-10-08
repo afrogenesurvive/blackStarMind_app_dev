@@ -32,7 +32,6 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
-    // console.log(args.username);
     try {
       const group = await Group.findById(args.groupId);
         return {
@@ -103,22 +102,46 @@ module.exports = {
         return transformGroup(group);
       });
         // {
-        //     ...content._doc,
-        //     _id: content.id,
-        //     title: content.title,
-        //     domain: content.domain,
-        //     category: content.category,
-        //     creator: content.creator
+        //     ...group._doc,
+        // _id: group.id,
+        // type: group.type,
+        // subtype: group.subtype,
+        // name: group.name,
+        // description: group.description,
+        // users: group.users,
+        // actions: group.actions
         // };
     } catch (err) {
       throw err;
     }
   },
+  getGroupTag: async (args, req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
+    try {
+      const groups = await Group.find({tags: args.tags});
+      return groups.map(group => {
+        return transformGroup(group);
+      });
+      // {
+      //     ...group._doc,
+      // _id: group.id,
+      // type: group.type,
+      // subtype: group.subtype,
+      // name: group.name,
+      // description: group.description,
+      // users: group.users,
+      // actions: group.actions
+      // };
+    } catch (err) {
+      throw err;
+    }
+  },
   updateGroup: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
-    console.log(JSON.stringify(args));
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     try {
 
       const existingGroup = await Group.findOne({ name: args.groupInput.name });
@@ -150,10 +173,9 @@ module.exports = {
     }
   },
   updateGroupSubtype: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
-    console.log(JSON.stringify(args));
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     try {
       const group = await Group.findOneAndUpdate({_id:args.groupId},{subtype:args.groupSubtypeInput},{new: true});
         return {
@@ -173,10 +195,9 @@ module.exports = {
     }
   },
   updateGroupUser: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
-    console.log(JSON.stringify(args));
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     try {
       const group = await Group.findOneAndUpdate({_id:args.groupId},{$push: {users:args.userRefInput}},{new: true});
         return {
@@ -199,7 +220,6 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
-    console.log(JSON.stringify(args));
     try {
       const group = await Group.findOneAndUpdate({_id:args.groupId},{$push: {data:args.groupDataInput}},{new: true});
         return {
@@ -223,7 +243,6 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
-    // console.log(JSON.stringify(args));
     try {
       const group = await Group.findOneAndUpdate({_id:args.groupId},{$push: {content:args.contentRefInput}},{new: true});
         return {
@@ -248,7 +267,6 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
-    // console.log(JSON.stringify(args));
     try {
       const group = await Group.findOneAndUpdate({_id:args.groupId},{$push: {actions:args.actionRefInput}},{new: true});
         return {
@@ -272,7 +290,6 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
-    console.log(JSON.stringify(args));
     try {
       const group = await Group.findOneAndUpdate({_id:args.groupId},{$push: {tags:args.tags}},{new: true});
         return {
@@ -319,7 +336,6 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
-    console.log(JSON.stringify(args.groupInput.users));
     try {
       const existingGroup = await Group.findOne({ name: args.groupInput.name });
       if (existingGroup) {

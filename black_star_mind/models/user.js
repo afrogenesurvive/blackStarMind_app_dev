@@ -73,14 +73,17 @@ const userSchema = new Schema({
   ],
   searches: [
     {
-      type: Schema.Types.ObjectId,
-      ref: 'Search'
+      _id: String,
+      query: {
+        target: String,
+        body: String
+      }
     }
   ],
   perks: [
     {
-      type: Schema.Types.ObjectId,
-      ref: 'Perk'
+      _id: String,
+      name: String
     }
   ]
 },

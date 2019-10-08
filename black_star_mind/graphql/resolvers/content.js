@@ -152,37 +152,27 @@ module.exports = {
       throw err;
     }
   },
-  // getContentUser: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
-    // try {
-    //   const contents = await Content.find();
-    //   console.log(groups);
-    // } catch (err) {
-    //   throw(err)
-    // };
-    // try {
-    //   const content = await Content.find({ 'users': { $elemMatch: {username: args.userRefInput.username } } });
-      // const content = await Content.find({'users.username': {$lte: args.userRefInput.username}});
-      // const content = await Content.findOne({'users.username': args.userRefInput.username});
-  //     console.log(group);
-  //       return {
-  //           ...content._doc,
-  //           _id: content.id,
-  //           createdAt: content.createdAt,
-  //           updatedAt: content.updatedAt,
-  //           type: content.type,
-  //           subtype: content.subtype,
-  //           name: content.name,
-  //           description: content.description,
-  //           users: content.users,
-  //           actions: content.actions
-  //       };
-  //   } catch (err) {
-  //     throw err;
-  //   }
-  // },
+  getContentTag: async (args, req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
+    try {
+      const contents = await Content.find({tags: args.tags});
+      return contents.map(content => {
+        return transformContent(content);
+      });
+      // {
+      //     ...content._doc,
+      //     _id: content.id,
+      //     title: content.title,
+      //     domain: content.domain,
+      //     category: content.category,
+      //     creator: content.creator
+      // };
+    } catch (err) {
+      throw err;
+    }
+  },
   updateContent: async (args, req) => {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');

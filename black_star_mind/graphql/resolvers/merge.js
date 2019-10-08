@@ -25,6 +25,9 @@ const actionLoader = new DataLoader(actionIds => {
 const perkLoader = new DataLoader(perkIds => {
   return perks(perkIds);
 });
+const searchLoader = new DataLoader(searchIds => {
+  return searches(searchIds);
+});
 
 // const userLoader = new DataLoader(userIds => {
 //   return User.find({ _id: { $in: userIds } });
@@ -105,6 +108,21 @@ const perks = async perkIds => {
     throw err;
   }
 };
+const searchs = async searchIds => {
+  try {
+    const searches = await Search.find({ _id: { $in: searchIds } });
+    searches.sort((a, b) => {
+      return (
+        searchIds.indexOf(a._id.toString()) - searchIds.indexOf(b._id.toString())
+      );
+    });
+    return searches.map(search => {
+      return transformSearch(search);
+    });
+  } catch (err) {
+    throw err;
+  }
+};
 
 const singleUser = async userId => {
   try {
@@ -142,6 +160,14 @@ const singlePerk = async perkId => {
   try {
     const perk = await perkLoader.load(perkId.toString());
     return perk;
+  } catch (err) {
+    throw err;
+  }
+};
+const singleSearch = async searchId => {
+  try {
+    const search = await searchLoader.load(searchId.toString());
+    return search;
   } catch (err) {
     throw err;
   }
@@ -210,7 +236,7 @@ const transformAction = action => {
 const transformPerk = perk => {
   return {
     ...perk._doc,
-    _id: perk._id,
+    _id: perk.id,
     name: perk.name,
     description: perk.description,
     type: perk.type,
@@ -218,17 +244,26 @@ const transformPerk = perk => {
     data: perk.data,
     users: perk.users,
     groups: perk.groups,
-    content: perk.content
+    content: perk.content,
+    tags: perk.tags
   };
 };
-
+const transformSearch = perk => {
+  return {
+    ...search._doc,
+    _id: search.id,
+    type: search.type,
+    user: search.user,
+    query: search.query,
+    response: search.response,
+    actions: search.actions,
+    tags: search.tags
+  };
+};
 
 exports.transformUser = transformUser;
 exports.transformContent = transformContent;
 exports.transformGroup = transformGroup;
 exports.transformAction = transformAction;
 exports.transformPerk = transformPerk;
-
-// exports.user = user;
-// exports.events = events;
-// exports.singleEvent = singleEvent;
+exports.transformSearch = transformSearch;

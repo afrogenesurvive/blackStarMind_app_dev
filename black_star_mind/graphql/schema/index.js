@@ -89,7 +89,7 @@ type PerkRef {
 
 type PerkSubtype {
   key: String
-  Value: String
+  value: String
 }
 
 type PerkData {
@@ -111,6 +111,7 @@ type Perk {
   users: [UserRef]
   groups: [GroupRef]
   content: [ContentRef]
+  tags: [String]
 }
 
 type ContentRef {
@@ -203,6 +204,7 @@ type Interaction {
   users: [UserRef]
   description: String
   data: String
+  tags: [String]
 }
 
 type SearchRef {
@@ -227,6 +229,7 @@ type Search {
   query: SearchQuery
   response: [SearchResponse]
   actions: [ActionRef]
+  tags: [String]
 }
 
 input UserRefInput {
@@ -325,8 +328,9 @@ input PerkInput {
   subtype: PerkSubtypeInput
   data: [PerkDataInput]
   users: [UserRefInput]
-  groups: [UserRefInput]
+  groups: [GroupRefInput]
   content: [ContentRefInput]
+  tags: [String]
 }
 
 input ContentRefInput {
@@ -454,7 +458,7 @@ type RootQuery {
     getGroupName(name: String!): Group
     getGroupCreator(groupId: ID, creator: String!): Group
     getGroupUser(groupId: ID, userRefInput: UserRefInput!): [Group]
-
+    getGroupTag(groupId: ID, tags: [String]): [Group]
 
     contents: [Content]
     getContentId(contentId: ID!,userId: ID): Content
@@ -463,6 +467,7 @@ type RootQuery {
     getContentTitle(contentId: ID, title: String!): Content
     getContentCreator(contentId: ID, creator: String!): [Content]
     getContentUser(contentId: ID, userRefInput: UserRefInput!): [Content]
+    getContentTag(contentId: ID, tags: [String]): [Content]
 
     actions: [Action!]
     getActionId(actionId: ID!): Action
@@ -470,6 +475,7 @@ type RootQuery {
     getActionType(actionId: ID, type: String!): [Action]
     getActionTarget(actionId: ID, contentRefInput: ContentRefInput!): [Action]
     getActionUser(actionId: ID, userRefInput: UserRefInput!): [Action]
+    getActionTag(actionId: ID, tags: [String]): [Action]
 
     interactions: [Interaction!]!
 
@@ -478,16 +484,21 @@ type RootQuery {
     perks: [Perk]
     getPerkId(perkId: ID, userId: ID): Perk
     getPerkName(perkId: ID, name: String): Perk
-    getPerkType(perkId: ID, type: String): Perk
-    getPerkUser(perkId: ID, userId: ID): Perk
+    getPerkType(perkId: ID, type: String): [Perk]
+    getPerkUser(perkId: ID, userRefInput: UserRefInput!): [Perk]
+    getPerkGroup(perkId: ID, groupRefInput: GroupRefInput!): [Perk]
+    getPerkTag(perkId: ID, tags: [String]): [Perk]
 
     getInteraction(interactionId: ID!): Interaction
 
     searches: [Search]
     getSearchId(searchId: ID!): Search
-    getSearchType(perkId: ID, userId: ID): Perk
-    getSearchUser(perkId: ID, userId: ID): Perk
-    getSearchQuery(perkId: ID, userId: ID): Perk
+    getSearchType(searchId: ID, type: String): [Search]
+    getSearchUser(searchId: ID, userRefInput: UserRefInput!): [Search]
+    getSearchQuery(searchId: ID, searchQueryInput: SearchQueryInput!): [Search]
+    getSearchResponse(searchId: ID, searchResponseInput: SearchResponseInput!): [Search]
+    getSearchAction(searchId: ID, actionRefInput: ActionRefInput!): [Search]
+    getSearchTag(searchId: ID, tags: [String]): [Search]
 }
 
 type RootMutation {
@@ -525,16 +536,19 @@ type RootMutation {
     updatePerk(perkId: ID!, perkInput: PerkInput): Perk
     updatePerkSubtype(perkId: ID!, perkSubtypeInput: PerkSubtypeInput): Perk
     updatePerkData(perkId: ID!, perkDataInput: [PerkDataInput]): Perk
-    updatePerkUser(perkId: ID!, userId: ID!, userRefInput: [UserRefInput]): Perk
-    updatePerkContent(perkId: ID!, userId: ID!, contentRefInput: [ContentInput]): Perk
+    updatePerkUser(perkId: ID!, userId: ID, userRefInput: [UserRefInput]): Perk
+    updatePerkGroup(perkId: ID!, userId: ID, groupRefInput: [GroupRefInput]): Perk
+    updatePerkContent(perkId: ID!, userId: ID, contentRefInput: [ContentRefInput]): Perk
     updatePerkTag(perkId: ID!, tags: [String]): Perk
     deletePerk(perkId: ID!): Perk
 
     createSearch(userID: ID!, searchInput: SearchInput): Search
     updateSearch(searchId: ID!, userID: ID, searchInput: SearchInput): Search
-    updateSearchUsers(searchId: ID!, searchRefInput: [SearchRefInput]): Search
+    updateSearchUser(searchId: ID!, userRefInput: UserRefInput): Search
     updateSearchQuery(searchId: ID!, searchQueryInput: [SearchQueryInput]): Search
     updateSearchResponse(searchId: ID!, searchResponseInput: [SearchResponseInput]): Search
+    updateSearchAction(searchId: ID!, actionRefInput: [ActionRefInput]): Search
+    updateSearchTag(searchId: ID!, tags: [String]): Search
     deleteSearch(searchId: ID!): Search
 
     createAction(userId: ID!, actionInput: ActionInput): Action
