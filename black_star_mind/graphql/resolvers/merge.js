@@ -108,7 +108,7 @@ const perks = async perkIds => {
     throw err;
   }
 };
-const searchs = async searchIds => {
+const searches = async searchIds => {
   try {
     const searches = await Search.find({ _id: { $in: searchIds } });
     searches.sort((a, b) => {
@@ -248,7 +248,7 @@ const transformPerk = perk => {
     tags: perk.tags
   };
 };
-const transformSearch = perk => {
+const transformSearch = search => {
   return {
     ...search._doc,
     _id: search.id,

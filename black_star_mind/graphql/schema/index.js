@@ -224,6 +224,7 @@ type SearchResponse {
 }
 
 type Search {
+  _id: ID!
   type: String!
   user: UserRef!
   query: SearchQuery
@@ -443,6 +444,7 @@ input SearchInput {
   query: SearchQueryInput
   response: [SearchResponseInput]
   actions: [ActionRefInput]
+  tags: [String]
 }
 
 
@@ -458,7 +460,7 @@ type RootQuery {
     getGroupName(name: String!): Group
     getGroupCreator(groupId: ID, creator: String!): Group
     getGroupUser(groupId: ID, userRefInput: UserRefInput!): [Group]
-    getGroupTag(groupId: ID, tags: [String]): [Group]
+    getGroupTag(groupId: ID, tag: String): [Group]
 
     contents: [Content]
     getContentId(contentId: ID!,userId: ID): Content
@@ -467,7 +469,7 @@ type RootQuery {
     getContentTitle(contentId: ID, title: String!): Content
     getContentCreator(contentId: ID, creator: String!): [Content]
     getContentUser(contentId: ID, userRefInput: UserRefInput!): [Content]
-    getContentTag(contentId: ID, tags: [String]): [Content]
+    getContentTag(contentId: ID, tag: String): [Content]
 
     actions: [Action!]
     getActionId(actionId: ID!): Action
@@ -475,7 +477,7 @@ type RootQuery {
     getActionType(actionId: ID, type: String!): [Action]
     getActionTarget(actionId: ID, contentRefInput: ContentRefInput!): [Action]
     getActionUser(actionId: ID, userRefInput: UserRefInput!): [Action]
-    getActionTag(actionId: ID, tags: [String]): [Action]
+    getActionTag(actionId: ID, tag: String): [Action]
 
     interactions: [Interaction!]!
 
@@ -487,7 +489,7 @@ type RootQuery {
     getPerkType(perkId: ID, type: String): [Perk]
     getPerkUser(perkId: ID, userRefInput: UserRefInput!): [Perk]
     getPerkGroup(perkId: ID, groupRefInput: GroupRefInput!): [Perk]
-    getPerkTag(perkId: ID, tags: [String]): [Perk]
+    getPerkTag(perkId: ID, tag: String): [Perk]
 
     getInteraction(interactionId: ID!): Interaction
 
@@ -496,9 +498,11 @@ type RootQuery {
     getSearchType(searchId: ID, type: String): [Search]
     getSearchUser(searchId: ID, userRefInput: UserRefInput!): [Search]
     getSearchQuery(searchId: ID, searchQueryInput: SearchQueryInput!): [Search]
+    getSearchQueryTarget(searchId: ID, searchQueryInput: SearchQueryInput!): [Search]
+    getSearchQueryBody(searchId: ID, searchQueryInput: SearchQueryInput!): [Search]
     getSearchResponse(searchId: ID, searchResponseInput: SearchResponseInput!): [Search]
     getSearchAction(searchId: ID, actionRefInput: ActionRefInput!): [Search]
-    getSearchTag(searchId: ID, tags: [String]): [Search]
+    getSearchTag(searchId: ID, tag: String): [Search]
 }
 
 type RootMutation {
@@ -542,10 +546,10 @@ type RootMutation {
     updatePerkTag(perkId: ID!, tags: [String]): Perk
     deletePerk(perkId: ID!): Perk
 
-    createSearch(userID: ID!, searchInput: SearchInput): Search
+    createSearch(userID: ID, searchInput: SearchInput): Search
     updateSearch(searchId: ID!, userID: ID, searchInput: SearchInput): Search
     updateSearchUser(searchId: ID!, userRefInput: UserRefInput): Search
-    updateSearchQuery(searchId: ID!, searchQueryInput: [SearchQueryInput]): Search
+    updateSearchQuery(searchId: ID!, searchQueryInput: SearchQueryInput): Search
     updateSearchResponse(searchId: ID!, searchResponseInput: [SearchResponseInput]): Search
     updateSearchAction(searchId: ID!, actionRefInput: [ActionRefInput]): Search
     updateSearchTag(searchId: ID!, tags: [String]): Search

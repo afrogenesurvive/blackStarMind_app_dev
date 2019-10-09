@@ -157,7 +157,7 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const perks = await Perk.find({tags: args.tags});
+      const perks = await Perk.find({tags: args.tag});
       return perks.map(perk => {
         return transformPerk(perk);
       });

@@ -157,7 +157,7 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const contents = await Content.find({tags: args.tags});
+      const contents = await Content.find({tags: args.tag});
       return contents.map(content => {
         return transformContent(content);
       });
