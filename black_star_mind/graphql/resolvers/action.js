@@ -160,7 +160,7 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const contents = await Action.find({tags: args.tags});
+      const contents = await Action.find({tags: args.tag});
       return contents.map(content => {
         return transformAction(content);
       });

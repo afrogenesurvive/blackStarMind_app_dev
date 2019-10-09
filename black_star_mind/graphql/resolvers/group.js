@@ -120,7 +120,7 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const groups = await Group.find({tags: args.tags});
+      const groups = await Group.find({tags: args.tag});
       return groups.map(group => {
         return transformGroup(group);
       });

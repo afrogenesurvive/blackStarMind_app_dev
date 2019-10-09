@@ -117,12 +117,58 @@ module.exports = {
       throw err;
     }
   },
+  getSearchQueryTarget: async (args, req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
+    try {
+      const searches = await Search.find({'query.target': args.searchQueryInput.target});
+      return searches.map(search => {
+        return transformSearch(search);
+      });
+      // {
+      // ...search._doc,
+      // _id: search.id,
+      // type: search.type,
+      // user: search.user,
+      // query: search.query,
+      // response: search.response,
+      // actions: search.actions,
+      // tags: search.tags
+      // };
+    } catch (err) {
+      throw err;
+    }
+  },
+  getSearchQueryBody: async (args, req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
+    try {
+      const searches = await Search.find({'query.body': args.searchQueryInput.body});
+      return searches.map(search => {
+        return transformSearch(search);
+      });
+      // {
+      // ...search._doc,
+      // _id: search.id,
+      // type: search.type,
+      // user: search.user,
+      // query: search.query,
+      // response: search.response,
+      // actions: search.actions,
+      // tags: search.tags
+      // };
+    } catch (err) {
+      throw err;
+    }
+  },
   getSearchResponse: async (args, req) => {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
     try {
-      const searches = await Search.find({response: args.searchResponseInput});
+      const searches = await Search.find({'response.title': args.searchResponseInput.title});
       return searches.map(search => {
         return transformSearch(search);
       });
@@ -168,7 +214,7 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const searches = await Search.find({tags: args.tags});
+      const searches = await Search.find({tags: args.tag});
       return searches.map(search => {
         return transformSearch(search);
       });
@@ -193,12 +239,12 @@ module.exports = {
     try {
       const search = await Search.findOneAndUpdate({_id:args.searchId},{
         // {
-        type: args.perkInput.type,
-        user: args.perkInput.user,
-        query: args.perkInput.query,
-        response: args.perkInput.response,
-        actions: args.perkInput.actions,
-        tags: args.perkInput.tags
+        type: args.searchInput.type,
+        user: args.searchInput.user,
+        query: args.searchInput.query,
+        response: args.searchInput.response,
+        actions: args.searchInput.actions,
+        tags: args.searchInput.tags
       // }
       },{new: true});
         return {
@@ -220,7 +266,7 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const search = await Search.findOneAndUpdate({_id:args.searchId},{users:args.userRefInput});
+      const search = await Search.findOneAndUpdate({_id:args.searchId},{user:args.userRefInput});
       // const search = await Search.findOneAndUpdate({_id:args.searchId},{$push: {users:args.userRefInput}},{new: true});
         return {
           ...search._doc,
@@ -346,16 +392,16 @@ module.exports = {
       // if (existingSearch) {
       //   throw new Error('Search name exists already.');
       // }
-      const perk = new Perk({
-        type: args.perkInput.type,
-        user: args.perkInput.user,
-        query: args.perkInput.query,
-        response: args.perkInput.response,
-        actions: args.perkInput.actions,
-        tags: args.perkInput.tags
+      const search = new Search({
+        type: args.searchInput.type,
+        user: args.searchInput.user,
+        query: args.searchInput.query,
+        response: args.searchInput.response,
+        actions: args.searchInput.actions,
+        tags: args.searchInput.tags
       });
 
-      const result = await perk.save();
+      const result = await search.save();
 
       return {
         ...result._doc,
