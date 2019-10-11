@@ -4,7 +4,6 @@ const groupResolver = require('./group');
 const contentResolver = require('./content');
 const perkResolver = require('./perk');
 const actionResolver = require('./action');
-// const interactionResolver = require('./interaction');
 const searchResolver = require('./search');
 
 
@@ -15,7 +14,6 @@ const rootResolver = {
   ...contentResolver,
   ...perkResolver,
   ...actionResolver,
-  // ...interactionResolver,
   ...searchResolver
 };
 
