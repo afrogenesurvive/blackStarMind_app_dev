@@ -14,6 +14,8 @@ const actionSchema = new Schema(
     },
     target: {
       _id: String,
+      username: String,
+      name: String,
       title: String
     },
     creator: {

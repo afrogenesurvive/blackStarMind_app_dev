@@ -50,7 +50,7 @@ const userSchema = new Schema({
       _id: String,
       action: String,
       targetId: String,
-      targetTitle: String
+      target: String
     }
   ],
   content: [
@@ -69,12 +69,6 @@ const userSchema = new Schema({
     {
       _id: String,
       name: String
-    }
-  ],
-  interactions: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'Interaction'
     }
   ],
   searches: [

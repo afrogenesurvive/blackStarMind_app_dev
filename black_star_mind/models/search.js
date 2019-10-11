@@ -28,7 +28,7 @@ const searchSchema = new Schema(
         _id: String,
         action: String,
         targetId: String,
-        targetTitle: String
+        target: String
       }
     ],
     tags: [String]

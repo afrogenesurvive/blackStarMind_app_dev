@@ -38,7 +38,6 @@ type User {
   content: [ContentRef]
   friends: [UserRef]
   groups: [GroupRef]
-  interactions: [Interaction]
   searches: [SearchRef]
   perks: [PerkRef]
 }
@@ -79,7 +78,6 @@ type Group {
   users: [UserRef]
   data: [GroupData]
   content: [ContentRef]
-  interactions: [Interaction]
   perks: [PerkRef]
   tags: [String]
   upvotes: Int
@@ -166,7 +164,6 @@ type Content {
   description: String
   users: [UserRef]
   data: [ContentData]
-  interactions: [Interaction]
   perks: [PerkRef]
   tags: [String]
   comments: [Comment]
@@ -178,7 +175,7 @@ type ActionRef {
   _id: String
   action: String
   targetId: String
-  targetTitle: String
+  target: String
 }
 
 type ActionSubtype {
@@ -195,11 +192,18 @@ type ActionSubtype {
   value03: [String]
 }
 
+type TargetRef {
+  _id: String!
+  username: String
+  name: String
+  title: String
+}
+
 type Action {
   _id: ID!
   type: String
   subtype: ActionSubtype
-  target: ContentRef
+  target: TargetRef
   creator: UserRef
   users: [UserRef]
   description: String
@@ -267,7 +271,6 @@ input UserInput {
   content: [ContentRefInput]
   groups: [GroupRefInput]
   friends: [UserRefInput]
-  interactions: [String]
   searches: [SearchRefInput]
   perks: [PerkRefInput]
 }
@@ -299,7 +302,6 @@ input GroupInput {
   users: [UserRefInput]
   data: [GroupDataInput]
   content: [ContentRefInput]
-  interactions: [String]
   perks: [PerkRefInput]
   tags: [String]
   upvotes: Int
@@ -384,12 +386,18 @@ input ContentInput {
   description: String
   users: [UserRefInput]
   data: [ContentDataInput]
-  interactions: [String]
   perks: [PerkRefInput]
   tags: [String]
   comments: [CommentInput]
   upvotes: Int
   downvotes: Int
+}
+
+input TargetRefInput {
+  _id: String!
+  username: String
+  name: String
+  title: String
 }
 
 input ActionRefInput {
@@ -416,7 +424,7 @@ input ActionDataInput {
 input ActionInput {
   type: String!
   subtype: ActionSubtypeInput!
-  target: ContentRefInput!
+  target: TargetRefInput!
   creator: UserRefInput
   users: [UserRefInput]
   description: String

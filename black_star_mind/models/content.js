@@ -62,13 +62,7 @@ const contentSchema = new Schema({
       _id: String,
       action: String,
       targetId: String,
-      targetTitle: String
-    }
-  ],
-  interactions: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'Interaction'
+      target: String
     }
   ],
   perks: [

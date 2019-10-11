@@ -7,7 +7,6 @@ const Group = require('../../models/group');
 const Perk = require('../../models/perk');
 const Content = require('../../models/content');
 const Action = require('../../models/action');
-const Interaction = require('../../models/interaction');
 const Search = require('../../models/search');
 
 const { transformAction } = require('./merge');
@@ -129,12 +128,90 @@ module.exports = {
       throw err;
     }
   },
+  getActionTargetUsername: async (args, req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
+    try {
+      const actions = await Action.find({'target.username': args.targetRefInput.username});
+      return actions.map(action => {
+        return transformAction(action);
+      });
+      // {
+      //    ...action._doc,
+          // _id: action.id,
+          // createdAt: action.createdAt,
+          // updatedAt: action.updatedAt,
+          // type: action.type,
+          // subtype: action.subtype,
+          // target: action.target,
+          // creator: action.creator,
+          // users: action.users,
+          // description: action.description,
+          // data: action.data
+      // };
+    } catch (err) {
+      throw err;
+    }
+  },
+  getActionTargetId: async (args, req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
+    try {
+      const actions = await Action.find({'target._id': args.targetRefInput._id});
+      return actions.map(action => {
+        return transformAction(action);
+      });
+      // {
+      //    ...action._doc,
+          // _id: action.id,
+          // createdAt: action.createdAt,
+          // updatedAt: action.updatedAt,
+          // type: action.type,
+          // subtype: action.subtype,
+          // target: action.target,
+          // creator: action.creator,
+          // users: action.users,
+          // description: action.description,
+          // data: action.data
+      // };
+    } catch (err) {
+      throw err;
+    }
+  },
   getActionTargetTitle: async (args, req) => {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
     try {
-      const actions = await Action.find({'target.title': args.contentRefInput.title});
+      const actions = await Action.find({'target.title': args.targetRefInput.title});
+      return actions.map(action => {
+        return transformAction(action);
+      });
+      // {
+      //    ...action._doc,
+          // _id: action.id,
+          // createdAt: action.createdAt,
+          // updatedAt: action.updatedAt,
+          // type: action.type,
+          // subtype: action.subtype,
+          // target: action.target,
+          // creator: action.creator,
+          // users: action.users,
+          // description: action.description,
+          // data: action.data
+      // };
+    } catch (err) {
+      throw err;
+    }
+  },
+  getActionTargetName: async (args, req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
+    try {
+      const actions = await Action.find({'target.name': args.targetRefInput.name});
       return actions.map(action => {
         return transformAction(action);
       });

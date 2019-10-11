@@ -7,7 +7,6 @@ const Group = require('../../models/group');
 const Perk = require('../../models/perk');
 const Content = require('../../models/content');
 const Action = require('../../models/action');
-const Interaction = require('../../models/interaction');
 const Search = require('../../models/search');
 
 const { transformGroup } = require('./merge');
