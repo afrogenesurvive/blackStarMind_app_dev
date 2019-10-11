@@ -63,13 +63,21 @@ const groupSchema = new Schema(
         title: String
       }
     ],
+    perks: [
+      {
+        _id: String,
+        name: String
+      }
+    ],
     interactions: [
       {
         type: Schema.Types.ObjectId,
         ref: 'Interaction'
       }
     ],
-    tags: [String]
+    tags: [String],
+    upvotes: Number,
+    downvotes: Number
   },
   { timestamps: true }
 );
