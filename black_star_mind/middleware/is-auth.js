@@ -13,6 +13,7 @@ module.exports = (req, res, next) => {
     req.isAuth = false;
     return next();
   }
+
   let decodedToken;
   try {
     decodedToken = jwt.verify(token, '5CleanStream');
@@ -24,7 +25,16 @@ module.exports = (req, res, next) => {
     req.isAuth = false;
     return next();
   }
-  req.isAuth = true;
+  // req.isAuth = true;
   req.userId = decodedToken.userId;
+
+  if (pocketVariables.user._id === req.userId) {
+    console.log("login token/request token match");
+    req.isAuth = true;
+  } else if (pocketVariables.user._id !== req.userId) {
+    console.log("login token/request token DO NOT match!!");
+    req.isAuth = false;
+  }
   next();
+
 };

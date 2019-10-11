@@ -143,18 +143,16 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-
-      const existingGroup = await Group.findOne({ name: args.groupInput.name });
-      if (existingGroup) {
-        throw new Error('Group name already taken.');
+      // Check request maker id matches user id
+      const owner = await Group.findById({_id:args.groupId});
+      console.log("owner..." + owner)
+      if (owner.creator._id != pocketVariables.user._id ) {
+        throw new Error('Not the creator! No edit permission');
       }
-
       const group = await Group.findOneAndUpdate({_id:args.groupId},{
-        // {
         type: args.groupInput.type,
         name: args.groupInput.name,
         description: args.groupInput.description
-      // }
       },{new: true});
         return {
           ...group._doc,
@@ -177,6 +175,11 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
+      const owner = await Group.findById({_id:args.groupId});
+      console.log("owner..." + owner)
+      if (owner.creator._id != pocketVariables.user._id ) {
+        throw new Error('Not the creator! No edit permission');
+      }
       const group = await Group.findOneAndUpdate({_id:args.groupId},{subtype:args.groupSubtypeInput},{new: true});
         return {
           ...group._doc,
@@ -199,6 +202,11 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
+      const owner = await Group.findById({_id:args.groupId});
+      console.log("owner..." + owner)
+      if (owner.creator._id != pocketVariables.user._id ) {
+        throw new Error('Not the creator! No edit permission');
+      }
       const group = await Group.findOneAndUpdate({_id:args.groupId},{$push: {users:args.userRefInput}},{new: true});
         return {
           ...group._doc,
@@ -221,6 +229,11 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
+      const owner = await Group.findById({_id:args.groupId});
+      console.log("owner..." + owner)
+      if (owner.creator._id != pocketVariables.user._id ) {
+        throw new Error('Not the creator! No edit permission');
+      }
       const group = await Group.findOneAndUpdate({_id:args.groupId},{$push: {data:args.groupDataInput}},{new: true});
         return {
           ...group._doc,
@@ -244,6 +257,11 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
+      const owner = await Group.findById({_id:args.groupId});
+      console.log("owner..." + owner)
+      if (owner.creator._id != pocketVariables.user._id ) {
+        throw new Error('Not the creator! No edit permission');
+      }
       const group = await Group.findOneAndUpdate({_id:args.groupId},{$push: {content:args.contentRefInput}},{new: true});
         return {
           ...group._doc,
@@ -268,6 +286,11 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
+      const owner = await Group.findById({_id:args.groupId});
+      console.log("owner..." + owner)
+      if (owner.creator._id != pocketVariables.user._id ) {
+        throw new Error('Not the creator! No edit permission');
+      }
       const group = await Group.findOneAndUpdate({_id:args.groupId},{$push: {actions:args.actionRefInput}},{new: true});
         return {
           ...group._doc,
@@ -291,6 +314,11 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
+      const owner = await Group.findById({_id:args.groupId});
+      console.log("owner..." + owner);
+      if (owner.creator._id != pocketVariables.user._id ) {
+        throw new Error('Not the creator! No edit permission');
+      }
       const group = await Group.findOneAndUpdate({_id:args.groupId},{$push: {tags:args.tags}},{new: true});
         return {
           ...group._doc,
@@ -315,6 +343,12 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
+      const owner = await Group.findById({_id:args.groupId});
+      console.log("owner..." + owner)
+      if (owner.creator._id != pocketVariables.user._id ) {
+        throw new Error('Not the creator! No edit permission');
+      }
+
       const group = await Group.findByIdAndRemove(args.groupId);
         return {
           ...group._doc,
@@ -328,6 +362,7 @@ module.exports = {
           users: group.users,
           actions: group.actions
         };
+      // }
     } catch (err) {
       throw err;
     }

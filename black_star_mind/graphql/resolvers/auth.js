@@ -16,16 +16,16 @@ module.exports = {
       throw new Error('Password is incorrect!');
     }
     const token = jwt.sign(
-      { userId: user.id, email: user.email },
+      { userId: user.id },
       '5CleanStream',
       {
         expiresIn: '5h'
       }
     );
-    
+
     pocketVariables.user._id = user.id;
-    pocketVariables.user.email = user.email;
-    // console.log(JSON.stringify(pocketVariables));
+    pocketVariables.user.token = token;
+    console.log("logged in... userId pocket vars set");
 
     return { userId: user.id, token: token, tokenExpiration: 5 };
   }

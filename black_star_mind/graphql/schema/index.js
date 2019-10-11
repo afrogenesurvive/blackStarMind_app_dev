@@ -36,9 +36,10 @@ type User {
   consumption: [UserConsumption]
   actions: [ActionRef]
   content: [ContentRef]
+  friends: [UserRef]
   groups: [GroupRef]
   interactions: [Interaction]
-  searches: [Search]
+  searches: [SearchRef]
   perks: [PerkRef]
 }
 
@@ -49,8 +50,9 @@ type AuthData {
 }
 
 type GroupRef {
-  _id: String!
+  _id: String
   name: String
+
 }
 
 type GroupSubtype {
@@ -73,13 +75,15 @@ type Group {
   subtype: GroupSubtype
   name: String
   description: String
-  creator: String
+  creator: UserRef
   users: [UserRef]
   data: [GroupData]
-  actions: [ActionRef!]
   content: [ContentRef]
   interactions: [Interaction]
+  perks: [PerkRef]
   tags: [String]
+  upvotes: Int
+  downvotes: Int
 }
 
 type PerkRef {
@@ -112,6 +116,11 @@ type Perk {
   groups: [GroupRef]
   content: [ContentRef]
   tags: [String]
+}
+
+type Comment {
+  comment: String
+  user: UserRef
 }
 
 type ContentRef {
@@ -153,20 +162,22 @@ type Content {
   domain: String
   category: String
   ContentType: ContentType
-  creator: String
+  creator: UserRef
   description: String
   users: [UserRef]
   data: [ContentData]
-  actions: [ActionRef]
   interactions: [Interaction]
   perks: [PerkRef]
   tags: [String]
+  comments: [Comment]
+  upvotes: Int
+  downvotes: Int
 }
 
 type ActionRef {
-  _id: String,
-  action: String,
-  targetId: String,
+  _id: String
+  action: String
+  targetId: String
   targetTitle: String
 }
 
@@ -189,7 +200,7 @@ type Action {
   type: String
   subtype: ActionSubtype
   target: ContentRef
-  creator: String
+  creator: UserRef
   users: [UserRef]
   description: String
   data: [ActionData]
@@ -202,7 +213,7 @@ type Interaction {
   subtype: String
   target: ContentRef
   users: [UserRef]
-  description: String
+  description: String!
   data: String
   tags: [String]
 }
@@ -225,8 +236,8 @@ type SearchResponse {
 
 type Search {
   _id: ID!
-  type: String!
-  user: UserRef!
+  type: String
+  user: UserRef
   query: SearchQuery
   response: [SearchResponse]
   actions: [ActionRef]
@@ -234,8 +245,8 @@ type Search {
 }
 
 input UserRefInput {
-  _id: String
-  username: String
+  _id: String!
+  username: String!
 }
 
 input UserGraphicsInput {
@@ -245,19 +256,19 @@ input UserGraphicsInput {
 }
 
 input UserConsumptionInput{
-  consumptionCategory: String,
-  consumptionBrands: [String],
-  consumptionCompanies: [String],
-  consumptionMotivations: [String]
+  consumptionCategory: String!
+  consumptionBrands: [String]!
+  consumptionCompanies: [String]!
+  consumptionMotivations: [String]!
 }
 
 input UserInput {
-  email: String
-  password: String
-  name: String
-  username: String
-  phone: String
-  address: String
+  email: String!
+  password: String!
+  name: String!
+  username: String!
+  phone: String!
+  address: String!
   socialMedia: [String]
   demographics: [UserGraphicsInput]
   biographics: [UserGraphicsInput]
@@ -266,8 +277,9 @@ input UserInput {
   actions: [ActionRefInput]
   content: [ContentRefInput]
   groups: [GroupRefInput]
+  friends: [UserRefInput]
   interactions: [String]
-  searches: [String]
+  searches: [SearchRefInput]
   perks: [PerkRefInput]
 }
 
@@ -290,17 +302,19 @@ input GroupDataInput {
 }
 
 input GroupInput {
-  type: String
-  subtype: GroupSubtypeInput
-  name: String
-  description: String
-  creator: String
+  type: String!
+  subtype: GroupSubtypeInput!
+  name: String!
+  description: String!
+  creator: UserRefInput
   users: [UserRefInput]
   data: [GroupDataInput]
-  actions: [ActionRefInput]
   content: [ContentRefInput]
   interactions: [String]
+  perks: [PerkRefInput]
   tags: [String]
+  upvotes: Int
+  downvotes: Int
 }
 
 input PerkRefInput {
@@ -323,10 +337,10 @@ input PerkDataInput {
 }
 
 input PerkInput {
-  name: String
-  description: String
-  type: String
-  subtype: PerkSubtypeInput
+  name: String!
+  description: String!
+  type: String!
+  subtype: PerkSubtypeInput!
   data: [PerkDataInput]
   users: [UserRefInput]
   groups: [GroupRefInput]
@@ -334,14 +348,19 @@ input PerkInput {
   tags: [String]
 }
 
+input CommentInput {
+  comment: String!
+  user: UserRefInput!
+}
+
 input ContentRefInput {
-  _id: String
-  title: String
+  _id: String!
+  title: String!
 }
 
 input ContentTypeInput{
-  medium: String,
-  mediumSubtype: String
+  medium: String!
+  mediumSubtype: String!
 }
 
 input ContentDataInput {
@@ -371,27 +390,29 @@ input ContentInput {
   title: String!
   domain: String!
   category: String!
-  ContentType: ContentTypeInput
-  creator: String
+  ContentType: ContentTypeInput!
+  creator: UserRefInput
   description: String
   users: [UserRefInput]
   data: [ContentDataInput]
-  actions: [ActionRefInput]
   interactions: [String]
   perks: [PerkRefInput]
   tags: [String]
+  comments: [CommentInput]
+  upvotes: Int
+  downvotes: Int
 }
 
 input ActionRefInput {
-  _id: String,
-  action: String,
-  targetId: String,
-  targetTitle: String
+  _id: String!
+  action: String!
+  targetId: String!
+  targetTitle: String!
 }
 
 input ActionSubtypeInput {
   key: String!
-  value: String
+  value: String!
 }
 
 input ActionDataInput {
@@ -404,17 +425,17 @@ input ActionDataInput {
 }
 
 input ActionInput {
-  type: String
-  subtype: ActionSubtypeInput
-  target: ContentRefInput
-  creator: String
+  type: String!
+  subtype: ActionSubtypeInput!
+  target: ContentRefInput!
+  creator: UserRefInput
   users: [UserRefInput]
   description: String
   data: [ActionDataInput]
 }
 
 input InteractionInput {
-  type: String!
+  type: String
   subtype: String
   target: String
   users: [UserRefInput]
@@ -423,25 +444,25 @@ input InteractionInput {
 }
 
 input SearchRefInput {
-  _id: String
-  query: SearchQueryInput
+  _id: String!
+  query: SearchQueryInput!
 }
 
 input SearchQueryInput {
-  target: String
-  body: String
+  target: String!
+  body: String!
 }
 
 input SearchResponseInput {
-  title: String
-  url: String
-  content: String
+  title: String!
+  url: String!
+  content: String!
 }
 
 input SearchInput {
-  type: String
-  user: UserRefInput
-  query: SearchQueryInput
+  type: String!
+  user: UserRefInput!
+  query: SearchQueryInput!
   response: [SearchResponseInput]
   actions: [ActionRefInput]
   tags: [String]
@@ -449,60 +470,75 @@ input SearchInput {
 
 
 type RootQuery {
-    users: [User]
+    users(userId: ID!): [User]
     getUserId(userId: ID!): User
-    getUserUsername(username: String!): User
-    getUserEmail(email: String!): User
+    getUserUsername(userId: ID!, username: String!): User
+    getUserEmail(userId: ID!, email: String!): User
+    getUserGroup(userId: ID!, groupRefInput: GroupRefInput!): [User]
+    getUserActionType(userId: ID!, actionRefInput: ActionRefInput): [User]
+    getUserFriend(userId: ID!, userRefInput: UserRefInput): [User]
+    getUserContent(userId: ID!, contentRefInput: ContentRefInput): [User]
+    getUserPerk(userId: ID!, perkRefInput: PerkRefInput): [User]
+    getUserSearchType(userId: ID!, searchRefInput: SearchRefInput): [User]
     getThisUser: User
 
-    groups: [Group]
-    getGroupId(groupId: ID!,userId: ID): Group
-    getGroupName(name: String!): Group
-    getGroupCreator(groupId: ID, creator: String!): Group
-    getGroupUser(groupId: ID, userRefInput: UserRefInput!): [Group]
-    getGroupTag(groupId: ID, tag: String): [Group]
+    groups(userId: ID!): [Group]
+    getGroupId(userId: ID!, groupId: ID!): Group
+    getGroupName(userId: ID!, name: String!): Group
+    getGroupCreator(userId: ID!, userRefInput: UserRefInput!): [Group]
+    getGroupUser(userId: ID!, userRefInput: UserRefInput!): [Group]
+    getGroupContent(userId: ID!, contentRefInput: ContentRefInput!): [Group]
+    getGroupPerk(userId: ID!, perkRefInput: PerkRefInput!): [Group]
+    getGroupUpvote(userId: ID!, upvotes: Int): [Group]
+    getGroupDownvote(userId: ID!, downvotes: Int): [Group]
+    getGroupTag(userId: ID!, tag: String): [Group]
 
     contents: [Content]
-    getContentId(contentId: ID!,userId: ID): Content
-    getContentDomain(contentId: ID, domain: String!): [Content]
-    getContentCategory(contentId: ID, category: String!): [Content]
-    getContentTitle(contentId: ID, title: String!): Content
-    getContentCreator(contentId: ID, creator: String!): [Content]
-    getContentUser(contentId: ID, userRefInput: UserRefInput!): [Content]
-    getContentTag(contentId: ID, tag: String): [Content]
+    getContentId(userId: ID!, contentId: ID!): Content
+    getContentDomain(userId: ID!, domain: String!): [Content]
+    getContentCategory(userId: ID!, category: String!): [Content]
+    getContentTitle(userId: ID!, title: String!): Content
+    getContentCreator(userId: ID!, userRefInput: UserRefInput!): [Content]
+    getContentUser(userId: ID!, userRefInput: UserRefInput!): [Content]
+    getContentPerk(userId: ID!, perkRefInput: PerkRefInput!): [Content]
+    getContentComment(userId: ID!, comment: CommentInput!): [Content]
+    getContentUpvote(userId: ID!, upvotes: Int): [Content]
+    getContentDownvote(userId: ID!, downvotes: Int): [Content]
+    getContentTag(userId: ID!, tag: String): [Content]
 
-    actions: [Action!]
-    getActionId(actionId: ID!): Action
-    getActionCreator(groupId: ID, creator: String!): [Action]
-    getActionType(actionId: ID, type: String!): [Action]
-    getActionTarget(actionId: ID, contentRefInput: ContentRefInput!): [Action]
-    getActionUser(actionId: ID, userRefInput: UserRefInput!): [Action]
-    getActionTag(actionId: ID, tag: String): [Action]
+    actions(userId: ID!): [Action!]
+    getActionId(userId: ID!, actionId: ID!): Action
+    getActionCreator(userId: ID!, userRefInput: UserRefInput!): [Action]
+    getActionType(userId: ID!, type: String!): [Action]
+    getActionTarget(userId: ID!, contentRefInput: ContentRefInput!): [Action]
+    getActionUser(userId: ID!, userRefInput: UserRefInput!): [Action]
+    getActionTag(userId: ID!, tag: String): [Action]
 
     interactions: [Interaction!]!
 
     login(email: String!, password: String!): AuthData!
 
-    perks: [Perk]
-    getPerkId(perkId: ID, userId: ID): Perk
-    getPerkName(perkId: ID, name: String): Perk
-    getPerkType(perkId: ID, type: String): [Perk]
-    getPerkUser(perkId: ID, userRefInput: UserRefInput!): [Perk]
-    getPerkGroup(perkId: ID, groupRefInput: GroupRefInput!): [Perk]
-    getPerkTag(perkId: ID, tag: String): [Perk]
+    perks(userId: ID!): [Perk]
+    getPerkId(userId: ID!, perkId: ID): Perk
+    getPerkName(userId: ID!, name: String): Perk
+    getPerkType(userId: ID!, type: String): [Perk]
+    getPerkUser(userId: ID!, userRefInput: UserRefInput!): [Perk]
+    getPerkGroup(userId: ID!, groupRefInput: GroupRefInput!): [Perk]
+    getPerkContent(userId: ID!, contentRefInput: ContentRefInput!): [Perk]
+    getPerkTag(userId: ID!, tag: String): [Perk]
 
     getInteraction(interactionId: ID!): Interaction
 
-    searches: [Search]
-    getSearchId(searchId: ID!): Search
-    getSearchType(searchId: ID, type: String): [Search]
-    getSearchUser(searchId: ID, userRefInput: UserRefInput!): [Search]
-    getSearchQuery(searchId: ID, searchQueryInput: SearchQueryInput!): [Search]
-    getSearchQueryTarget(searchId: ID, searchQueryInput: SearchQueryInput!): [Search]
-    getSearchQueryBody(searchId: ID, searchQueryInput: SearchQueryInput!): [Search]
-    getSearchResponse(searchId: ID, searchResponseInput: SearchResponseInput!): [Search]
-    getSearchAction(searchId: ID, actionRefInput: ActionRefInput!): [Search]
-    getSearchTag(searchId: ID, tag: String): [Search]
+    searches(userId: ID!): [Search]
+    getSearchId(userId: ID!, searchId: ID!): Search
+    getSearchType(userId: ID!, type: String): [Search]
+    getSearchUser(userId: ID!, userRefInput: UserRefInput!): [Search]
+    getSearchQuery(userId: ID!, searchQueryInput: SearchQueryInput!): [Search]
+    getSearchQueryTarget(userId: ID!, searchQueryInput: SearchQueryInput!): [Search]
+    getSearchQueryBody(userId: ID!, searchQueryInput: SearchQueryInput!): [Search]
+    getSearchResponse(userId: ID!, searchResponseInput: SearchResponseInput!): [Search]
+    getSearchAction(userId: ID!, actionRefInput: ActionRefInput!): [Search]
+    getSearchTag(userId: ID!, tag: String): [Search]
 }
 
 type RootMutation {
@@ -515,11 +551,14 @@ type RootMutation {
     updateUserConsumption(userId: ID!, userConsumptionInput: [UserConsumptionInput]): User
     updateUserContent(userId: ID!, contentRefInput: [ContentRefInput]): User
     updateUserGroup(userId: ID!, groupRefInput: [GroupRefInput]): User
+    updateUserFriend(userId: ID!, userRefInput: [UserRefInput]): User
     updateUserAction(userId: ID!, actionRefInput: [ActionRefInput]): User
+    updateUserPerk(userId: ID!, perkRefInput: [PerkRefInput]): User
+    updateUserSearch(userId: ID!, searchRefInput: [SearchRefInput]): User
     deleteUser(userId: ID!): User
 
     createGroup(userId: ID!, groupInput: GroupInput): Group
-    updateGroup(groupId: ID, groupInput: GroupInput): Group
+    updateGroup(userId: ID!, groupId: ID, groupInput: GroupInput): Group
     updateGroupSubtype(groupId: ID!, groupSubtypeInput: GroupSubtypeInput): Group
     updateGroupUser(groupId: ID!, userRefInput: [UserRefInput]): Group
     updateGroupData(groupId: ID!, groupDataInput: [GroupDataInput]): Group

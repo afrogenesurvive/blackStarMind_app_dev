@@ -1,5 +1,6 @@
 const pocketVariables = {
     user: {
+      token: null,
       _id: null,
       email: null,
       name: null,

@@ -49,9 +49,9 @@ module.exports = {
     }
   },
   getContentTitle: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     try {
       const content = await Content.findOne({title: args.title});
         return {
@@ -90,9 +90,9 @@ module.exports = {
     }
   },
   getContentCategory: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     try {
       const contents = await Content.find({category: args.category});
       return contents.map(content => {
@@ -179,6 +179,11 @@ module.exports = {
     }
     console.log(JSON.stringify(args));
     try {
+      const owner = await Content.findById({_id:args.contentId});
+      console.log("owner..." + owner);
+      if (owner.creator._id != pocketVariables.user._id ) {
+        throw new Error('Not the creator! No edit permission');
+      }
       const content = await Content.findOneAndUpdate({_id:args.contentId},{
         // {
         title: args.contentInput.title,
@@ -203,8 +208,13 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
-    // console.log(JSON.stringify(args));
+    console.log("args..." + JSON.stringify(args));
     try {
+      const owner = await Content.findById({_id:args.contentId});
+      console.log("owner..." + owner);
+      if (owner.creator._id != pocketVariables.user._id ) {
+        throw new Error('Not the creator! No edit permission');
+      }
       const content= await Content.findOneAndUpdate({_id:args.contentId},{$push: {users:args.userRefInput}},{new: true});
         return {
           ...content._doc,
@@ -223,8 +233,13 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
-    console.log(JSON.stringify(args));
+    console.log("args..." + JSON.stringify(args));
     try {
+      const owner = await Content.findById({_id:args.contentId});
+      console.log("owner..." + owner);
+      if (owner.creator._id != pocketVariables.user._id ) {
+        throw new Error('Not the creator! No edit permission');
+      }
       const content = await Content.findOneAndUpdate({_id:args.contentId},{$push: {data:args.contentDataInput}},{new: true});
         return {
           ...content._doc,
@@ -244,8 +259,13 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
-    console.log(JSON.stringify(args));
+    console.log("args..." + JSON.stringify(args));
     try {
+      const owner = await Content.findById({_id:args.contentId});
+      console.log("owner..." + owner);
+      if (owner.creator._id != pocketVariables.user._id ) {
+        throw new Error('Not the creator! No edit permission');
+      }
       const content = await Content.findOneAndUpdate({_id:args.contentId},{$push: {actions:args.actionRefInput}},{new: true});
         return {
           ...content._doc,
@@ -266,8 +286,13 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
-    console.log(JSON.stringify(args));
+    console.log("args..." + JSON.stringify(args));
     try {
+      const owner = await Content.findById({_id:args.contentId});
+      console.log("owner..." + owner);
+      if (owner.creator._id != pocketVariables.user._id ) {
+        throw new Error('Not the creator! No edit permission');
+      }
       const content = await Content.findOneAndUpdate({_id:args.contentId},{$push: {tags:args.tags}},{new: true});
         return {
           ...content._doc,
@@ -289,8 +314,13 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
-    // console.log(JSON.stringify(args));
+    console.log("args..." + JSON.stringify(args));
     try {
+      const owner = await Content.findById({_id:args.contentId});
+      console.log("owner..." + owner);
+      if (owner.creator._id != pocketVariables.user._id ) {
+        throw new Error('Not the creator! No edit permission');
+      }
       const content = await Content.findByIdAndRemove(args.contentId);
       // const user = await User.findById(userId);
         return {
