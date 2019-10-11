@@ -278,7 +278,7 @@ module.exports = {
         throw new Error('Not the creator! No edit permission');
       } else if (owner.id == pocketVariables.user._id) {
 
-      const user = await User.findOneAndUpdate({_id:args.userId},{$push: {socialMedia:args.userSocial}},{new: true});
+      const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {socialMedia:args.userSocial}},{new: true});
         return {
             ...user._doc,
             _id: user.id,
@@ -303,7 +303,7 @@ module.exports = {
         throw new Error('Not the creator! No edit permission');
       } else if (owner.id == pocketVariables.user._id) {
 
-      const user = await User.findOneAndUpdate({_id:args.userId},{$push: {demographics:args.userGraphicsInput}},{new: true});
+      const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {demographics:args.userGraphicsInput}},{new: true});
         return {
             ...user._doc,
             _id: user.id,
@@ -330,7 +330,7 @@ module.exports = {
         throw new Error('Not the creator! No edit permission');
       } else if (owner.id == pocketVariables.user._id) {
 
-      const user = await User.findOneAndUpdate({_id:args.userId},{$push: {biographics:args.userGraphicsInput}},{new: true});
+      const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {biographics:args.userGraphicsInput}},{new: true});
         return {
             ...user._doc,
             _id: user.id,
@@ -357,7 +357,7 @@ module.exports = {
         throw new Error('Not the creator! No edit permission');
       } else if (owner.id == pocketVariables.user._id) {
 
-      const user = await User.findOneAndUpdate({_id:args.userId},{$push: {psychgraphics:args.userGraphicsInput}},{new: true});
+      const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {psychgraphics:args.userGraphicsInput}},{new: true});
         return {
             ...user._doc,
             _id: user.id,
@@ -384,7 +384,7 @@ module.exports = {
         throw new Error('Not the creator! No edit permission');
       } else if (owner.id == pocketVariables.user._id) {
 
-      const user = await User.findOneAndUpdate({_id:args.userId},{$push: {consumption:args.userConsumptionInput}},{new: true});
+      const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {consumption:args.userConsumptionInput}},{new: true});
         return {
             ...user._doc,
             _id: user.id,
@@ -410,7 +410,7 @@ module.exports = {
       } else if (owner.id == pocketVariables.user._id) {
       // Check for duplicates//
 
-        const user = await User.findOneAndUpdate({_id:args.userId},{$push: {groups:args.groupRefInput}},{new: true});
+        const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {groups:args.groupRefInput}},{new: true});
           return {
               ...user._doc,
               _id: user.id,
@@ -437,7 +437,7 @@ module.exports = {
       } else if (owner.id == pocketVariables.user._id) {
       // Check for duplicates//
 
-        const user = await User.findOneAndUpdate({_id:args.userId},{$push: {friends:args.userRefInput}},{new: true});
+        const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {friends:args.userRefInput}},{new: true});
           return {
               ...user._doc,
               _id: user.id,
@@ -465,7 +465,7 @@ module.exports = {
 
       // Check for duplicates//
 
-      const user = await User.findOneAndUpdate({_id:args.userId},{$push: {content:args.contentRefInput}},{new: true});
+      const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {content:args.contentRefInput}},{new: true});
         return {
             ...user._doc,
             _id: user.id,
@@ -490,7 +490,57 @@ module.exports = {
         throw new Error('Not the creator! No edit permission');
       } else if (owner.id == pocketVariables.user._id) {
 
-      const user = await User.findOneAndUpdate({_id:args.userId},{$push: {actions:args.actionRefInput}},{new: true});
+      const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {actions:args.actionRefInput}},{new: true});
+        return {
+            ...user._doc,
+            _id: user.id,
+            name: user.name,
+            username: user.username,
+            email: user.email,
+            actions: user.actions
+        };
+      }
+    } catch (err) {
+      throw err;
+    }
+  },
+  updateUserPerk: async (args, req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
+    try {
+      // Check request maker id matches user id
+      const owner = await User.findById(args.userId);
+      if (owner._id != pocketVariables.user._id ) {
+        throw new Error('Not the creator! No edit permission');
+      } else if (owner.id == pocketVariables.user._id) {
+
+      const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {perks:args.perkRefInput}},{new: true});
+        return {
+            ...user._doc,
+            _id: user.id,
+            name: user.name,
+            username: user.username,
+            email: user.email,
+            actions: user.actions
+        };
+      }
+    } catch (err) {
+      throw err;
+    }
+  },
+  updateUserSearch: async (args, req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
+    try {
+      // Check request maker id matches user id
+      const owner = await User.findById(args.userId);
+      if (owner._id != pocketVariables.user._id ) {
+        throw new Error('Not the creator! No edit permission');
+      } else if (owner.id == pocketVariables.user._id) {
+
+      const user = await User.findOneAndUpdate({_id:args.userId},{$push: {searches:args.searchRefInput}},{new: true});
         return {
             ...user._doc,
             _id: user.id,

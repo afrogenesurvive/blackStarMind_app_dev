@@ -32,6 +32,7 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
       const group = await Group.findById(args.groupId);
         return {
@@ -54,6 +55,7 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
       const group = await Group.findOne({name: args.name});
         return {
@@ -70,24 +72,50 @@ module.exports = {
       throw err;
     }
   },
+  getGroupType: async (args, req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
+    console.log("args..." + JSON.stringify(args));
+    try {
+      const groups = await Group.find({type: args.type});
+      return groups.map(group => {
+        return transformGroup(group);
+      });
+        // {
+        //     ...group._doc,
+        // _id: group.id,
+        // type: group.type,
+        // subtype: group.subtype,
+        // name: group.name,
+        // description: group.description,
+        // users: group.users,
+        // actions: group.actions
+        // };
+    } catch (err) {
+      throw err;
+    }
+  },
   getGroupCreator: async (args, req) => {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
-      const group = await Group.findOne({creator: args.creator});
-        return {
-            ...group._doc,
-            _id: group.id,
-            createdAt: group.createdAt,
-            updatedAt: group.updatedAt,
-            type: group.type,
-            subtype: group.subtype,
-            name: group.name,
-            description: group.description,
-            users: group.users,
-            actions: group.actions
-        };
+      const groups = await Group.find({'creator.username': args.userRefInput.username});
+      return groups.map(group => {
+        return transformGroup(group);
+      });
+        // {
+        //     ...group._doc,
+        // _id: group.id,
+        // type: group.type,
+        // subtype: group.subtype,
+        // name: group.name,
+        // description: group.description,
+        // users: group.users,
+        // actions: group.actions
+        // };
     } catch (err) {
       throw err;
     }
@@ -96,6 +124,7 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
       const groups = await Group.find({'users.username': args.userRefInput.username});
       return groups.map(group => {
@@ -115,10 +144,91 @@ module.exports = {
       throw err;
     }
   },
+  getGroupContentTitle: async (args, req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
+    console.log("args..." + JSON.stringify(args));
+    try {
+      const groups = await Group.find({'content.title': args.contentRefInput.title});
+      return groups.map(group => {
+        return transformGroup(group);
+      });
+        // {
+        //     ...group._doc,
+        // _id: group.id,
+        // type: group.type,
+        // subtype: group.subtype,
+        // name: group.name,
+        // description: group.description,
+        // users: group.users,
+        // actions: group.actions
+        // };
+    } catch (err) {
+      throw err;
+    }
+  },
+  getGroupPerk: async (args, req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
+    console.log("args..." + JSON.stringify(args));
+    try {
+      const groups = await Group.find({'perks.name': args.perkRefInput.name});
+      return groups.map(group => {
+        return transformGroup(group);
+      });
+        // {
+        //     ...group._doc,
+        // _id: group.id,
+        // type: group.type,
+        // subtype: group.subtype,
+        // name: group.name,
+        // description: group.description,
+        // users: group.users,
+        // actions: group.actions
+        // };
+    } catch (err) {
+      throw err;
+    }
+  },
+  getGroupUpvote: async (args, req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
+    try {
+      const group = await Group.find({upvotes: {$eq:args.upvotes}})
+        return {
+            ...group._doc,
+            _id: group.id,
+            name: group.name,
+            upvotes: group.upvotes
+        };
+    } catch (err) {
+      throw err;
+    }
+  },
+  getGroupDownvote: async (args, req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
+    try {
+      const group = await Group.find({downvotes: {$eq:args.downvotes}})
+        return {
+            ...group._doc,
+            _id: group.id,
+            name: group.name,
+            downvotes: group.downvotes
+        };
+    } catch (err) {
+      throw err;
+    }
+  },
   getGroupTag: async (args, req) => {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
       const groups = await Group.find({tags: args.tag});
       return groups.map(group => {
@@ -142,6 +252,7 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
       // Check request maker id matches user id
       const owner = await Group.findById({_id:args.groupId});
@@ -174,6 +285,7 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
       const owner = await Group.findById({_id:args.groupId});
       console.log("owner..." + owner)
@@ -201,13 +313,14 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
       const owner = await Group.findById({_id:args.groupId});
       console.log("owner..." + owner)
       if (owner.creator._id != pocketVariables.user._id ) {
         throw new Error('Not the creator! No edit permission');
       }
-      const group = await Group.findOneAndUpdate({_id:args.groupId},{$push: {users:args.userRefInput}},{new: true});
+      const group = await Group.findOneAndUpdate({_id:args.groupId},{$addToSet: {users:args.userRefInput}},{new: true});
         return {
           ...group._doc,
           _id: group.id,
@@ -228,13 +341,14 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
       const owner = await Group.findById({_id:args.groupId});
       console.log("owner..." + owner)
       if (owner.creator._id != pocketVariables.user._id ) {
         throw new Error('Not the creator! No edit permission');
       }
-      const group = await Group.findOneAndUpdate({_id:args.groupId},{$push: {data:args.groupDataInput}},{new: true});
+      const group = await Group.findOneAndUpdate({_id:args.groupId},{$addToSet: {data:args.groupDataInput}},{new: true});
         return {
           ...group._doc,
           _id: group.id,
@@ -256,13 +370,14 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
       const owner = await Group.findById({_id:args.groupId});
       console.log("owner..." + owner)
       if (owner.creator._id != pocketVariables.user._id ) {
         throw new Error('Not the creator! No edit permission');
       }
-      const group = await Group.findOneAndUpdate({_id:args.groupId},{$push: {content:args.contentRefInput}},{new: true});
+      const group = await Group.findOneAndUpdate({_id:args.groupId},{$addToSet: {content:args.contentRefInput}},{new: true});
         return {
           ...group._doc,
           _id: group.id,
@@ -281,29 +396,71 @@ module.exports = {
       throw err;
     }
   },
-  updateGroupAction: async (args, req) => {
+  updateGroupPerk: async (args, req) => {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
       const owner = await Group.findById({_id:args.groupId});
       console.log("owner..." + owner)
       if (owner.creator._id != pocketVariables.user._id ) {
         throw new Error('Not the creator! No edit permission');
       }
-      const group = await Group.findOneAndUpdate({_id:args.groupId},{$push: {actions:args.actionRefInput}},{new: true});
+      const group = await Group.findOneAndUpdate({_id:args.groupId},{$addToSet: {perks:args.perkRefInput}},{new: true});
         return {
           ...group._doc,
           _id: group.id,
-          createdAt: group.createdAt,
-          updatedAt: group.updatedAt,
           action: group.action,
           subtype: group.subtype,
           name: group.name,
-          description: group.description,
-          users: group.users,
-          content: group.content,
-          actions: group. actions
+          perks: group.perks
+        };
+    } catch (err) {
+      throw err;
+    }
+  },
+  updateGroupUpvotes: async (args, req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
+    console.log("args..." + JSON.stringify(args));
+    try {
+      // const owner = await Group.findById({_id:args.groupId});
+      // console.log("owner..." + owner)
+      // if (owner.creator._id != pocketVariables.user._id ) {
+      //   throw new Error('Not the creator! No edit permission');
+      // }
+
+      const group = await Group.findOneAndUpdate({_id:args.groupId},{$inc: {upvotes:1}},{new: true});
+        return {
+          ...group._doc,
+          _id: group.id,
+          name: group.name,
+          upvotes: group.upvotes
+        };
+    } catch (err) {
+      throw err;
+    }
+  },
+  updateGroupDownvotes: async (args, req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
+    console.log("args..." + JSON.stringify(args));
+    try {
+      // const owner = await Group.findById({_id:args.groupId});
+      // console.log("owner..." + owner)
+      // if (owner.creator._id != pocketVariables.user._id ) {
+      //   throw new Error('Not the creator! No edit permission');
+      // }
+
+      const group = await Group.findOneAndUpdate({_id:args.groupId},{$inc: {downvotes:1}},{new: true});
+        return {
+          ...group._doc,
+          _id: group.id,
+          name: group.name,
+          downvotes: group.downvotes
         };
     } catch (err) {
       throw err;
@@ -313,13 +470,14 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
       const owner = await Group.findById({_id:args.groupId});
       console.log("owner..." + owner);
       if (owner.creator._id != pocketVariables.user._id ) {
         throw new Error('Not the creator! No edit permission');
       }
-      const group = await Group.findOneAndUpdate({_id:args.groupId},{$push: {tags:args.tags}},{new: true});
+      const group = await Group.findOneAndUpdate({_id:args.groupId},{$addToSet: {tags:args.tags}},{new: true});
         return {
           ...group._doc,
           _id: group.id,
@@ -342,6 +500,7 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
       const owner = await Group.findById({_id:args.groupId});
       console.log("owner..." + owner)
@@ -371,6 +530,7 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
       const existingGroup = await Group.findOne({ name: args.groupInput.name });
       if (existingGroup) {

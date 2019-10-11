@@ -56,7 +56,7 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const actions = await Action.find({creator: args.creator});
+      const actions = await Action.find({'creator.username': args.UserRefInput.username});
       return actions.map(action => {
         return transformAction(action);
       });
@@ -129,12 +129,12 @@ module.exports = {
       throw err;
     }
   },
-  getActionTarget: async (args, req) => {
+  getActionTargetTitle: async (args, req) => {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
     try {
-      const actions = await Action.find({target: args.contentRefInput});
+      const actions = await Action.find({'target.title': args.contentRefInput.title});
       return actions.map(action => {
         return transformAction(action);
       });
@@ -187,12 +187,10 @@ module.exports = {
     }
     try {
       const action = await Action.findOneAndUpdate({_id:args.actionId},{
-        // {
         type: args.actionInput.type,
         target: args.actionInput.target,
         creator: args.actionInput.creator,
         description: args.actionInput.description,
-      // }
       },{new: true});
         return {
           ...action._doc,
@@ -255,7 +253,7 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const action = await Action.findOneAndUpdate({_id:args.actionId},{$push: {users:args.userRefInput}},{new: true});
+      const action = await Action.findOneAndUpdate({_id:args.actionId},{$addToSet: {users:args.userRefInput}},{new: true});
         return {
           ...action._doc,
           _id: action.id,
@@ -277,7 +275,7 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const action = await Action.findOneAndUpdate({_id:args.actionId},{$push: {data:args.actionDataInput}},{new: true});
+      const action = await Action.findOneAndUpdate({_id:args.actionId},{$addToSet: {data:args.actionDataInput}},{new: true});
         return {
           ...action._doc,
           _id: action.id,
@@ -300,7 +298,7 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const action = await Action.findOneAndUpdate({_id:args.actionId},{$push: {tags:args.tags}},{new: true});
+      const action = await Action.findOneAndUpdate({_id:args.actionId},{$addToSet: {tags:args.tags}},{new: true});
         return {
           ...action._doc,
           _id: action.id,

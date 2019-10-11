@@ -73,11 +73,22 @@ const contentSchema = new Schema({
   ],
   perks: [
     {
-      type: Schema.Types.ObjectId,
-      ref: 'Perks'
+      _id: String,
+      name: String
     }
   ],
-  tags: [String]
+  comments: [
+    {
+      comment: String,
+      user: {
+        _id: String,
+        username: String
+      }
+    }
+  ],
+  tags: [String],
+  upvotes: Number,
+  downvotes: Number
 },
   { timestamps: true }
 );

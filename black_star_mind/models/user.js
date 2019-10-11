@@ -59,6 +59,12 @@ const userSchema = new Schema({
       title: String
     }
   ],
+  friends: [
+    {
+      _id: String,
+      username: String
+    }
+  ],
   groups: [
     {
       _id: String,
