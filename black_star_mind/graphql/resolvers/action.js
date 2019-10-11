@@ -338,10 +338,6 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      // const existingContent = await Action.findOne({ title: args.actionInput.title });
-      // if (existingContent) {
-      //   throw new Error('Title exists already.');
-      // }
       const action = new Action({
         type: args.actionInput.type,
         subtype: args.actionInput.subtype,
@@ -368,10 +364,6 @@ module.exports = {
         data: action.data,
         tags: action.tags
       };
-      // pocketVariables.key01 = "contentId";
-      // pocketVariables.value01 = result.id;
-      // return pocketVariables;
-      // console.log("pocket vars:  " + pocketVariables);
     } catch (err) {
       throw err;
     }

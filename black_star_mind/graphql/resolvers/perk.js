@@ -182,6 +182,7 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    // check if admin
     try {
       const perk = await Perk.findOneAndUpdate({_id:args.perkId},{
         // {

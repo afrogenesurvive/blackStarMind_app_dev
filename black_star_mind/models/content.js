@@ -23,7 +23,10 @@ const contentSchema = new Schema({
     type: String,
     required: false
   },
-  creator: String,
+  creator: {
+    _id: String,
+    username: String
+  },
   users: [
     {
       _id: String,

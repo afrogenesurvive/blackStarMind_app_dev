@@ -21,7 +21,8 @@ const groupSchema = new Schema(
       required: false
     },
     creator: {
-      type: String
+      _id: String,
+      username: String
     },
     users: [
       {
