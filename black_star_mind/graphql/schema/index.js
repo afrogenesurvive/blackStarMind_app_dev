@@ -207,17 +207,6 @@ type Action {
   tags: [String]
 }
 
-type Interaction {
-  _id: ID!
-  type: String
-  subtype: String
-  target: ContentRef
-  users: [UserRef]
-  description: String!
-  data: String
-  tags: [String]
-}
-
 type SearchRef {
   _id: String
   query: SearchQuery
@@ -434,15 +423,6 @@ input ActionInput {
   data: [ActionDataInput]
 }
 
-input InteractionInput {
-  type: String
-  subtype: String
-  target: String
-  users: [UserRefInput]
-  description: String
-  data: [String]
-}
-
 input SearchRefInput {
   _id: String!
   query: SearchQueryInput!
@@ -494,7 +474,7 @@ type RootQuery {
     getGroupDownvote(userId: ID!, downvotes: Int): [Group]
     getGroupTag(userId: ID!, tag: String): [Group]
 
-    contents: [Content]
+    contents(userId: ID!): [Content]
     getContentId(userId: ID!, contentId: ID!): Content
     getContentType(userId: ID!, type: String!): [Content]
     getContentDomain(userId: ID!, domain: String!): [Content]
@@ -517,7 +497,6 @@ type RootQuery {
     getActionUser(userId: ID!, userRefInput: UserRefInput!): [Action]
     getActionTag(userId: ID!, tag: String): [Action]
 
-    interactions: [Interaction!]!
 
     login(email: String!, password: String!): AuthData!
 
@@ -529,8 +508,6 @@ type RootQuery {
     getPerkGroup(userId: ID!, groupRefInput: GroupRefInput!): [Perk]
     getPerkContentTitle(userId: ID!, contentRefInput: ContentRefInput!): [Perk]
     getPerkTag(userId: ID!, tag: String): [Perk]
-
-    getInteraction(interactionId: ID!): Interaction
 
     searches(userId: ID!): [Search]
     getSearchId(userId: ID!, searchId: ID!): Search
@@ -612,8 +589,6 @@ type RootMutation {
     updateActionTag(userId: ID!, actionId: ID!, tags:[String]): Action
     deleteAction(userId: ID!, actionId: ID!): Action
 
-    createInteraction(userID: ID!, interactionInput: InteractionInput): Interaction
-    deleteInteraction(interactionId: ID!): Interaction
 }
 
 schema {
