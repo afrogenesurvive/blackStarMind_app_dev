@@ -50,38 +50,43 @@ const userSchema = new Schema({
   ],
   actions: [
     {
-      type: Schema.Types.ObjectId,
-            ref: 'Action'
+      _id: String,
+      action: String,
+      targetId: String,
+      target: String
     }
   ],
   content: [
     {
-      type: Schema.Types.ObjectId,
-            ref: 'Content'
+      _id: String,
+      title: String
     }
   ],
   friends: [
     {
-      type: Schema.Types.ObjectId,
-            ref: 'User'
+      _id: String,
+      username: String
     }
   ],
   groups: [
     {
-      type: Schema.Types.ObjectId,
-            ref: 'Group'
+      _id: String,
+      name: String
     }
   ],
   searches: [
     {
-      type: Schema.Types.ObjectId,
-            ref: 'Search'
+      _id: String,
+      query: {
+        target: String,
+        body: String
+      }
     }
   ],
   perks: [
     {
-      type: Schema.Types.ObjectId,
-            ref: 'Perk'
+      _id: String,
+      name: String
     }
   ]
 },

@@ -1,6 +1,9 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 const DataLoader = require('dataloader');
+
+const ObjectId = require('mongodb').ObjectID;
 
 const User = require('../../models/user');
 const Group = require('../../models/group');
@@ -19,7 +22,7 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const groups = await Group.find();
+      const groups = await Group.find().populate('creator');
       return groups.map(group => {
         return transformGroup(group);
       });
@@ -33,18 +36,16 @@ module.exports = {
     }
     console.log("args..." + JSON.stringify(args));
     try {
-      const group = await Group.findById(args.groupId);
+      const group = await Group.findById(args.groupId).populate('creator');
         return {
             ...group._doc,
             _id: group.id,
-            createdAt: group.createdAt,
-            updatedAt: group.updatedAt,
             type: group.type,
             subtype: group.subtype,
             name: group.name,
+            creator: group.creator,
             description: group.description,
-            users: group.users,
-            actions: group.actions
+            users: group.users
         };
     } catch (err) {
       throw err;
@@ -273,8 +274,7 @@ module.exports = {
           subtype: group.subtype,
           name: group.name,
           description: group.description,
-          users: group.users,
-          actions: group.actions
+          users: group.users
         };
     } catch (err) {
       throw err;
@@ -301,8 +301,7 @@ module.exports = {
           subtype: group.subtype,
           name: group.name,
           description: group.description,
-          users: group.users,
-          actions: group.actions
+          users: group.users
         };
     } catch (err) {
       throw err;
@@ -319,7 +318,16 @@ module.exports = {
       if (owner.creator._id != pocketVariables.user._id ) {
         throw new Error('Not the creator! No edit permission');
       }
-      const group = await Group.findOneAndUpdate({_id:args.groupId},{$addToSet: {users:args.userRefInput}},{new: true});
+
+      const groupUser = await User.findById({_id:args.groupUserId});
+      const groupUserId = groupUser.id
+      console.log("groupUser... " + groupUser.username);
+      console.log("groupUserId... " + groupUserId);
+
+      const group = await Group.findOneAndUpdate({_id:args.groupId},{$addToSet: {users:groupUser}},{new: true})
+      .populate('creator')
+      .populate('users')
+
         return {
           ...group._doc,
           _id: group.id,
@@ -328,6 +336,7 @@ module.exports = {
           type: group.type,
           subtype: group.subtype,
           name: group.name,
+          creator: group.creator,
           description: group.description,
           users: group.users,
           actions: group.actions
@@ -347,6 +356,7 @@ module.exports = {
       if (owner.creator._id != pocketVariables.user._id ) {
         throw new Error('Not the creator! No edit permission');
       }
+
       const group = await Group.findOneAndUpdate({_id:args.groupId},{$addToSet: {data:args.groupDataInput}},{new: true});
         return {
           ...group._doc,
@@ -376,7 +386,17 @@ module.exports = {
       if (owner.creator._id != pocketVariables.user._id ) {
         throw new Error('Not the creator! No edit permission');
       }
-      const group = await Group.findOneAndUpdate({_id:args.groupId},{$addToSet: {content:args.contentRefInput}},{new: true});
+
+      const userContent = await Content.findById({_id:args.contentId});
+      const userContentId = userContent.id
+      console.log("userContent... " + userContent.username);
+      console.log("userContentId... " + userContentId);
+
+      const group = await Group.findOneAndUpdate({_id:args.userId},{$addToSet: {content:userContent}},{new: true})
+      .populate('users')
+      .populate('content')
+      .populate('perks')
+
         return {
           ...group._doc,
           _id: group.id,
@@ -406,7 +426,17 @@ module.exports = {
       if (owner.creator._id != pocketVariables.user._id ) {
         throw new Error('Not the creator! No edit permission');
       }
-      const group = await Group.findOneAndUpdate({_id:args.groupId},{$addToSet: {perks:args.perkRefInput}},{new: true});
+
+      const userPerk = await Perk.findById({_id:args.perkId});
+      const userPerkId = userPerk.id
+      console.log("userPerk... " + userPerk.name);
+      console.log("userPerkId... " + userPerkId);
+
+      const group = await Group.findOneAndUpdate({_id:args.userId},{$addToSet: {perks:userPerk}},{new: true})
+      .populate('users')
+      .populate('content')
+      .populate('perks')
+
         return {
           ...group._doc,
           _id: group.id,
@@ -430,7 +460,6 @@ module.exports = {
       // if (owner.creator._id != pocketVariables.user._id ) {
       //   throw new Error('Not the creator! No edit permission');
       // }
-
       const group = await Group.findOneAndUpdate({_id:args.groupId},{$inc: {upvotes:1}},{new: true});
         return {
           ...group._doc,
@@ -531,17 +560,22 @@ module.exports = {
     }
     console.log("args..." + JSON.stringify(args));
     try {
-      const existingGroup = await Group.findOne({ name: args.groupInput.name });
+      const existingGroup = await Group.findOne({name: args.groupInput.name});
       if (existingGroup) {
         throw new Error('Group name already taken.');
       }
+
+      const creator = await User.findById({_id:args.userId});
+      const creatorId = creator.id
+      console.log("creator... " + creator);
+      console.log("creatorId... " + creatorId);
 
       const group = new Group({
         type: args.groupInput.type,
         subtype: args.groupInput.subtype,
         name: args.groupInput.name,
         description: args.groupInput.description,
-        creator: args.groupInput.creator
+        creator: creator
       });
 
       const result = await group.save();
@@ -549,8 +583,6 @@ module.exports = {
       return {
         ...result._doc,
         _id: result.id,
-        createdAt: result.createdAt,
-        updatedAt: result.updatedAt,
         type: result.type,
         subtype: result.subtype,
         name: result.name,

@@ -14,23 +14,26 @@ const actionSchema = new Schema(
     },
     target: {
       _id: String,
-      user: {
-        type: Schema.Types.ObjectId,
-            ref: 'User'
-      },
+      username: String,
       name: String,
       title: String
     },
     creator: {
-      type: Schema.Types.ObjectId,
-          ref: 'User'
+      _id: String,
+      username: String
     },
     users: [
       {
-        type: Schema.Types.ObjectId,
-            ref: 'User'
+        _id: String,
+        username: String
       }
     ],
+    // users: [
+    //   {
+    //     type: Schema.Types.ObjectId,
+    //     ref: 'User'
+    //   }
+    // ],
     description: {
       type: String,
       required: false

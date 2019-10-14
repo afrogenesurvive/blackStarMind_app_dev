@@ -266,7 +266,6 @@ module.exports = {
       const action = await Action.findOneAndUpdate({_id:args.actionId},{
         type: args.actionInput.type,
         target: args.actionInput.target,
-        creator: args.actionInput.creator,
         description: args.actionInput.description,
       },{new: true});
         return {
@@ -330,7 +329,15 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const action = await Action.findOneAndUpdate({_id:args.actionId},{$addToSet: {users:args.userRefInput}},{new: true});
+      const actionUser = await User.findById({_id:args.actionUserId});
+      const actionUserId = actionUser.id
+      console.log("actionUser... " + actionUser.username);
+      console.log("actionUserId... " + actionUserId);
+
+      const action = await Content.findOneAndUpdate({_id:args.actionId},{$addToSet: {users:actionUser}},{new: true}).
+      populate('creator').
+      populate('users')
+
         return {
           ...action._doc,
           _id: action.id,
@@ -413,11 +420,16 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
+      const creator = await User.findById({_id:args.userId});
+      const creatorId = creator.id
+      console.log("creator... " + creator);
+      console.log("creatorId... " + creatorId);
+
       const action = new Action({
         type: args.actionInput.type,
         subtype: args.actionInput.subtype,
         target: args.actionInput.target,
-        creator: args.actionInput.creator,
+        creator: creator,
         description: args.actionInput.description,
         users: args.actionInput.users,
         data: args.actionInput.data

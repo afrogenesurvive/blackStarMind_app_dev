@@ -18,8 +18,8 @@ const perkSchema = new Schema({
   },
   users: [
     {
-      type: Schema.Types.ObjectId,
-          ref: 'User'
+      _id: String,
+      username: String
     }
   ],
   data: [
@@ -32,16 +32,22 @@ const perkSchema = new Schema({
       value03: [String]
     }
   ],
+  // users: [
+  //   {
+  //     type: Schema.Types.ObjectId,
+  //     ref: 'User'
+  //   }
+  // ],
   groups: [
     {
-      type: Schema.Types.ObjectId,
-          ref: 'Group'
+      _id: String,
+      name: String
     }
   ],
   content: [
     {
-      type: Schema.Types.ObjectId,
-          ref: 'Content'
+      _id: String,
+      title: String
     }
   ],
   tags: [String]

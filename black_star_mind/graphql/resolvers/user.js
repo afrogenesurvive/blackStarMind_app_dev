@@ -244,14 +244,13 @@ module.exports = {
 
       const hashedPassword = await bcrypt.hash(args.userInput.password, 12);
       const user = await User.findOneAndUpdate({_id:args.userId},{
-        // {
         email: args.userInput.email,
         password: hashedPassword,
         name: args.userInput.name,
+        dob: new Date(args.userInput.dob),
         username: args.userInput.username,
         phone: args.userInput.phone,
         address: args.userInput.address
-      // }
       },{new: true});
         return {
             ...user._doc,
@@ -407,9 +406,20 @@ module.exports = {
       if (owner._id != pocketVariables.user._id ) {
         throw new Error('Not the creator! No edit permission');
       } else if (owner.id == pocketVariables.user._id) {
-      // Check for duplicates//
 
-        const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {groups:args.groupRefInput}},{new: true});
+        const userGroup = await Group.findById({_id:args.GroupId});
+        const userGroupId = userGroup.id
+        console.log("userGroup... " + userGroup.name);
+        console.log("userGroupId... " + userGroupId);
+
+        const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {groups:userGroup}},{new: true})
+        .populate('groups')
+        .populate('friends')
+        .populate('content')
+        .populate('actions')
+        .populate('perks')
+        .populate('search')
+
           return {
               ...user._doc,
               _id: user.id,
@@ -418,7 +428,6 @@ module.exports = {
               email: user.email,
               groups: user.groups
           };
-
       }
     } catch (err) {
       throw err;
@@ -434,9 +443,20 @@ module.exports = {
       if (owner._id != pocketVariables.user._id ) {
         throw new Error('Not the creator! No edit permission');
       } else if (owner.id == pocketVariables.user._id) {
-      // Check for duplicates//
 
-        const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {friends:args.userRefInput}},{new: true});
+      const friend = await User.findById({_id:args.friendId});
+      const friendId = friend.id
+      console.log("friend... " + friend.username);
+      console.log("friendId... " + friendId);
+
+      const group = await Group.findOneAndUpdate({_id:args.userId},{$addToSet: {friends:friend}},{new: true})
+      .populate('groups')
+      .populate('friends')
+      .populate('content')
+      .populate('actions')
+      .populate('perks')
+      .populate('search')
+
           return {
               ...user._doc,
               _id: user.id,
@@ -462,9 +482,19 @@ module.exports = {
         throw new Error('Not the creator! No edit permission');
       } else if (owner.id == pocketVariables.user._id) {
 
-      // Check for duplicates//
+      const userContent = await Content.findById({_id:args.ContentId});
+      const userContentId = userContent.id
+      console.log("userContent... " + userContent.title);
+      console.log("userContentId... " + userContentId);
 
-      const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {content:args.contentRefInput}},{new: true});
+      const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {content:userContent}},{new: true})
+      .populate('groups')
+      .populate('friends')
+      .populate('content')
+      .populate('actions')
+      .populate('perks')
+      .populate('search')
+
         return {
             ...user._doc,
             _id: user.id,
@@ -489,7 +519,19 @@ module.exports = {
         throw new Error('Not the creator! No edit permission');
       } else if (owner.id == pocketVariables.user._id) {
 
-      const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {actions:args.actionRefInput}},{new: true});
+        const userAction = await Action.findById({_id:args.ActionId});
+        const userActionId = userAction.id
+        console.log("userAction... " + userAction.target);
+        console.log("userActionId... " + userActionId);
+
+        const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {actions:userAction}},{new: true})
+        .populate('groups')
+        .populate('friends')
+        .populate('content')
+        .populate('actions')
+        .populate('perks')
+        .populate('search')
+
         return {
             ...user._doc,
             _id: user.id,
@@ -514,14 +556,27 @@ module.exports = {
         throw new Error('Not the creator! No edit permission');
       } else if (owner.id == pocketVariables.user._id) {
 
-      const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {perks:args.perkRefInput}},{new: true});
+        const userPerk = await Perk.findById({_id:args.PerkId});
+        const userPerkId = userPerk.id
+        console.log("userPerk... " + userPerk.name);
+        console.log("userPerkId... " + userPerkId);
+
+        const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {perks:userPerk}},{new: true})
+        .populate('groups')
+        .populate('friends')
+        .populate('content')
+        .populate('actions')
+        .populate('perks')
+        .populate('search')
+
         return {
             ...user._doc,
             _id: user.id,
             name: user.name,
             username: user.username,
             email: user.email,
-            actions: user.actions
+            actions: user.actions,
+            perks: user.perks
         };
       }
     } catch (err) {
@@ -539,7 +594,19 @@ module.exports = {
         throw new Error('Not the creator! No edit permission');
       } else if (owner.id == pocketVariables.user._id) {
 
-      const user = await User.findOneAndUpdate({_id:args.userId},{$push: {searches:args.searchRefInput}},{new: true});
+        const userSearch = await Search.findById({_id:args.SearchId});
+        const userSearchId = userSearch.id
+        console.log("userContent... " + userSearch.name);
+        console.log("userContentId... " + userSearchId);
+
+        const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {content:userSearch}},{new: true})
+        .populate('groups')
+        .populate('friends')
+        .populate('content')
+        .populate('actions')
+        .populate('perks')
+        .populate('search')
+
         return {
             ...user._doc,
             _id: user.id,
@@ -565,7 +632,6 @@ module.exports = {
       } else if (owner.id == pocketVariables.user._id) {
 
       const user = await User.findByIdAndRemove(args.userId);
-      // const user = await User.findById(userId);
         return {
             ...user._doc,
             _id: user.id,
@@ -588,6 +654,7 @@ module.exports = {
         email: args.userInput.email,
         password: hashedPassword,
         name: args.userInput.name,
+        dob: new Date(args.userInput.dob),
         username: args.userInput.username,
         phone: args.userInput.phone,
         address: args.userInput.address,
@@ -599,7 +666,6 @@ module.exports = {
         actions: args.userInput.actions,
         content: args.userInput.content,
         groups: args.userInput.groups,
-        interactions: args.userInput.interactions,
         searches: args.userInput.searches,
         perks: args.userInput.perks
       });
@@ -612,6 +678,7 @@ module.exports = {
         _id: result.id,
         email: result.email,
         name: result.name,
+        dob: result.dob,
         username: result.username,
         phone: result.phone,
         address: result.address,

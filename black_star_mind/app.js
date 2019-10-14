@@ -2,7 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const graphqlHttp = require('express-graphql');
 const mongoose = require('mongoose');
-
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
 const graphQlSchema = require('./graphql/schema/index');
 const graphQlResolvers = require('./graphql/resolvers/index');
 const isAuth = require('./middleware/is-auth');
@@ -32,6 +33,7 @@ app.use(
     graphiql: true
   })
 );
+
 mongoose.connect(process.env.MONGO_URI,{useNewUrlParser: true})
   .then(() => {
     app.listen(5000);
@@ -39,3 +41,10 @@ mongoose.connect(process.env.MONGO_URI,{useNewUrlParser: true})
   .catch(err => {
     console.log(err);
   });
+
+  app.use(session({
+      store: new MongoStore({ url: 'mongodb+srv://profblack:<7_CNu8#YXB.s5K@>@sessionstorage-ylsuz.mongodb.net/test?retryWrites=true&w=majority' },{useNewUrlParser: true})
+      // store: new MongoStore({ url: `${process.env.MONGO_URI2}` })
+      // store: new MongoStore({ url: process.env.MONGO_URI2 },{useNewUrlParser: true})
+  }));
+  // ${process.env.MONGO_USER}

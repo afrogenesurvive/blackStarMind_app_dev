@@ -9,8 +9,8 @@ const searchSchema = new Schema(
       required: true
     },
     user: {
-        type: Schema.Types.ObjectId,
-              ref: 'User'
+      _id: String,
+      username: String
     },
     query: {
       target: String,

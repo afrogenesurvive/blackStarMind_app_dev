@@ -21,13 +21,13 @@ const groupSchema = new Schema(
       required: false
     },
     creator: {
-      type: Schema.Types.ObjectId,
-          ref: 'User'
+      _id: String,
+      username: String
     },
     users: [
       {
-        type: Schema.Types.ObjectId,
-            ref: 'User'
+        _id: String,
+        username: String
       }
     ],
     data: [
@@ -40,16 +40,25 @@ const groupSchema = new Schema(
         value03: [String]
       }
     ],
+    // users: [
+    //   {
+    //     _id: {
+    //       type: Schema.Types.ObjectId,
+    //       ref: 'User'
+    //     },
+    //     username: String
+    //   }
+    // ],
     content: [
       {
-        type: Schema.Types.ObjectId,
-            ref: 'Content'
+        _id: String,
+        title: String
       }
     ],
     perks: [
       {
-        type: Schema.Types.ObjectId,
-            ref: 'Perk'
+        _id: String,
+        name: String
       }
     ],
     tags: [String],
