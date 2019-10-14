@@ -331,7 +331,18 @@ module.exports = {
       if (owner.creator._id != pocketVariables.user._id ) {
         throw new Error('Not the creator! No edit permission');
       }
-      const content= await Content.findOneAndUpdate({_id:args.contentId},{$addToSet: {users:args.userRefInput}},{new: true});
+
+      const contentUser = await User.findById({_id:args.contentUserId});
+      const contentUserId = contentUser.id
+      console.log("contentUser... " + contentUser.username);
+      console.log("contentUserId... " + contentUserId);
+
+      const content= await Content.findOneAndUpdate({_id:args.contentId},{$addToSet: {users:contentUser}},{new: true})
+      .populate('creator')
+      .populate('users')
+      .populate('perks')
+      .populate('actions')
+
         return {
           ...content._doc,
           _id: content.id,
@@ -382,7 +393,17 @@ module.exports = {
       if (owner.creator._id != pocketVariables.user._id ) {
         throw new Error('Not the creator! No edit permission');
       }
-      const content = await Content.findOneAndUpdate({_id:args.contentId},{$addToSet: {actions:args.actionRefInput}},{new: true});
+      const contentAction = await Action.findById({_id:args.actionId});
+      const contentActionId = contentAction.id
+      console.log("contentAction... " + contentAction);
+      console.log("contentActionId... " + contentActionId);
+
+      const content= await Content.findOneAndUpdate({_id:args.contentId},{$addToSet: {actions:contentAction}},{new: true})
+      .populate('creator')
+      .populate('users')
+      .populate('perks')
+      .populate('actions')
+
         return {
           ...content._doc,
           _id: content.id,
@@ -409,7 +430,18 @@ module.exports = {
       if (owner.creator._id != pocketVariables.user._id ) {
         throw new Error('Not the creator! No edit permission');
       }
-      const content = await Content.findOneAndUpdate({_id:args.contentId},{$addToSet: {perks:args.perkRefInput}},{new: true});
+
+      const contentPerk = await Perk.findById({_id:args.perkId});
+      const contentPerkId = contentPerk.id
+      console.log("contentPerk... " + contentPerk.name);
+      console.log("contentPerkId... " + contentPerkId);
+
+      const content= await Content.findOneAndUpdate({_id:args.contentId},{$addToSet: {perks:contentPerk}},{new: true})
+      .populate('creator')
+      .populate('users')
+      .populate('perks')
+      .populate('actions')
+
         return {
           ...content._doc,
           _id: content.id,
@@ -437,7 +469,7 @@ module.exports = {
       if (owner.creator._id != pocketVariables.user._id ) {
         throw new Error('Not the creator! No edit permission');
       }
-      const content = await Content.findOneAndUpdate({_id:args.contentId},{$addToSet: {actions:args.commentInput}},{new: true});
+      const content = await Content.findOneAndUpdate({_id:args.contentId},{$addToSet: {comments:args.commentInput}},{new: true});
         return {
           ...content._doc,
           _id: content.id,
@@ -563,11 +595,17 @@ module.exports = {
       if (existingContent) {
         throw new Error('Title exists already.');
       }
+
+      const creator = await User.findById({_id:args.userId});
+      const creatorId = creator.id
+      console.log("creator... " + creator);
+      console.log("creatorId... " + creatorId);
+
       const content = new Content({
         title: args.contentInput.title,
         domain: args.contentInput.domain,
         category: args.contentInput.category,
-        creator: args.contentInput.creator,
+        creator: creator,
         description: args.contentInput.description,
         ContentType: args.contentInput.ContentType,
         actions: args.contentInput.actions

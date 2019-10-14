@@ -40,7 +40,6 @@ module.exports = {
           user: search.user,
           query: search.query,
           response: search.response,
-          actions: search.actions,
           tags: search.tags
         };
     } catch (err) {
@@ -63,7 +62,6 @@ module.exports = {
       // user: search.user,
       // query: search.query,
       // response: search.response,
-      // actions: search.actions,
       // tags: search.tags
       // };
     } catch (err) {
@@ -86,7 +84,6 @@ module.exports = {
         // user: search.user,
         // query: search.query,
         // response: search.response,
-        // actions: search.actions,
         // tags: search.tags
         // };
     } catch (err) {
@@ -109,7 +106,6 @@ module.exports = {
       // user: search.user,
       // query: search.query,
       // response: search.response,
-      // actions: search.actions,
       // tags: search.tags
       // };
     } catch (err) {
@@ -132,7 +128,6 @@ module.exports = {
       // user: search.user,
       // query: search.query,
       // response: search.response,
-      // actions: search.actions,
       // tags: search.tags
       // };
     } catch (err) {
@@ -155,7 +150,6 @@ module.exports = {
       // user: search.user,
       // query: search.query,
       // response: search.response,
-      // actions: search.actions,
       // tags: search.tags
       // };
     } catch (err) {
@@ -178,30 +172,6 @@ module.exports = {
       // user: search.user,
       // query: search.query,
       // response: search.response,
-      // actions: search.actions,
-      // tags: search.tags
-      // };
-    } catch (err) {
-      throw err;
-    }
-  },
-  getSearchAction: async (args, req) => {
-    if (!req.isAuth) {
-      throw new Error('Unauthenticated!');
-    }
-    try {
-      const searches = await Search.find({actions: args.actionRefInput});
-      return searches.map(search => {
-        return transformSearch(search);
-      });
-      // {
-      // ...search._doc,
-      // _id: search.id,
-      // type: search.type,
-      // user: search.user,
-      // query: search.query,
-      // response: search.response,
-      // actions: search.actions,
       // tags: search.tags
       // };
     } catch (err) {
@@ -224,7 +194,6 @@ module.exports = {
       // user: search.user,
       // query: search.query,
       // response: search.response,
-      // actions: search.actions,
       // tags: search.tags
       // };
     } catch (err) {
@@ -242,7 +211,6 @@ module.exports = {
         user: args.searchInput.user,
         query: args.searchInput.query,
         response: args.searchInput.response,
-        actions: args.searchInput.actions,
         tags: args.searchInput.tags
       // }
       },{new: true});
@@ -253,7 +221,6 @@ module.exports = {
           user: search.user,
           query: search.query,
           response: search.response,
-          actions: search.actions,
           tags: search.tags
         };
     } catch (err) {
@@ -274,7 +241,6 @@ module.exports = {
           user: search.user,
           query: search.query,
           response: search.response,
-          actions: search.actions,
           tags: search.tags
         };
     } catch (err) {
@@ -295,7 +261,6 @@ module.exports = {
           user: search.user,
           query: search.query,
           response: search.response,
-          actions: search.actions,
           tags: search.tags
         };
     } catch (err) {
@@ -315,7 +280,6 @@ module.exports = {
           user: search.user,
           query: search.query,
           response: search.response,
-          actions: search.actions,
           tags: search.tags
         };
     } catch (err) {
@@ -335,7 +299,6 @@ module.exports = {
           user: search.user,
           query: search.query,
           response: search.response,
-          actions: search.actions,
           tags: search.tags
         };
     } catch (err) {
@@ -355,7 +318,6 @@ module.exports = {
           user: search.user,
           query: search.query,
           response: search.response,
-          actions: search.actions,
           tags: search.tags
         };
     } catch (err) {
@@ -375,7 +337,6 @@ module.exports = {
           user: search.user,
           query: search.query,
           response: search.response,
-          actions: search.actions,
           tags: search.tags
         };
     } catch (err) {
@@ -387,16 +348,11 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      // const existingSearch = await Search.findOne({ name: args.perkInput.name });
-      // if (existingSearch) {
-      //   throw new Error('Search name exists already.');
-      // }
       const search = new Search({
         type: args.searchInput.type,
         user: args.searchInput.user,
         query: args.searchInput.query,
         response: args.searchInput.response,
-        actions: args.searchInput.actions,
         tags: args.searchInput.tags
       });
 
@@ -409,7 +365,6 @@ module.exports = {
         user: result.user,
         query: result.query,
         response: result.response,
-        actions: result.actions,
         tags: result.tags
       };
     } catch (err) {

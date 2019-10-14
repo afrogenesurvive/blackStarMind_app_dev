@@ -15,6 +15,9 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
+  dob:{
+    type: Date
+  },
   username: {
     type: String,
     required: true
@@ -47,43 +50,38 @@ const userSchema = new Schema({
   ],
   actions: [
     {
-      _id: String,
-      action: String,
-      targetId: String,
-      target: String
+      type: Schema.Types.ObjectId,
+            ref: 'Action'
     }
   ],
   content: [
     {
-      _id: String,
-      title: String
+      type: Schema.Types.ObjectId,
+            ref: 'Content'
     }
   ],
   friends: [
     {
-      _id: String,
-      username: String
+      type: Schema.Types.ObjectId,
+            ref: 'User'
     }
   ],
   groups: [
     {
-      _id: String,
-      name: String
+      type: Schema.Types.ObjectId,
+            ref: 'Group'
     }
   ],
   searches: [
     {
-      _id: String,
-      query: {
-        target: String,
-        body: String
-      }
+      type: Schema.Types.ObjectId,
+            ref: 'Search'
     }
   ],
   perks: [
     {
-      _id: String,
-      name: String
+      type: Schema.Types.ObjectId,
+            ref: 'Perk'
     }
   ]
 },

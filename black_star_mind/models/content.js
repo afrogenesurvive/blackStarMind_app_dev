@@ -24,13 +24,13 @@ const contentSchema = new Schema({
     required: false
   },
   creator: {
-    _id: String,
-    username: String
+    type: Schema.Types.ObjectId,
+        ref: 'User'
   },
   users: [
     {
-      _id: String,
-      username: String
+      type: Schema.Types.ObjectId,
+          ref: 'User'
     }
   ],
   data: [
@@ -47,9 +47,9 @@ const contentSchema = new Schema({
       value05: String,
       key06: String,
       value06: String,
-      key07: [String],
+      key07: String,
       value07: [String],
-      key08: [String],
+      key08: String,
       value08: [String],
       key09: String,
       value09: String,
@@ -59,24 +59,22 @@ const contentSchema = new Schema({
   ],
   actions: [
     {
-      _id: String,
-      action: String,
-      targetId: String,
-      target: String
+      type: Schema.Types.ObjectId,
+          ref: 'Action'
     }
   ],
   perks: [
     {
-      _id: String,
-      name: String
+      type: Schema.Types.ObjectId,
+          ref: 'Perk'
     }
   ],
   comments: [
     {
       comment: String,
       user: {
-        _id: String,
-        username: String
+        type: Schema.Types.ObjectId,
+            ref: 'User'
       }
     }
   ],

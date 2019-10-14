@@ -211,14 +211,12 @@ const transformGroup = group => {
   return {
     ...group._doc,
     _id: group.id,
-    createdAt: group.createdAt,
-    updatedAt: group.updatedAt,
+    creator: group.populate('creator'),
     type: group.type,
     subtype: group.subtype,
     name: group.name,
     description: group.description,
-    users: group.users,
-    actions: group.actions
+    users: group.users
   };
 };
 const transformAction = action => {
