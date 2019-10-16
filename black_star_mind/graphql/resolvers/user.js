@@ -2,6 +2,9 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const DataLoader = require('dataloader');
 
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
+
 const User = require('../../models/user');
 const Group = require('../../models/group');
 const Perk = require('../../models/perk');
@@ -15,9 +18,10 @@ const { pocketVariables } = require('../../helpers/pocketVars');
 
 module.exports = {
   users: async (args, req) => {
-    if (!req.isAuth) {
-      throw new Error('Unauthenticated!');
-    }
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
+    console.log("session info ... " + req.session);
     try {
       const users = await User.find();
       return users.map(user => {
@@ -26,7 +30,6 @@ module.exports = {
     } catch (err) {
       throw err;
     }
-    console.log("req =  " + req);
   },
   getThisUser: async (args, req) => {
     if (!req.isAuth) {
