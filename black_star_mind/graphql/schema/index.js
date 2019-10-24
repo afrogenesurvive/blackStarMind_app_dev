@@ -400,12 +400,12 @@ type RootQuery {
     getUserUsername(userId: ID!, username: String!): User
     getUserEmail(userId: ID!, email: String!): User
     getUserDob(userId: ID!, dob: String!): User
-    getUserGroup(userId: ID!, groupId: ID!): [User]
-    getUserActionType(userId: ID!, actionId: ID!): [User]
+    getUserGroup(userId: ID!, userGroupId: ID!): [User]
+    getUserActionType(userId: ID!, actionType: String!): [User]
     getUserFriend(userId: ID!, friendId: ID!): [User]
-    getUserContent(userId: ID!, contentId: ID!): [User]
-    getUserPerk(userId: ID!, perkId: ID!): [User]
-    getUserSearchType(userId: ID!, searchId: ID!): [User]
+    getUserContent(userId: ID!, userContentId: ID!): [User]
+    getUserPerk(userId: ID!, userPerkId: ID!): [User]
+    getUserSearchType(userId: ID!, searchType: String!): [User]
     getThisUser: User
 
     groups(userId: ID!): [Group]
@@ -488,8 +488,8 @@ type RootMutation {
     updateGroupData(userId: ID!, groupId: ID!, groupDataInput: [GroupDataInput!]): Group
     updateGroupContent(userId: ID!, groupId: ID!, contentId: [ID!]): Group
     updateGroupPerk(userId: ID!, groupId: ID!, perkId: [ID!]): Group
-    updateGroupUpvote(userId: ID!, upvotes: Int!): Group
-    updateGroupDownvote(userId: ID!, downvotes: Int!): Group
+    updateGroupUpvotes(userId: ID!, groupId: ID!, upvotes: Int!): Group
+    updateGroupDownvotes(userId: ID!, groupId: ID!, downvotes: Int!): Group
     updateGroupTag(userId: ID!, groupId: ID!, tags: [String!]): Group
     deleteGroup(userId: ID!, groupId: ID!): Group
 

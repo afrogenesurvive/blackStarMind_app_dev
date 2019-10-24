@@ -1,5 +1,9 @@
 const jwt = require('jsonwebtoken');
 
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
+const sessionStore = require('../middleware/sessionStore');
+
 const { pocketVariables } = require('../helpers/pocketVars');
 
 module.exports = (req, res, next) => {
@@ -25,16 +29,16 @@ module.exports = (req, res, next) => {
     req.isAuth = false;
     return next();
   }
-  // req.isAuth = true;
+  req.isAuth = true;
   req.userId = decodedToken.userId;
 
-  if (pocketVariables.user._id === req.userId) {
-    console.log("login token/request token match");
-    req.isAuth = true;
-  } else if (pocketVariables.user._id !== req.userId) {
-    console.log("login token/request token DO NOT match!!");
-    req.isAuth = false;
-  }
+  // if (req.session.userId === req.userId) {
+  //   console.log("login token/request token match");
+  //   req.isAuth = true;
+  // } else if (req.session.userId !== req.userId) {
+  //   console.log("login token/request token DO NOT match!!");
+  //   req.isAuth = false;
+  // }
   next();
 
 };

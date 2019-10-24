@@ -211,7 +211,7 @@ const transformGroup = group => {
   return {
     ...group._doc,
     _id: group.id,
-    creator: group.populate('creator'),
+    creator: group.creator,
     type: group.type,
     subtype: group.subtype,
     name: group.name,

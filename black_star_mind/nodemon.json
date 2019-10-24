@@ -1,10 +1,8 @@
 {
-    "env": {
-        "MONGO_USER": "profblack",
-        "MONGO_PASSWORD": "Y1goCqtw71ttDblZ",
-        "MONGO_DB": "test",
-        "MONGO_URI": "mongodb+srv://profblack:Y1goCqtw71ttDblZ@cluster0-p7asf.mongodb.net/test?retryWrites=true&w=majority",
-    }
-
-}
+  "env": {
+      "MONGO_USER": "profblack",
+      "MONGO_PASSWORD": "Y1goCqtw71ttDblZ",
+      "MONGO_DB": "test",
+      "MONGO_URI": "mongodb+srv://profblack:Y1goCqtw71ttDblZ@cluster0-p7asf.mongodb.net/test?retryWrites=true&w=majority"
+  }
 }
