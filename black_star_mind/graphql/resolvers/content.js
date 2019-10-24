@@ -299,7 +299,7 @@ module.exports = {
     try {
       const owner = await Content.findById({_id:args.contentId});
       console.log("owner..." + owner);
-      if (owner.creator._id != pocketVariables.user._id ) {
+      if (owner.creator._id != req.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       const content = await Content.findOneAndUpdate({_id:args.contentId},{
@@ -328,7 +328,7 @@ module.exports = {
     try {
       const owner = await Content.findById({_id:args.contentId});
       console.log("owner..." + owner);
-      if (owner.creator._id != pocketVariables.user._id ) {
+      if (owner.creator._id != req.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
 
@@ -364,7 +364,7 @@ module.exports = {
     try {
       const owner = await Content.findById({_id:args.contentId});
       console.log("owner..." + owner);
-      if (owner.creator._id != pocketVariables.user._id ) {
+      if (owner.creator._id != req.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       const content = await Content.findOneAndUpdate({_id:args.contentId},{$addToSet: {data:args.contentDataInput}},{new: true});
@@ -390,7 +390,7 @@ module.exports = {
     try {
       const owner = await Content.findById({_id:args.contentId});
       console.log("owner..." + owner);
-      if (owner.creator._id != pocketVariables.user._id ) {
+      if (owner.creator._id != req.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       const contentAction = await Action.findById({_id:args.actionId});
@@ -427,7 +427,7 @@ module.exports = {
     try {
       const owner = await Content.findById({_id:args.contentId});
       console.log("owner..." + owner);
-      if (owner.creator._id != pocketVariables.user._id ) {
+      if (owner.creator._id != req.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
 
@@ -466,7 +466,7 @@ module.exports = {
     try {
       const owner = await Content.findById({_id:args.contentId});
       console.log("owner..." + owner);
-      if (owner.creator._id != pocketVariables.user._id ) {
+      if (owner.creator._id != req.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       const content = await Content.findOneAndUpdate({_id:args.contentId},{$addToSet: {comments:args.commentInput}},{new: true});
@@ -493,7 +493,7 @@ module.exports = {
     try {
       // const owner = await Group.findById({_id:args.groupId});
       // console.log("owner..." + owner)
-      // if (owner.creator._id != pocketVariables.user._id ) {
+      // if (owner.creator._id != req.userId ) {
       //   throw new Error('Not the creator! No edit permission');
       // }
 
@@ -516,7 +516,7 @@ module.exports = {
     try {
       // const owner = await Group.findById({_id:args.groupId});
       // console.log("owner..." + owner)
-      // if (owner.creator._id != pocketVariables.user._id ) {
+      // if (owner.creator._id != req.userId ) {
       //   throw new Error('Not the creator! No edit permission');
       // }
 
@@ -539,7 +539,7 @@ module.exports = {
     try {
       const owner = await Content.findById({_id:args.contentId});
       console.log("owner..." + owner);
-      if (owner.creator._id != pocketVariables.user._id ) {
+      if (owner.creator._id != req.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       const content = await Content.findOneAndUpdate({_id:args.contentId},{$addToSet: {tags:args.tags}},{new: true});
@@ -567,7 +567,7 @@ module.exports = {
     try {
       const owner = await Content.findById({_id:args.contentId});
       console.log("owner..." + owner);
-      if (owner.creator._id != pocketVariables.user._id ) {
+      if (owner.creator._id != req.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       const content = await Content.findByIdAndRemove(args.contentId);

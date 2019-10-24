@@ -6,10 +6,10 @@ const graphQlResolvers = require('./graphql/resolvers/index');
 
 const mongoose = require('mongoose');
 const mongodb = require('mongodb');
-const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
+// const session = require('express-session');
+// const MongoStore = require('connect-mongo')(session);
 
-const sessionStore = require('./middleware/sessionStore');
+// const sessionStore = require('./middleware/sessionStore');
 const isAuth = require('./middleware/is-auth');
 
 const app = express();
@@ -27,23 +27,30 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(isAuth);
+// app.use(session ({
+//   name: "pouch",
+//   resave: true,
+//   saveUninitialized: true,
+//   store: sessionStore.db,
+//   secret: sessionStore.secret,
+//   ttl: sessionStore.ttl,
+//   cookie: {
+//     path: "/",
+//     httpOnly: true,
+//     maxAge: sessionStore.cookie.maxAge,
+//     secure: false
+//   }
+// }));
 
-app.use(session ({
-  resave: false,
-  saveUninitialized: true,
-  store: sessionStore.db,
-  secret: sessionStore.secret,
-  ttl: sessionStore.ttl,
-  cookie: {
-    httpOnly: true,
-    maxAge: sessionStore.cookie.maxAge,
-    secure: true
-  }
-}));
+app.use(isAuth);
 
 app.use(
   '/graphql',
+  // bodyParser.json(),
+  // (req, res, next) => {
+  //   console.log("front page session... " + JSON.stringify(req.session));
+  //   return next();
+  // },
   graphqlHttp({
     schema: graphQlSchema,
     rootValue: graphQlResolvers,
@@ -57,9 +64,4 @@ mongoose.connect(process.env.MONGO_URI,{useNewUrlParser: true})
   })
   .catch(err => {
     console.log(err);
-  });
-
-app.use(function(req,res,next){
-  req.session.store
-  console.log("front page" + req.session.store);
 });

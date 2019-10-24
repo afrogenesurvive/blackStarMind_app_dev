@@ -2,8 +2,10 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const DataLoader = require('dataloader');
 
-const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
+// const session = require('express-session');
+// const MongoStore = require('connect-mongo')(session);
+// const sessionStore = require('../../middleware/sessionStore');
+
 
 const User = require('../../models/user');
 const Group = require('../../models/group');
@@ -18,12 +20,14 @@ const { pocketVariables } = require('../../helpers/pocketVars');
 
 module.exports = {
   users: async (args, req) => {
-    // if (!req.isAuth) {
-    //   throw new Error('Unauthenticated!');
-    // }
-    console.log("session info ... " + req.session);
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
+
+    // action data for mutation here: userId + username --> user object from mongo,type:"get",subType{key:"query",value:get "all users"},
+
     try {
-      const users = await User.find();
+      const users = await User.find().populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches');
       return users.map(user => {
         return transformUser(user);
       });
@@ -36,7 +40,7 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const user = await User.findById(req.userId);
+      const user = await User.findById(req.userId).populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches');
         return {
             ...user._doc,
             _id: user.id,
@@ -52,7 +56,7 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const user = await User.findById(args.userId);
+      const user = await User.findById(args.userId).populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches');
         return {
             ...user._doc,
             _id: user.id,
@@ -68,7 +72,7 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const user = await User.findOne({username: args.username});
+      const user = await User.findOne({username: args.username}).populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches');
         return {
             ...user._doc,
             _id: user.id,
@@ -84,7 +88,7 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const user = await User.findOne({email: args.email})
+      const user = await User.findOne({email: args.email}).populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches')
         return {
             ...user._doc,
             _id: user.id,
@@ -101,7 +105,9 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const users = await User.find({'friends.username': args.userRefInput.username});
+      const userFriendObj = await User.findById(args.friendId)
+
+      const users = await User.find({'friends': userFriendObj}).populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches');
       return users.map(user => {
         return transformUser(user);
       });
@@ -124,7 +130,9 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const users = await User.find({'groups.name': args.userRefInput.username});
+      const userGroupObj = await Group.findById(args.userGroupId)
+
+      const users = await User.find({'groups': userGroupObj}).populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches');
       return users.map(user => {
         return transformUser(user);
       });
@@ -147,7 +155,9 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const users = await User.find({'content.title': args.contentRefInput.title});
+      const userContentObj = await User.findById(args.userContentId)
+
+      const users = await User.find({'content': userContentObj}).populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches');
       return users.map(user => {
         return transformUser(user);
       });
@@ -170,7 +180,9 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const users = await User.find({'perk.name': args.perkRefInput.name});
+      const userPerkObj = await User.findById(args.userPerkId)
+
+      const users = await User.find({'perk': userPerkObj}).populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches');
       return users.map(user => {
         return transformUser(user);
       });
@@ -193,7 +205,7 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const users = await User.find({'actions.type': args.actionRefInput.type});
+      const users = await User.find({'actions.type': args.actionType}).populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches');
       return users.map(user => {
         return transformUser(user);
       });
@@ -216,7 +228,7 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const users = await User.find({'searches.type': args.searchRefInput.type});
+      const users = await User.find({'searches.type': args.searchType}).populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches');
       return users.map(user => {
         return transformUser(user);
       });
@@ -239,11 +251,14 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      // Check request maker id matches user id
-      const owner = await User.findById(args.userId);
-      if (owner._id != pocketVariables.user._id ) {
+
+      const owner = await User.findById({_id:args.userId});
+      console.log("request user... " + args.userId);
+      console.log("owner... " + owner._id)
+      if (owner._id != args.userId ) {
         throw new Error('Not the creator! No edit permission');
-      } else if (owner.id == pocketVariables.user._id) {
+      }
+      else {
 
       const hashedPassword = await bcrypt.hash(args.userInput.password, 12);
       const user = await User.findOneAndUpdate({_id:args.userId},{
@@ -254,7 +269,7 @@ module.exports = {
         username: args.userInput.username,
         phone: args.userInput.phone,
         address: args.userInput.address
-      },{new: true});
+      },{new: true}).populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches');
         return {
             ...user._doc,
             _id: user.id,
@@ -273,13 +288,15 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      // Check request maker id matches user id
-      const owner = await User.findById(args.userId);
-      if (owner._id != pocketVariables.user._id ) {
+      const owner = await User.findById({_id:args.userId});
+      console.log("request user... " + args.userId);
+      console.log("owner... " + owner._id)
+      if (owner._id != args.userId ) {
         throw new Error('Not the creator! No edit permission');
-      } else if (owner.id == pocketVariables.user._id) {
+      }
+      else {
 
-      const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {socialMedia:args.userSocial}},{new: true});
+      const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {socialMedia:args.userSocial}},{new: true}).populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches');
         return {
             ...user._doc,
             _id: user.id,
@@ -298,13 +315,15 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      // Check request maker id matches user id
-      const owner = await User.findById(args.userId);
-      if (owner._id != pocketVariables.user._id ) {
+      const owner = await User.findById({_id:args.userId});
+      console.log("request user... " + args.userId);
+      console.log("owner... " + owner._id)
+      if (owner._id != args.userId ) {
         throw new Error('Not the creator! No edit permission');
-      } else if (owner.id == pocketVariables.user._id) {
+      }
+      else {
 
-      const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {demographics:args.userGraphicsInput}},{new: true});
+      const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {demographics:args.userGraphicsInput}},{new: true}).populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches');
         return {
             ...user._doc,
             _id: user.id,
@@ -325,13 +344,16 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      // Check request maker id matches user id
-      const owner = await User.findById(args.userId);
-      if (owner._id != pocketVariables.user._id ) {
-        throw new Error('Not the creator! No edit permission');
-      } else if (owner.id == pocketVariables.user._id) {
 
-      const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {biographics:args.userGraphicsInput}},{new: true});
+      const owner = await User.findById({_id:args.userId});
+      console.log("request user... " + args.userId);
+      console.log("owner... " + owner._id)
+      if (owner._id != args.userId ) {
+        throw new Error('Not the creator! No edit permission');
+      }
+      else {
+
+      const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {biographics:args.userGraphicsInput}},{new: true}).populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches');
         return {
             ...user._doc,
             _id: user.id,
@@ -352,13 +374,16 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      // Check request maker id matches user id
-      const owner = await User.findById(args.userId);
-      if (owner._id != pocketVariables.user._id ) {
-        throw new Error('Not the creator! No edit permission');
-      } else if (owner.id == pocketVariables.user._id) {
 
-      const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {psychgraphics:args.userGraphicsInput}},{new: true});
+      const owner = await User.findById({_id:args.userId});
+      console.log("request user... " + args.userId);
+      console.log("owner... " + owner._id)
+      if (owner._id != args.userId ) {
+        throw new Error('Not the creator! No edit permission');
+      }
+      else {
+
+      const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {psychgraphics:args.userGraphicsInput}},{new: true}).populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches');
         return {
             ...user._doc,
             _id: user.id,
@@ -379,13 +404,16 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      // Check request maker id matches user id
-      const owner = await User.findById(args.userId);
-      if (owner._id != pocketVariables.user._id ) {
-        throw new Error('Not the creator! No edit permission');
-      } else if (owner.id == pocketVariables.user._id) {
 
-      const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {consumption:args.userConsumptionInput}},{new: true});
+      const owner = await User.findById({_id:args.userId});
+      console.log("request user... " + args.userId);
+      console.log("owner... " + owner._id)
+      if (owner._id != args.userId ) {
+        throw new Error('Not the creator! No edit permission');
+      }
+      else {
+
+      const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {consumption:args.userConsumptionInput}},{new: true}).populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches');
         return {
             ...user._doc,
             _id: user.id,
@@ -404,11 +432,13 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      // Check request maker id matches user id
-      const owner = await User.findById(args.userId);
-      if (owner._id != pocketVariables.user._id ) {
+      const owner = await User.findById({_id:args.userId});
+      console.log("request user... " + args.userId);
+      console.log("owner... " + owner._id)
+      if (owner._id != args.userId ) {
         throw new Error('Not the creator! No edit permission');
-      } else if (owner.id == pocketVariables.user._id) {
+      }
+      else {
 
         const userGroup = await Group.findById({_id:args.GroupId});
         const userGroupId = userGroup.id
@@ -421,7 +451,7 @@ module.exports = {
         .populate('content')
         .populate('actions')
         .populate('perks')
-        .populate('search')
+        .populate('searches')
 
           return {
               ...user._doc,
@@ -441,11 +471,14 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      // Check request maker id matches user id
-      const owner = await User.findById(args.userId);
-      if (owner._id != pocketVariables.user._id ) {
+
+      const owner = await User.findById({_id:args.userId});
+      console.log("request user... " + args.userId);
+      console.log("owner... " + owner._id)
+      if (owner._id != args.userId ) {
         throw new Error('Not the creator! No edit permission');
-      } else if (owner.id == pocketVariables.user._id) {
+      }
+      else {
 
       const friend = await User.findById({_id:args.friendId});
       const friendId = friend.id
@@ -458,7 +491,7 @@ module.exports = {
       .populate('content')
       .populate('actions')
       .populate('perks')
-      .populate('search')
+      .populate('searches')
 
           return {
               ...user._doc,
@@ -479,11 +512,14 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      // Check request maker id matches user id
-      const owner = await User.findById(args.userId);
-      if (owner._id != pocketVariables.user._id ) {
+
+      const owner = await User.findById({_id:args.userId});
+      console.log("request user... " + args.userId);
+      console.log("owner... " + owner._id)
+      if (owner._id != args.userId ) {
         throw new Error('Not the creator! No edit permission');
-      } else if (owner.id == pocketVariables.user._id) {
+      }
+      else {
 
       const userContent = await Content.findById({_id:args.ContentId});
       const userContentId = userContent.id
@@ -496,7 +532,7 @@ module.exports = {
       .populate('content')
       .populate('actions')
       .populate('perks')
-      .populate('search')
+      .populate('searches')
 
         return {
             ...user._doc,
@@ -516,11 +552,14 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      // Check request maker id matches user id
-      const owner = await User.findById(args.userId);
-      if (owner._id != pocketVariables.user._id ) {
+
+      const owner = await User.findById({_id:args.userId});
+      console.log("request user... " + args.userId);
+      console.log("owner... " + owner._id)
+      if (owner._id != args.userId ) {
         throw new Error('Not the creator! No edit permission');
-      } else if (owner.id == pocketVariables.user._id) {
+      }
+      else {
 
         const userAction = await Action.findById({_id:args.ActionId});
         const userActionId = userAction.id
@@ -533,7 +572,7 @@ module.exports = {
         .populate('content')
         .populate('actions')
         .populate('perks')
-        .populate('search')
+        .populate('searches')
 
         return {
             ...user._doc,
@@ -553,11 +592,14 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      // Check request maker id matches user id
-      const owner = await User.findById(args.userId);
-      if (owner._id != pocketVariables.user._id ) {
+
+      const owner = await User.findById({_id:args.userId});
+      console.log("request user... " + args.userId);
+      console.log("owner... " + owner._id)
+      if (owner._id != args.userId ) {
         throw new Error('Not the creator! No edit permission');
-      } else if (owner.id == pocketVariables.user._id) {
+      }
+      else {
 
         const userPerk = await Perk.findById({_id:args.PerkId});
         const userPerkId = userPerk.id
@@ -570,7 +612,7 @@ module.exports = {
         .populate('content')
         .populate('actions')
         .populate('perks')
-        .populate('search')
+        .populate('searches')
 
         return {
             ...user._doc,
@@ -591,11 +633,14 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      // Check request maker id matches user id
-      const owner = await User.findById(args.userId);
-      if (owner._id != pocketVariables.user._id ) {
+
+      const owner = await User.findById({_id:args.userId});
+      console.log("request user... " + args.userId);
+      console.log("owner... " + owner._id)
+      if (owner._id != args.userId ) {
         throw new Error('Not the creator! No edit permission');
-      } else if (owner.id == pocketVariables.user._id) {
+      }
+      else {
 
         const userSearch = await Search.findById({_id:args.SearchId});
         const userSearchId = userSearch.id
@@ -608,7 +653,7 @@ module.exports = {
         .populate('content')
         .populate('actions')
         .populate('perks')
-        .populate('search')
+        .populate('searches')
 
         return {
             ...user._doc,
@@ -628,11 +673,14 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      // Check request maker id matches user id
-      const owner = await User.findById(args.userId);
-      if (owner._id != pocketVariables.user._id ) {
+      
+      const owner = await User.findById({_id:args.userId});
+      console.log("request user... " + args.userId);
+      console.log("owner... " + owner._id)
+      if (owner._id != args.userId ) {
         throw new Error('Not the creator! No edit permission');
-      } else if (owner.id == pocketVariables.user._id) {
+      }
+      else {
 
       const user = await User.findByIdAndRemove(args.userId);
         return {
