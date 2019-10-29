@@ -11,6 +11,7 @@ const Perk = require('../../models/perk');
 const Content = require('../../models/content');
 const Action = require('../../models/action');
 const Search = require('../../models/search');
+const Chat = require('../../models/chat');
 
 const { transformGroup } = require('./merge');
 const { dateToString } = require('../../helpers/date');
@@ -211,7 +212,7 @@ module.exports = {
     }
     console.log("args..." + JSON.stringify(args));
     try {
-      const groups = await Group.find({'upvotes':args.upvotes}).populate('creator').populate('users').populate('content').populate('perks');
+      const groups = await Group.find({'upvotes.count':args.upvotes}).populate('creator').populate('users').populate('content').populate('perks');
       return groups.map(group => {
         return transformGroup(group);
       });
@@ -234,7 +235,7 @@ module.exports = {
     }
     console.log("args..." + JSON.stringify(args));
     try {
-      const groups = await Group.find({'downvotes':args.downvotes}).populate('creator').populate('users').populate('content').populate('perks');
+      const groups = await Group.find({'downvotes.count':args.downvotes}).populate('creator').populate('users').populate('content').populate('perks');
       return groups.map(group => {
         return transformGroup(group);
       });
@@ -496,16 +497,23 @@ module.exports = {
     }
     console.log("args..." + JSON.stringify(args));
     try {
-
       // const owner = await Group.findById({_id:args.groupId});
-      // console.log("group object... " + owner );
-      // console.log("request user... " + args.userId);
-      // console.log("owner... " + owner.creator)
-      // if (owner.creator._id != args.userId ) {
+      // console.log("owner..." + owner)
+      // if (owner.creator._id != req.userId ) {
       //   throw new Error('Not the creator! No edit permission');
       // }
 
-      const group = await Group.findOneAndUpdate({_id:args.groupId},{$inc: {upvotes:1}},{new: true}).populate('creator').populate('users').populate('content').populate('perks');
+      const voteGroup = await Group.findById({_id:args.groupId})
+      console.log("vote group..." + voteGroup.upvotes.users);
+      if (voteGroup.upvotes.users.includes(req.userId)) {
+        throw new Error('Already Voted!');
+      }
+      const group = await Group.findOneAndUpdate({_id:args.groupId},{$inc: {'upvotes.count':1},$addToSet:{'upvotes.users':req.userId}},{new: true})
+      .populate('users')
+      .populate('creator')
+      .populate('content')
+      .populate('perks');
+
         return {
           ...group._doc,
           _id: group.id,
@@ -513,7 +521,7 @@ module.exports = {
           subtype: group.subtype,
           name: group.name,
           creator: group.creator,
-          upvotes: group.upvotes
+          downvotes: group.downvotes
         };
     } catch (err) {
       throw err;
@@ -525,16 +533,23 @@ module.exports = {
     }
     console.log("args..." + JSON.stringify(args));
     try {
-
       // const owner = await Group.findById({_id:args.groupId});
-      // console.log("group object... " + owner );
-      // console.log("request user... " + args.userId);
-      // console.log("owner... " + owner.creator)
-      // if (owner.creator._id != args.userId ) {
+      // console.log("owner..." + owner)
+      // if (owner.creator._id != req.userId ) {
       //   throw new Error('Not the creator! No edit permission');
       // }
 
-      const group = await Group.findOneAndUpdate({_id:args.groupId},{$inc: {downvotes:1}},{new: true}).populate('creator').populate('users').populate('content').populate('perks');
+      const voteGroup = await Group.findById({_id:args.groupId})
+      console.log("vote group..." + voteGroup.downvotes.users);
+      if (voteGroup.downvotes.users.includes(req.userId)) {
+        throw new Error('Already Voted!');
+      }
+      const group = await Group.findOneAndUpdate({_id:args.groupId},{$inc: {'downvotes.count':1},$addToSet:{'downvotes.users':req.userId}},{new: true})
+      .populate('users')
+      .populate('creator')
+      .populate('content')
+      .populate('perks');
+
         return {
           ...group._doc,
           _id: group.id,

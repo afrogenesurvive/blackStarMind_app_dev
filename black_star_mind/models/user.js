@@ -66,6 +66,12 @@ const userSchema = new Schema({
             ref: 'User'
     }
   ],
+  chats: [
+    {
+      type: Schema.Types.ObjectId,
+            ref: 'Chat'
+    }
+  ],
   groups: [
     {
       type: Schema.Types.ObjectId,

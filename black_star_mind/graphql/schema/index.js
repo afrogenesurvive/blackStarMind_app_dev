@@ -35,6 +35,7 @@ type User {
   actions: [Action]
   content: [Content]
   friends: [User]
+  chats: [Chat]
   groups: [Group]
   searches: [Search]
   perks: [Perk]
@@ -44,6 +45,16 @@ type AuthData {
   userId: ID!
   token: String!
   tokenExpiration: Int!
+}
+
+type Chat {
+  title: String
+  date: String
+  type: String
+  sender: User
+  receiver: User
+  message: String
+  tags: [String]
 }
 
 type GroupSubtype {
@@ -72,8 +83,8 @@ type Group {
   content: [Content]
   perks: [Perk]
   tags: [String]
-  upvotes: Int
-  downvotes: Int
+  upvotes: Votes
+  downvotes: Votes
 }
 
 type PerkSubtype {
@@ -136,6 +147,11 @@ type ContentData {
   value10: String
 }
 
+type Votes {
+  users: [String]
+  count: Int
+}
+
 type Content {
   _id: ID!
   title: String
@@ -149,8 +165,8 @@ type Content {
   perks: [Perk]
   tags: [String]
   comments: [Comment]
-  upvotes: Int
-  downvotes: Int
+  upvotes: Votes
+  downvotes: Votes
 }
 
 type ActionSubtype {
@@ -240,6 +256,16 @@ input UserInput {
   perks: [String]
 }
 
+input ChatInput {
+  title: String
+  date: String
+  type: String
+  sender: String
+  receiver: String
+  message: String
+  tags: [String]
+}
+
 input GroupSubtypeInput {
   key: String!
   value: String!
@@ -264,8 +290,8 @@ input GroupInput {
   content: [String]
   perks: [String]
   tags: [String]
-  upvotes: Int
-  downvotes: Int
+  upvotes: String
+  downvotes: String
 }
 
 input PerkSubtypeInput {
@@ -334,8 +360,8 @@ input ContentInput {
   perks: [String]
   tags: [String]
   comments: [String]
-  upvotes: Int
-  downvotes: Int
+  upvotes: String
+  downvotes: String
 }
 
 input TargetRefInput {
@@ -402,6 +428,9 @@ type RootQuery {
     getUserPerk(userId: ID!, perkId: ID!): [User]
     getUserSearchType(userId: ID!, searchType: String!): [User]
     getThisUser: User
+
+    chats(userId: ID!): [Chat]
+    getChatId(userId: ID!, chatId: ID!): Chat
 
     groups(userId: ID!): [Group]
     getGroupId(userId: ID!, groupId: ID!): Group
@@ -475,6 +504,9 @@ type RootMutation {
     updateUserSearch(userId: ID!, searchId: [ID!]): User
     deleteUser(userId: ID!): User
 
+    createChat(userId: ID!, receiverId: ID!, chatInput: ChatInput!): Chat
+    deleteChat(userId: ID!, receiverId: ID!): Chat
+
     createGroup(userId: ID!, groupInput: GroupInput!): Group
     updateGroup(userId: ID!, groupId: ID, groupInput: GroupInput!): Group
     updateGroupSubtype(userId: ID!, groupId: ID!, groupSubtypeInput: GroupSubtypeInput!): Group
@@ -528,8 +560,15 @@ type RootMutation {
 
 }
 
+type RootSubscription {
+
+  messageSent: Chat
+
+}
+
 schema {
     query: RootQuery
     mutation: RootMutation
+    subscription: RootSubscription
 }
 `);
