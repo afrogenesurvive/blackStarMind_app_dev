@@ -141,7 +141,7 @@ type Content {
   title: String
   domain: String
   category: String
-  ContentType: ContentType
+  contentType: ContentType
   creator: User
   description: String
   users: [User]
@@ -207,26 +207,26 @@ type Search {
 }
 
 input UserGraphicsInput {
-  key: String!
-  value: String!
+  key: String
+  value: String
   description: String
 }
 
 input UserConsumptionInput{
-  consumptionCategory: String!
-  consumptionBrands: [String]!
-  consumptionCompanies: [String]!
-  consumptionMotivations: [String]!
+  consumptionCategory: String
+  consumptionBrands: [String]
+  consumptionCompanies: [String]
+  consumptionMotivations: [String]
 }
 
 input UserInput {
-  email: String!
-  password: String!
-  name: String!
-  dob: String!
-  username: String!
-  phone: String!
-  address: String!
+  email: String
+  password: String
+  name: String
+  dob: String
+  username: String
+  phone: String
+  address: String
   socialMedia: [String]
   demographics: [UserGraphicsInput]
   biographics: [UserGraphicsInput]
@@ -254,10 +254,10 @@ input GroupDataInput {
 }
 
 input GroupInput {
-  type: String!
-  subtype: GroupSubtypeInput!
-  name: String!
-  description: String!
+  type: String
+  subtype: GroupSubtypeInput
+  name: String
+  description: String
   creator: String
   users: [String]
   data: [GroupDataInput]
@@ -283,20 +283,15 @@ input PerkDataInput {
 }
 
 input PerkInput {
-  name: String!
-  description: String!
-  type: String!
-  subtype: PerkSubtypeInput!
+  name: String
+  description: String
+  type: String
+  subtype: PerkSubtypeInput
   data: [PerkDataInput]
   users: [String]
   groups: [String]
   content: [String]
   tags: [String]
-}
-
-input CommentInput {
-  comment: String!
-  user: String!
 }
 
 input ContentTypeInput{
@@ -328,17 +323,17 @@ input ContentDataInput {
 }
 
 input ContentInput {
-  title: String!
-  domain: String!
-  category: String!
-  ContentType: ContentTypeInput!
+  title: String
+  domain: String
+  category: String
+  contentType: ContentTypeInput
   creator: String
   description: String
   users: [String]
   data: [ContentDataInput]
   perks: [String]
   tags: [String]
-  comments: [CommentInput]
+  comments: [String]
   upvotes: Int
   downvotes: Int
 }
@@ -365,9 +360,9 @@ input ActionDataInput {
 }
 
 input ActionInput {
-  type: String!
-  subtype: ActionSubtypeInput!
-  target: TargetRefInput!
+  type: String
+  subtype: ActionSubtypeInput
+  target: TargetRefInput
   creator: String
   users: [String]
   description: String
@@ -396,15 +391,15 @@ input SearchInput {
 
 type RootQuery {
     users(userId: ID!): [User]
-    getUserId(userId: ID!): User
+    getUserId(userId: ID! otherUserId: ID!): User
     getUserUsername(userId: ID!, username: String!): User
     getUserEmail(userId: ID!, email: String!): User
     getUserDob(userId: ID!, dob: String!): User
     getUserGroup(userId: ID!, userGroupId: ID!): [User]
     getUserActionType(userId: ID!, actionType: String!): [User]
     getUserFriend(userId: ID!, friendId: ID!): [User]
-    getUserContent(userId: ID!, userContentId: ID!): [User]
-    getUserPerk(userId: ID!, userPerkId: ID!): [User]
+    getUserContent(userId: ID!, contentId: ID!): [User]
+    getUserPerk(userId: ID!, perkId: ID!): [User]
     getUserSearchType(userId: ID!, searchType: String!): [User]
     getThisUser: User
 
@@ -414,25 +409,25 @@ type RootQuery {
     getGroupName(userId: ID!, name: String!): Group
     getGroupCreator(userId: ID!, creatorId: ID!): [Group]
     getGroupUser(userId: ID!, groupUserId: ID!): [Group]
-    getGroupContentTitle(userId: ID!, contentId: ID!): [Group]
+    getGroupContent(userId: ID!, contentId: ID!): [Group]
     getGroupPerk(userId: ID!, perkId: ID!): [Group]
-    getGroupUpvote(userId: ID!, upvotes: Int!): [Group]
-    getGroupDownvote(userId: ID!, downvotes: Int!): [Group]
+    getGroupUpvotes(userId: ID!, upvotes: Int!): [Group]
+    getGroupDownvotes(userId: ID!, downvotes: Int!): [Group]
     getGroupTag(userId: ID!, tag: String!): [Group]
 
-    contents(userId: ID!): [Content]
+    content(userId: ID!): [Content]
     getContentId(userId: ID!, contentId: ID!): Content
-    getContentType(userId: ID!, type: String!): [Content]
+    getContentTypeMedium(userId: ID!, medium: String!): [Content]
     getContentDomain(userId: ID!, domain: String!): [Content]
     getContentCategory(userId: ID!, category: String!): [Content]
     getContentTitle(userId: ID!, title: String!): Content
     getContentCreator(userId: ID!, creatorId: ID!): [Content]
     getContentUser(userId: ID!, contentUserId: ID!): [Content]
     getContentPerk(userId: ID!, perkId: ID!): [Content]
-    getContentCommentCreator(userId: ID!, commentInput: CommentInput!): [Content]
-    getContentComment(userId: ID!, commentInput: CommentInput!): [Content]
-    getContentUpvote(userId: ID!, upvotes: Int!): [Content]
-    getContentDownvote(userId: ID!, downvotes: Int!): [Content]
+    getContentCommentCreator(userId: ID!, commentCreator: ID!): [Content]
+    getContentComment(userId: ID!, comment: String!): [Content]
+    getContentUpvotes(userId: ID!, upvotes: Int!): [Content]
+    getContentDownvotes(userId: ID!, downvotes: Int!): [Content]
     getContentTag(userId: ID!, tag: String!): [Content]
 
     actions(userId: ID!): [Action!]
@@ -499,9 +494,9 @@ type RootMutation {
     updateContentData(userId: ID!, contentId: ID!, contentDataInput: [ContentDataInput!]): Content
     updateContentAction(userId: ID!, contentId: ID!, actionId: [ID!]): Content
     updateContentPerk(userId: ID!, contentId: ID!, perkId: [ID!]): Content
-    updateContentComment(userId: ID!, contentId: ID!, commentInput: [CommentInput!]): Content
-    updateContentUpvote(userId: ID!, contentId: ID!): Content
-    updateContentDownvote(userId: ID!, contentId: ID!): Content
+    updateContentComment(userId: ID!, contentId: ID!, comment: String!): Content
+    updateContentUpvotes(userId: ID!, contentId: ID!): Content
+    updateContentDownvotes(userId: ID!, contentId: ID!): Content
     updateContentTag(userId: ID!, contentId: ID!, tags: [String]): Content
     deleteContent(userId: ID!, contentId: ID!): Content
 
@@ -510,7 +505,7 @@ type RootMutation {
     updatePerkSubtype(userId: ID!, perkId: ID!, perkSubtypeInput: PerkSubtypeInput!): Perk
     updatePerkData(userId: ID!, perkId: ID!, perkDataInput: [PerkDataInput!]): Perk
     updatePerkUser(userId: ID!, perkId: ID!, perkUserId: [ID!]): Perk
-    updatePerkGroup(userId: ID!, perkId: ID!, perkGroupId: [ID!]): Perk
+    updatePerkGroup(userId: ID!, perkId: ID!, groupId: [ID!]): Perk
     updatePerkContent(userId: ID!, perkId: ID!, contentId: [ID!]): Perk
     updatePerkTag(userId: ID!, perkId: ID!, tags: [String!]): Perk
     deletePerk(userId: ID!, perkId: ID!): Perk

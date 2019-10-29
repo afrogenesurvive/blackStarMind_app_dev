@@ -103,6 +103,7 @@ module.exports = {
     console.log("args..." + JSON.stringify(args));
     try {
       const creatorObj = await User.findById(args.creatorId)
+      console.log("creator object... " + creatorObj);
 
       const groups = await Group.find({'creator': creatorObj}).populate('creator').populate('users').populate('content').populate('perks');
       return groups.map(group => {
@@ -130,6 +131,7 @@ module.exports = {
     try {
 
       const groupUserObj = await User.findById(args.groupUserId)
+      console.log("group user object... " + groupUserObj);
 
       const groups = await Group.find({'users': groupUserObj}).populate('creator').populate('users').populate('content').populate('perks');
       return groups.map(group => {
@@ -149,13 +151,16 @@ module.exports = {
       throw err;
     }
   },
-  getGroupContentTitle: async (args, req) => {
+  getGroupContent: async (args, req) => {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
     console.log("args..." + JSON.stringify(args));
     try {
-      const groups = await Group.find({'content.title': args.contentRefInput.title}).populate('creator').populate('users').populate('content').populate('perks');
+      const groupContentObj = await Content.findById({_id:args.contentId})
+      console.log("group content object... " + groupContentObj);
+
+      const groups = await Group.find({'content': groupContentObj }).populate('creator').populate('users').populate('content').populate('perks');
       return groups.map(group => {
         return transformGroup(group);
       });
@@ -179,7 +184,10 @@ module.exports = {
     }
     console.log("args..." + JSON.stringify(args));
     try {
-      const groups = await Group.find({'perks.name': args.perkRefInput.name}).populate('creator').populate('users').populate('content').populate('perks');
+      const groupPerkObj = await Perk.findById({_id:args.perkId})
+      console.log("group content object... " + groupPerkObj);
+
+      const groups = await Group.find({'perks': groupPerkObj}).populate('creator').populate('users').populate('content').populate('perks');
       return groups.map(group => {
         return transformGroup(group);
       });
@@ -197,34 +205,48 @@ module.exports = {
       throw err;
     }
   },
-  getGroupUpvote: async (args, req) => {
+  getGroupUpvotes: async (args, req) => {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
-      const group = await Group.find({upvotes: {$eq:args.upvotes}}).populate('creator').populate('users').populate('content').populate('perks')
-        return {
-            ...group._doc,
-            _id: group.id,
-            name: group.name,
-            upvotes: group.upvotes
-        };
+      const groups = await Group.find({'upvotes':args.upvotes}).populate('creator').populate('users').populate('content').populate('perks');
+      return groups.map(group => {
+        return transformGroup(group);
+      });
+        // return {
+        //     ...group._doc,
+        //     _id: group.id,
+        //     name: group.name,
+        //     creator: group.creator,
+        //     upvotes: group.upvotes,
+        //     downvotes: group.downvotes,
+        //     tags: group.tags
+        // };
     } catch (err) {
       throw err;
     }
   },
-  getGroupDownvote: async (args, req) => {
+  getGroupDownvotes: async (args, req) => {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
-      const group = await Group.find({downvotes: {$eq:args.downvotes}}).populate('creator').populate('users').populate('content').populate('perks')
-        return {
-            ...group._doc,
-            _id: group.id,
-            name: group.name,
-            downvotes: group.downvotes
-        };
+      const groups = await Group.find({'downvotes':args.downvotes}).populate('creator').populate('users').populate('content').populate('perks');
+      return groups.map(group => {
+        return transformGroup(group);
+      });
+        // return {
+        //     ...group._doc,
+        //     _id: group.id,
+        //     name: group.name,
+        //     creator: group.creator,
+        //     upvotes: group.upvotes,
+        //     downvotes: group.downvotes,
+        //     tags: group.tags
+        // };
     } catch (err) {
       throw err;
     }
@@ -261,9 +283,9 @@ module.exports = {
     try {
       const owner = await Group.findById({_id:args.groupId});
       console.log("group object... " + owner );
-      console.log("request user... " + args.userId);
+      console.log("request user... " + req.userId);
       console.log("owner... " + owner.creator)
-      if (owner.creator._id != args.userId ) {
+      if (owner.creator._id != req.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       const group = await Group.findOneAndUpdate({_id:args.groupId},{
@@ -294,9 +316,9 @@ module.exports = {
     try {
       const owner = await Group.findById({_id:args.groupId});
       console.log("group object... " + owner );
-      console.log("request user... " + args.userId);
+      console.log("request user... " + req.userId);
       console.log("owner... " + owner.creator)
-      if (owner.creator._id != args.userId ) {
+      if (owner.creator._id != req.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       const group = await Group.findOneAndUpdate({_id:args.groupId},{subtype:args.groupSubtypeInput},{new: true}).populate('creator').populate('users').populate('content').populate('perks');
@@ -324,11 +346,9 @@ module.exports = {
     try {
       const owner = await Group.findById({_id:args.groupId});
       console.log("group object... " + owner );
-      console.log("request user... " + args.userId);
-      // console.log("request user... " + req.userId);
+      console.log("request user... " + req.userId);
       console.log("owner... " + owner.creator)
-      if (owner.creator != args.userId ) {
-      // if (owner.creator != req.userId ) {
+      if (owner.creator != req.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
 
@@ -364,7 +384,6 @@ module.exports = {
     try {
       const owner = await Group.findById({_id:args.groupId});
       console.log("group object... " + owner );
-      console.log("request user... " + args.userId);
       console.log("owner... " + owner.creator)
       if (owner.creator._id != args.userId ) {
         throw new Error('Not the creator! No edit permission');
@@ -397,9 +416,8 @@ module.exports = {
     try {
       const owner = await Group.findById({_id:args.groupId});
       console.log("group object... " + owner );
-      console.log("request user... " + args.userId);
       console.log("owner... " + owner.creator)
-      if (owner.creator._id != args.userId ) {
+      if (owner.creator != req.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
 
@@ -408,7 +426,7 @@ module.exports = {
       console.log("userContent... " + userContent.username);
       console.log("userContentId... " + userContentId);
 
-      const group = await Group.findOneAndUpdate({_id:args.userId},{$addToSet: {content:userContent}},{new: true})
+      const group = await Group.findOneAndUpdate({_id:args.groupId},{$addToSet: {content:userContent}},{new: true})
       .populate('users')
       .populate('creator')
       .populate('content')
@@ -441,9 +459,9 @@ module.exports = {
     try {
       const owner = await Group.findById({_id:args.groupId});
       console.log("group object... " + owner );
-      console.log("request user... " + args.userId);
+      console.log("request user... " + req.userId);
       console.log("owner... " + owner.creator)
-      if (owner.creator._id != args.userId ) {
+      if (owner.creator._id != req.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
 
@@ -452,7 +470,7 @@ module.exports = {
       console.log("userPerk... " + userPerk.name);
       console.log("userPerkId... " + userPerkId);
 
-      const group = await Group.findOneAndUpdate({_id:args.userId},{$addToSet: {perks:userPerk}},{new: true})
+      const group = await Group.findOneAndUpdate({_id:args.groupId},{$addToSet: {perks:userPerk}},{new: true})
       .populate('users')
       .populate('creator')
       .populate('content')

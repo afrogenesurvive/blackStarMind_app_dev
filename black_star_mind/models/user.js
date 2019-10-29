@@ -37,7 +37,7 @@ const userSchema = new Schema({
   biographics: [
     {key:String,value:String,description:String}
   ],
-  psychgraphics: [
+  psychographics: [
     {key:String,value:String,description:String}
   ],
   consumption: [

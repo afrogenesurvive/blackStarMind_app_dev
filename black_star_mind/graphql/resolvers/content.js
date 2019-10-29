@@ -14,12 +14,18 @@ const { dateToString } = require('../../helpers/date');
 const { pocketVariables } = require('../../helpers/pocketVars');
 
 module.exports = {
-  contents: async (args,req) => {
+  content: async (args,req) => {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
     try {
-      const contents = await Content.find();
+      const contents = await Content.find()
+      .populate('creator')
+      .populate('users')
+      .populate('perks')
+      .populate('actions')
+      .populate('comments.user');
+
       return contents.map(content => {
         return transformContent(content);
       });
@@ -32,28 +38,42 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const content = await Content.findById(args.contentId);
+      const content = await Content.findById(args.contentId)
+      .populate('creator')
+      .populate('users')
+      .populate('perks')
+      .populate('actions')
+      .populate('comments.user');
+
         return {
             ...content._doc,
             _id: content.id,
             createdAt: content.createdAt,
             updatedAt: content.updatedAt,
             title: content.title,
+            contentType: content.contentType,
             domain: content.domain,
             category: content.category,
-            creator: content.creator
+            creator: content.creator,
+            tags: content.tags
         };
     } catch (err) {
       throw err;
     }
   },
-  getContentType: async (args, req) => {
+  getContentTypeMedium: async (args, req) => {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
     console.log("args..." + JSON.stringify(args));
     try {
-      const contents = await Content.find({type: args.type});
+      const contents = await Content.find({'contentType.medium': args.medium})
+      .populate('creator')
+      .populate('users')
+      .populate('perks')
+      .populate('actions')
+      .populate('comments.user');
+
       return contents.map(content => {
         return transformContent(content);
       });
@@ -76,7 +96,13 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const content = await Content.findOne({title: args.title});
+      const content = await Content.findOne({title: args.title})
+      .populate('creator')
+      .populate('users')
+      .populate('perks')
+      .populate('actions')
+      .populate('comments.user');
+
         return {
             ...content._doc,
             _id: content.id,
@@ -96,7 +122,13 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const contents = await Content.find({domain: args.domain});
+      const contents = await Content.find({domain: args.domain})
+      .populate('creator')
+      .populate('users')
+      .populate('perks')
+      .populate('actions')
+      .populate('comments.user');
+
       return contents.map(content => {
         return transformContent(content);
       });
@@ -117,7 +149,13 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const contents = await Content.find({category: args.category});
+      const contents = await Content.find({category: args.category})
+      .populate('creator')
+      .populate('users')
+      .populate('perks')
+      .populate('actions')
+      .populate('comments.user');
+
       return contents.map(content => {
         return transformContent(content);
       });
@@ -138,7 +176,16 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const contents = await Content.find({'creator.username': args.userRefInput.username});
+      const creator = await User.findById({_id: args.creatorId});
+      console.log("content creator... " + creator);
+
+      const contents = await Content.find({'creator': creator})
+      .populate('creator')
+      .populate('users')
+      .populate('perks')
+      .populate('actions')
+      .populate('comments.user');
+
       return contents.map(content => {
         return transformContent(content);
       });
@@ -159,7 +206,16 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const contents = await Content.find({'users.username': args.userRefInput.username});
+      const contentUser = await User.findById({_id: args.contentUserId});
+      console.log("content user... " + contentUser);
+
+      const contents = await Content.find({'users': contentUser})
+      .populate('creator')
+      .populate('users')
+      .populate('perks')
+      .populate('actions')
+      .populate('comments.user');
+
       return contents.map(content => {
         return transformContent(content);
       });
@@ -180,7 +236,16 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const contents = await Content.find({'perks.name': args.perkRefInput.name});
+      const contentPerkObj = await Perk.findById({_id:args.perkId})
+      console.log("content perk object... " + contentPerkObj);
+
+      const contents = await Content.find({'perks': contentPerkObj})
+      .populate('creator')
+      .populate('users')
+      .populate('perks')
+      .populate('actions')
+      .populate('comments.user');
+
       return contents.map(content => {
         return transformContent(content);
       });
@@ -201,7 +266,16 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const contents = await Content.find({'comments.user.username': args.commentInput.user.username});
+      const commenter = await User.findById({_id: args.commentCreator});
+      console.log("commenter... " + commenter);
+
+      const contents = await Content.find({'comments.user': commenter})
+      .populate('creator')
+      .populate('users')
+      .populate('perks')
+      .populate('actions')
+      .populate('comments.user');
+
       return contents.map(content => {
         return transformContent(content);
       });
@@ -222,7 +296,13 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const contents = await Content.find({'comments.comment': args.commentInput.comment});
+      const contents = await Content.find({'comments.comment': args.comment})
+      .populate('creator')
+      .populate('users')
+      .populate('perks')
+      .populate('actions')
+      .populate('comments.user');
+
       return contents.map(content => {
         return transformContent(content);
       });
@@ -238,34 +318,72 @@ module.exports = {
       throw err;
     }
   },
-  getContentUpvote: async (args, req) => {
+  getContentUpvotes: async (args, req) => {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
-      const content = await Content.find({upvotes: {$eq:args.upvotes}})
-        return {
-            ...content._doc,
-            _id: content.id,
-            title: content.title,
-            upvotes: content.upvotes
-        };
+      const contents = await Content.find({'upvotes':args.upvotes})
+      .populate('creator')
+      .populate('users')
+      .populate('perks')
+      .populate('actions')
+      .populate('comments.user');
+
+      return contents.map(content => {
+        return transformContent(content);
+      });
+        // return {
+        //     ...content._doc,
+        // _id: content.id,
+        // title: content.title,
+        // domain: content.domain,
+        // category: content.category,
+        // creator: content.creator,
+        // users: content.users,
+        // data: content.data,
+        // comments: content.comments,
+        // actions: content.actions,
+        // upvotes: content.upvotes,
+        // downvotes: content.downvotes,
+        // tags: content.tags
+        // };
     } catch (err) {
       throw err;
     }
   },
-  getContentDownvote: async (args, req) => {
+  getContentDownvotes: async (args, req) => {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
-      const content = await Content.find({downvotes: {$eq:args.downvotes}})
-        return {
-            ...content._doc,
-            _id: content.id,
-            title: content.title,
-            downvotes: content.downvotes
-        };
+      const contents = await Content.find({'downvotes':args.downvotes})
+      .populate('creator')
+      .populate('users')
+      .populate('perks')
+      .populate('actions')
+      .populate('comments.user');
+
+      return contents.map(content => {
+        return transformContent(content);
+      });
+        // return {
+        //     ...content._doc,
+        // _id: content.id,
+        // title: content.title,
+        // domain: content.domain,
+        // category: content.category,
+        // creator: content.creator,
+        // users: content.users,
+        // data: content.data,
+        // comments: content.comments,
+        // actions: content.actions,
+        // upvotes: content.upvotes,
+        // downvotes: content.downvotes,
+        // tags: content.tags
+        // };
     } catch (err) {
       throw err;
     }
@@ -275,17 +393,30 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const contents = await Content.find({tags: args.tag});
+      const contents = await Content.find({tags: args.tag})
+      .populate('creator')
+      .populate('users')
+      .populate('perks')
+      .populate('actions')
+      .populate('comments.user');
+
       return contents.map(content => {
         return transformContent(content);
       });
       // {
       //     ...content._doc,
-      //     _id: content.id,
-      //     title: content.title,
-      //     domain: content.domain,
-      //     category: content.category,
-      //     creator: content.creator
+      // _id: content.id,
+      // title: content.title,
+      // domain: content.domain,
+      // category: content.category,
+      // creator: content.creator,
+      // users: content.users,
+      // data: content.data,
+      // comments: content.comments,
+      // actions: content.actions,
+      // upvotes: content.upvotes,
+      // downvotes: content.downvotes,
+      // tags: content.tags
       // };
     } catch (err) {
       throw err;
@@ -306,15 +437,15 @@ module.exports = {
         title: args.contentInput.title,
         domain: args.contentInput.domain,
         category: args.contentInput.category,
-        creator: args.contentInput.creator
-      },{new: true});
+        // creator: args.contentInput.creator
+      },{new: true}).populate('creator').populate('users').populate('perks').populate('actions').populate('comments.user');
         return {
           ...content._doc,
           _id: content.id,
           title: content.title,
           domain: content.domain,
           category: content.category,
-          creator: content.creator
+          // creator: content.creator
         };
     } catch (err) {
       throw err;
@@ -342,6 +473,7 @@ module.exports = {
       .populate('users')
       .populate('perks')
       .populate('actions')
+      .populate('comments.user')
 
         return {
           ...content._doc,
@@ -350,7 +482,13 @@ module.exports = {
           domain: content.domain,
           category: content.category,
           creator: content.creator,
-          users: content.users
+          users: content.users,
+          data: content.data,
+          comments: content.comments,
+          actions: content.actions,
+          upvotes: content.upvotes,
+          downvotes: content.downvotes,
+          tags: content.tags
         };
     } catch (err) {
       throw err;
@@ -364,10 +502,17 @@ module.exports = {
     try {
       const owner = await Content.findById({_id:args.contentId});
       console.log("owner..." + owner);
+      console.log("requester..." + req.userId);
       if (owner.creator._id != req.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
-      const content = await Content.findOneAndUpdate({_id:args.contentId},{$addToSet: {data:args.contentDataInput}},{new: true});
+      const content = await Content.findOneAndUpdate({_id:args.contentId},{$addToSet: {data:args.contentDataInput}},{new: true})
+      .populate('creator')
+      .populate('users')
+      .populate('perks')
+      .populate('actions')
+      .populate('comments.user');
+
         return {
           ...content._doc,
           _id: content.id,
@@ -376,7 +521,12 @@ module.exports = {
           category: content.category,
           creator: content.creator,
           users: content.users,
-          data: content.data
+          data: content.data,
+          comments: content.comments,
+          actions: content.actions,
+          upvotes: content.upvotes,
+          downvotes: content.downvotes,
+          tags: content.tags
         };
     } catch (err) {
       throw err;
@@ -403,6 +553,7 @@ module.exports = {
       .populate('users')
       .populate('perks')
       .populate('actions')
+      .populate('comments.user')
 
         return {
           ...content._doc,
@@ -413,6 +564,11 @@ module.exports = {
           creator: content.creator,
           users: content.users,
           data: content.data,
+          comments: content.comments,
+          actions: content.actions,
+          upvotes: content.upvotes,
+          downvotes: content.downvotes,
+          tags: content.tags,
           actions: content.actions
         };
     } catch (err) {
@@ -441,6 +597,7 @@ module.exports = {
       .populate('users')
       .populate('perks')
       .populate('actions')
+      .populate('comments.user')
 
         return {
           ...content._doc,
@@ -451,7 +608,11 @@ module.exports = {
           creator: content.creator,
           users: content.users,
           data: content.data,
+          comments: content.comments,
           actions: content.actions,
+          upvotes: content.upvotes,
+          downvotes: content.downvotes,
+          tags: content.tags,
           perks: content.perks
         };
     } catch (err) {
@@ -464,12 +625,21 @@ module.exports = {
     }
     console.log("args..." + JSON.stringify(args));
     try {
-      const owner = await Content.findById({_id:args.contentId});
-      console.log("owner..." + owner);
-      if (owner.creator._id != req.userId ) {
-        throw new Error('Not the creator! No edit permission');
-      }
-      const content = await Content.findOneAndUpdate({_id:args.contentId},{$addToSet: {comments:args.commentInput}},{new: true});
+      const commenter = await User.findById({_id: args.userId});
+      console.log("commenter... " + commenter);
+
+      // const owner = await Content.findById({_id:args.contentId});
+      // console.log("owner..." + owner);
+      // if (owner.creator._id != req.userId ) {
+      //   throw new Error('Not the creator! No edit permission');
+      // }
+      const content = await Content.findOneAndUpdate({_id:args.contentId},{$addToSet: {comments:{comment:args.comment,user:commenter}}},{new: true})
+      .populate('creator')
+      .populate('users')
+      .populate('perks')
+      .populate('actions')
+      .populate('comments.user');
+
         return {
           ...content._doc,
           _id: content.id,
@@ -479,7 +649,11 @@ module.exports = {
           creator: content.creator,
           users: content.users,
           data: content.data,
-          actions: content.actions
+          comments: content.comments,
+          actions: content.actions,
+          upvotes: content.upvotes,
+          downvotes: content.downvotes,
+          tags: content.tags
         };
     } catch (err) {
       throw err;
@@ -497,12 +671,27 @@ module.exports = {
       //   throw new Error('Not the creator! No edit permission');
       // }
 
-      const content = await Content.findOneAndUpdate({_id:args.contentId},{$inc: {upvotes:1}},{new: true});
+      const content = await Content.findOneAndUpdate({_id:args.contentId},{$inc: {upvotes:1}},{new: true})
+      .populate('creator')
+      .populate('users')
+      .populate('perks')
+      .populate('actions')
+      .populate('comments.user');
+
         return {
           ...content._doc,
-          _id: group.id,
+          _id: content.id,
           title: content.title,
-          upvotes: content.upvotes
+          domain: content.domain,
+          category: content.category,
+          creator: content.creator,
+          users: content.users,
+          data: content.data,
+          comments: content.comments,
+          actions: content.actions,
+          upvotes: content.upvotes,
+          downvotes: content.downvotes,
+          tags: content.tags
         };
     } catch (err) {
       throw err;
@@ -520,12 +709,27 @@ module.exports = {
       //   throw new Error('Not the creator! No edit permission');
       // }
 
-      const content = await Content.findOneAndUpdate({_id:args.contentId},{$inc: {downvotes:1}},{new: true});
+      const content = await Content.findOneAndUpdate({_id:args.contentId},{$inc: {downvotes:1}},{new: true})
+      .populate('creator')
+      .populate('users')
+      .populate('perks')
+      .populate('actions')
+      .populate('comments.user');
+
         return {
           ...content._doc,
           _id: content.id,
           title: content.title,
-          downvotes: content.downvotes
+          domain: content.domain,
+          category: content.category,
+          creator: content.creator,
+          users: content.users,
+          data: content.data,
+          comments: content.comments,
+          actions: content.actions,
+          upvotes: content.upvotes,
+          downvotes: content.downvotes,
+          tags: content.tags
         };
     } catch (err) {
       throw err;
@@ -542,7 +746,13 @@ module.exports = {
       if (owner.creator._id != req.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
-      const content = await Content.findOneAndUpdate({_id:args.contentId},{$addToSet: {tags:args.tags}},{new: true});
+      const content = await Content.findOneAndUpdate({_id:args.contentId},{$addToSet: {tags:args.tags}},{new: true})
+      .populate('creator')
+      .populate('users')
+      .populate('perks')
+      .populate('actions')
+      .populate('comments.user');
+
         return {
           ...content._doc,
           _id: content.id,
@@ -552,7 +762,10 @@ module.exports = {
           creator: content.creator,
           users: content.users,
           data: content.data,
+          comments: content.comments,
           actions: content.actions,
+          upvotes: content.upvotes,
+          downvotes: content.downvotes,
           tags: content.tags
         };
     } catch (err) {
@@ -607,8 +820,9 @@ module.exports = {
         category: args.contentInput.category,
         creator: creator,
         description: args.contentInput.description,
-        ContentType: args.contentInput.ContentType,
-        actions: args.contentInput.actions
+        contentType: args.contentInput.contentType,
+        actions: args.contentInput.actions,
+        tags: args.contentInput.tags
       });
 
       const result = await content.save();
@@ -622,7 +836,8 @@ module.exports = {
         domain: result.domain,
         category: result.category,
         creator: result.creator,
-        ContentType: result.ContentType
+        ContentType: result.ContentType,
+        tags: result.tags
       };
     } catch (err) {
       throw err;
