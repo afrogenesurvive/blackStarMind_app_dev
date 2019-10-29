@@ -430,17 +430,6 @@ type RootQuery {
     getContentDownvotes(userId: ID!, downvotes: Int!): [Content]
     getContentTag(userId: ID!, tag: String!): [Content]
 
-    actions(userId: ID!): [Action!]
-    getActionId(userId: ID!, actionId: ID!): Action
-    getActionCreator(userId: ID!, creatorId: ID!): [Action]
-    getActionType(userId: ID!, type: String!): [Action]
-    getActionTargetTitle(userId: ID!, targetRefInput: TargetRefInput!): [Action]
-    getActionUser(userId: ID!, actionUserId: ID!): [Action]
-    getActionTag(userId: ID!, tag: String!): [Action]
-
-
-    login(email: String!, password: String!): AuthData!
-
     perks(userId: ID!): [Perk]
     getPerkId(userId: ID!, perkId: ID!): Perk
     getPerkName(userId: ID!, name: String!): Perk
@@ -449,6 +438,16 @@ type RootQuery {
     getPerkGroup(userId: ID!, groupId: ID!): [Perk]
     getPerkContent(userId: ID!, contentId: ID!): [Perk]
     getPerkTag(userId: ID!, tag: String!): [Perk]
+
+    actions(userId: ID!): [Action!]
+    getActionId(userId: ID!, actionId: ID!): Action
+    getActionCreator(userId: ID!, creatorId: ID!): [Action]
+    getActionType(userId: ID!, type: String!): [Action]
+    getActionTargetTitle(userId: ID!, targetRefInput: TargetRefInput!): [Action]
+    getActionUser(userId: ID!, actionUserId: ID!): [Action]
+    getActionTag(userId: ID!, tag: String!): [Action]
+
+    login(email: String!, password: String!): AuthData!
 
     searches(userId: ID!): [Search]
     getSearchId(userId: ID!, searchId: ID!): Search
@@ -510,14 +509,6 @@ type RootMutation {
     updatePerkTag(userId: ID!, perkId: ID!, tags: [String!]): Perk
     deletePerk(userId: ID!, perkId: ID!): Perk
 
-    createSearch(userID: ID!, searchInput: SearchInput!): Search
-    updateSearch(userId: ID!, searchId: ID!, searchInput: SearchInput!): Search
-    updateSearchUser(userId: ID!, searchId: ID!, searchUserId: ID!): Search
-    updateSearchQuery(userId: ID!, searchId: ID!, searchQueryInput: SearchQueryInput!): Search
-    updateSearchResponse(userId: ID!, searchId: ID!, searchResponseInput: [SearchResponseInput!]): Search
-    updateSearchTag(userId: ID!, searchId: ID!, tags: [String!]): Search
-    deleteSearch(userId: ID!, searchId: ID!): Search
-
     createAction(userId: ID!, actionInput: ActionInput!): Action
     updateAction(userId: ID!, actionId: ID!, actionInput: ActionInput!): Action
     updateActionSubtype(userId: ID!, actionId: ID!, actionSubtypeInput: ActionSubtypeInput!): Action
@@ -526,6 +517,14 @@ type RootMutation {
     updateActionData(userId: ID!, actionId: ID!, actionDataInput: [ActionDataInput!]): Action
     updateActionTag(userId: ID!, actionId: ID!, tags:[String!]): Action
     deleteAction(userId: ID!, actionId: ID!): Action
+
+    createSearch(userID: ID!, searchInput: SearchInput!): Search
+    updateSearch(userId: ID!, searchId: ID!, searchInput: SearchInput!): Search
+    updateSearchUser(userId: ID!, searchId: ID!, searchUserId: ID!): Search
+    updateSearchQuery(userId: ID!, searchId: ID!, searchQueryInput: SearchQueryInput!): Search
+    updateSearchResponse(userId: ID!, searchId: ID!, searchResponseInput: [SearchResponseInput!]): Search
+    updateSearchTag(userId: ID!, searchId: ID!, tags: [String!]): Search
+    deleteSearch(userId: ID!, searchId: ID!): Search
 
 }
 
