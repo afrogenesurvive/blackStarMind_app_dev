@@ -8,6 +8,7 @@ const Perk = require('../../models/perk');
 const Content = require('../../models/content');
 const Action = require('../../models/action');
 const Search = require('../../models/search');
+const Chat = require('../../models/chat');
 
 const { transformAction } = require('./merge');
 const { dateToString } = require('../../helpers/date');

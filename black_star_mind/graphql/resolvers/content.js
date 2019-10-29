@@ -8,6 +8,7 @@ const Perk = require('../../models/perk');
 const Content = require('../../models/content');
 const Action = require('../../models/action');
 const Search = require('../../models/search');
+const Chat = require('../../models/chat');
 
 const { transformContent } = require('./merge');
 const { dateToString } = require('../../helpers/date');
@@ -324,7 +325,7 @@ module.exports = {
     }
     console.log("args..." + JSON.stringify(args));
     try {
-      const contents = await Content.find({'upvotes':args.upvotes})
+      const contents = await Content.find({'upvotes.count':args.upvotes})
       .populate('creator')
       .populate('users')
       .populate('perks')
@@ -359,7 +360,7 @@ module.exports = {
     }
     console.log("args..." + JSON.stringify(args));
     try {
-      const contents = await Content.find({'downvotes':args.downvotes})
+      const contents = await Content.find({'downvotes.count':args.downvotes})
       .populate('creator')
       .populate('users')
       .populate('perks')
@@ -671,7 +672,12 @@ module.exports = {
       //   throw new Error('Not the creator! No edit permission');
       // }
 
-      const content = await Content.findOneAndUpdate({_id:args.contentId},{$inc: {upvotes:1}},{new: true})
+      const voteContent = await Content.findById({_id:args.contentId})
+      console.log("vote content..." + voteContent.upvotes.users);
+      if (voteContent.upvotes.users.includes(req.userId)) {
+        throw new Error('Already Voted!');
+      }
+      const content = await Content.findOneAndUpdate({_id:args.contentId},{$inc: {'upvotes.count':1},$addToSet:{'upvotes.users':req.userId}},{new: true})
       .populate('creator')
       .populate('users')
       .populate('perks')
@@ -709,7 +715,12 @@ module.exports = {
       //   throw new Error('Not the creator! No edit permission');
       // }
 
-      const content = await Content.findOneAndUpdate({_id:args.contentId},{$inc: {downvotes:1}},{new: true})
+      const voteContent = await Content.findById({_id:args.contentId})
+      console.log("vote content..." + voteContent.downvotes.users);
+      if (voteContent.downvotes.users.includes(req.userId)) {
+        throw new Error('Already Voted!');
+      }
+      const content = await Content.findOneAndUpdate({_id:args.contentId},{$inc: {'downvotes.count':1},$addToSet:{'downvotes.users':req.userId}},{new: true})
       .populate('creator')
       .populate('users')
       .populate('perks')

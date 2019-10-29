@@ -79,8 +79,14 @@ const contentSchema = new Schema({
     }
   ],
   tags: [String],
-  upvotes: Number,
-  downvotes: Number
+  upvotes: {
+    users: [String],
+    count:Number
+  },
+  downvotes: {
+    users: [String],
+    count:Number
+  }
 },
   { timestamps: true }
 );
