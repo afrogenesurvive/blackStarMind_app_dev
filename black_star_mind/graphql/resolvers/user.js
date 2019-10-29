@@ -6,7 +6,6 @@ const DataLoader = require('dataloader');
 // const MongoStore = require('connect-mongo')(session);
 // const sessionStore = require('../../middleware/sessionStore');
 
-
 const User = require('../../models/user');
 const Group = require('../../models/group');
 const Perk = require('../../models/perk');
@@ -23,7 +22,6 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
-
     // action data for mutation here: userId + username --> user object from mongo,type:"get",subType{key:"query",value:get "all users"},
 
     try {
@@ -56,7 +54,7 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const user = await User.findById(args.userId).populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches');
+      const user = await User.findById(args.otherUserId).populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches');
         return {
             ...user._doc,
             _id: user.id,
@@ -155,7 +153,7 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const userContentObj = await User.findById(args.userContentId)
+      const userContentObj = await Content.findById(args.contentId)
 
       const users = await User.find({'content': userContentObj}).populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches');
       return users.map(user => {
@@ -180,9 +178,10 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const userPerkObj = await User.findById(args.userPerkId)
+      const userPerkObj = await Perk.findById(args.perkId)
+      console.log("user perk object... " + userPerkObj);
 
-      const users = await User.find({'perk': userPerkObj}).populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches');
+      const users = await User.find({'perks': userPerkObj}).populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches');
       return users.map(user => {
         return transformUser(user);
       });
@@ -253,9 +252,9 @@ module.exports = {
     try {
 
       const owner = await User.findById({_id:args.userId});
-      console.log("request user... " + args.userId);
+      console.log("request user... " + req.userId);
       console.log("owner... " + owner._id)
-      if (owner._id != args.userId ) {
+      if (owner._id != req.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       else {
@@ -289,9 +288,9 @@ module.exports = {
     }
     try {
       const owner = await User.findById({_id:args.userId});
-      console.log("request user... " + args.userId);
+      console.log("request user... " + req.userId);
       console.log("owner... " + owner._id)
-      if (owner._id != args.userId ) {
+      if (owner._id != req.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       else {
@@ -316,9 +315,9 @@ module.exports = {
     }
     try {
       const owner = await User.findById({_id:args.userId});
-      console.log("request user... " + args.userId);
+      console.log("request user... " + req.userId);
       console.log("owner... " + owner._id)
-      if (owner._id != args.userId ) {
+      if (owner._id != req.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       else {
@@ -346,9 +345,9 @@ module.exports = {
     try {
 
       const owner = await User.findById({_id:args.userId});
-      console.log("request user... " + args.userId);
+      console.log("request user... " + req.userId);
       console.log("owner... " + owner._id)
-      if (owner._id != args.userId ) {
+      if (owner._id != req.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       else {
@@ -376,14 +375,14 @@ module.exports = {
     try {
 
       const owner = await User.findById({_id:args.userId});
-      console.log("request user... " + args.userId);
+      console.log("request user... " + req.userId);
       console.log("owner... " + owner._id)
-      if (owner._id != args.userId ) {
+      if (owner._id != req.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       else {
 
-      const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {psychgraphics:args.userGraphicsInput}},{new: true}).populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches');
+      const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {psychographics:args.userGraphicsInput}},{new: true}).populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches');
         return {
             ...user._doc,
             _id: user.id,
@@ -406,9 +405,9 @@ module.exports = {
     try {
 
       const owner = await User.findById({_id:args.userId});
-      console.log("request user... " + args.userId);
+      console.log("request user... " + req.userId);
       console.log("owner... " + owner._id)
-      if (owner._id != args.userId ) {
+      if (owner._id != req.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       else {
@@ -433,14 +432,14 @@ module.exports = {
     }
     try {
       const owner = await User.findById({_id:args.userId});
-      console.log("request user... " + args.userId);
+      console.log("request user... " + req.userId);
       console.log("owner... " + owner._id)
-      if (owner._id != args.userId ) {
+      if (owner._id != req.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       else {
 
-        const userGroup = await Group.findById({_id:args.GroupId});
+        const userGroup = await Group.findById({_id:args.groupId}).populate('creator').populate('users').populate('content').populate('perks');
         const userGroupId = userGroup.id
         console.log("userGroup... " + userGroup.name);
         console.log("userGroupId... " + userGroupId);
@@ -473,9 +472,9 @@ module.exports = {
     try {
 
       const owner = await User.findById({_id:args.userId});
-      console.log("request user... " + args.userId);
+      console.log("request user... " + req.userId);
       console.log("owner... " + owner._id)
-      if (owner._id != args.userId ) {
+      if (owner._id != req.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       else {
@@ -485,7 +484,7 @@ module.exports = {
       console.log("friend... " + friend.username);
       console.log("friendId... " + friendId);
 
-      const group = await Group.findOneAndUpdate({_id:args.userId},{$addToSet: {friends:friend}},{new: true})
+      const user = await User.findOneAndUpdate({_id:args.userId},{$addToSet: {friends:friend}},{new: true})
       .populate('groups')
       .populate('friends')
       .populate('content')
@@ -514,14 +513,20 @@ module.exports = {
     try {
 
       const owner = await User.findById({_id:args.userId});
-      console.log("request user... " + args.userId);
+      console.log("request user... " + req.userId);
       console.log("owner... " + owner._id)
-      if (owner._id != args.userId ) {
+      if (owner._id != req.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       else {
 
-      const userContent = await Content.findById({_id:args.ContentId});
+      const userContent = await Content.findById({_id:args.contentId})
+      .populate('creator')
+      .populate('users')
+      .populate('perks')
+      .populate('actions')
+      .populate('comments.user');
+
       const userContentId = userContent.id
       console.log("userContent... " + userContent.title);
       console.log("userContentId... " + userContentId);
@@ -553,13 +558,14 @@ module.exports = {
     }
     try {
 
-      const owner = await User.findById({_id:args.userId});
-      console.log("request user... " + args.userId);
-      console.log("owner... " + owner._id)
-      if (owner._id != args.userId ) {
-        throw new Error('Not the creator! No edit permission');
-      }
-      else {
+      //check for admin
+      // const owner = await User.findById({_id:args.userId});
+      // console.log("request user... " + req.userId);
+      // console.log("owner... " + owner._id)
+      // if (owner._id != req.userId ) {
+      //   throw new Error('Not the creator! No edit permission');
+      // }
+      // else {
 
         const userAction = await Action.findById({_id:args.ActionId});
         const userActionId = userAction.id
@@ -582,7 +588,7 @@ module.exports = {
             email: user.email,
             actions: user.actions
         };
-      }
+      // }
     } catch (err) {
       throw err;
     }
@@ -593,15 +599,16 @@ module.exports = {
     }
     try {
 
-      const owner = await User.findById({_id:args.userId});
-      console.log("request user... " + args.userId);
-      console.log("owner... " + owner._id)
-      if (owner._id != args.userId ) {
-        throw new Error('Not the creator! No edit permission');
-      }
-      else {
+      //check for admin
+      // const owner = await User.findById({_id:args.userId});
+      // console.log("request user... " + req.userId);
+      // console.log("owner... " + owner._id)
+      // if (owner._id != req.userId ) {
+      //   throw new Error('Not the creator! No edit permission');
+      // }
+      // else {
 
-        const userPerk = await Perk.findById({_id:args.PerkId});
+        const userPerk = await Perk.findById({_id:args.perkId});
         const userPerkId = userPerk.id
         console.log("userPerk... " + userPerk.name);
         console.log("userPerkId... " + userPerkId);
@@ -623,7 +630,7 @@ module.exports = {
             actions: user.actions,
             perks: user.perks
         };
-      }
+      // }
     } catch (err) {
       throw err;
     }
@@ -634,13 +641,14 @@ module.exports = {
     }
     try {
 
-      const owner = await User.findById({_id:args.userId});
-      console.log("request user... " + args.userId);
-      console.log("owner... " + owner._id)
-      if (owner._id != args.userId ) {
-        throw new Error('Not the creator! No edit permission');
-      }
-      else {
+      //check for admin
+      // const owner = await User.findById({_id:args.userId});
+      // console.log("request user... " + req.userId);
+      // console.log("owner... " + owner._id)
+      // if (owner._id != req.userId ) {
+      //   throw new Error('Not the creator! No edit permission');
+      // }
+      // else {
 
         const userSearch = await Search.findById({_id:args.SearchId});
         const userSearchId = userSearch.id
@@ -663,7 +671,7 @@ module.exports = {
             email: user.email,
             actions: user.actions
         };
-      }
+      // }
     } catch (err) {
       throw err;
     }
@@ -673,11 +681,11 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      
+
       const owner = await User.findById({_id:args.userId});
-      console.log("request user... " + args.userId);
+      console.log("request user... " + req.userId);
       console.log("owner... " + owner._id)
-      if (owner._id != args.userId ) {
+      if (owner._id != req.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       else {
@@ -695,7 +703,11 @@ module.exports = {
   },
   createUser: async args => {
     try {
-      const existingUser = await User.findOne({ email: args.userInput.email });
+      const existingUserEmail = await User.findOne({ email: args.userInput.email });
+      if (existingUser) {
+        throw new Error('User exists already.');
+      }
+      const existingUsername = await User.findOne({ username: args.userInput.username });
       if (existingUser) {
         throw new Error('User exists already.');
       }

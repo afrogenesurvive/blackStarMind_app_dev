@@ -15,7 +15,7 @@ const contentSchema = new Schema({
     type: String,
     required: true
   },
-  ContentType: {
+  contentType: {
     medium: String,
     mediumSubtype: String
   },

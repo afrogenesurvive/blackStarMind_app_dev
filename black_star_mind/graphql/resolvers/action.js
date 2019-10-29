@@ -19,7 +19,11 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const actions = await Action.find();
+      const actions = await Action.find()
+      .populate('creator')
+      .populate('target.user')
+      .populate('users')
+
       return actions.map(action => {
         return transformAction(action);
       });

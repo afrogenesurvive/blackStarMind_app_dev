@@ -18,8 +18,13 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
-      const perks = await Perk.find();
+      const perks = await Perk.find()
+      .populate('users')
+      .populate('groups')
+      .populate('content');
+
       return perks.map(perk => {
         return transformPerk(perk);
       });
@@ -31,8 +36,13 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
-      const perk = await Perk.findById(args.perkId);
+      const perk = await Perk.findById(args.perkId)
+      .populate('users')
+      .populate('groups')
+      .populate('content');
+
         return {
           ...perk._doc,
           _id: perk.id,
@@ -54,8 +64,13 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
-      const perk = await Perk.findOne({name: args.name});
+      const perk = await Perk.findOne({name: args.name})
+      .populate('users')
+      .populate('groups')
+      .populate('content');
+
         return {
           ...perk._doc,
           _id: perk.id,
@@ -77,8 +92,13 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
-      const perks = await Perk.find({type: args.type});
+      const perks = await Perk.find({type: args.type})
+      .populate('users')
+      .populate('groups')
+      .populate('content');
+
       return perks.map(perk => {
         return transformPerk(perk);
       });
@@ -103,8 +123,23 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
-      const perks = await Perk.find({'users.username': args.userRefInput.username});
+      const perkUser = await User.findById({_id:args.perkUserId})
+      .populate('groups')
+      .populate('friends')
+      .populate('content')
+      .populate('actions')
+      .populate('perks')
+      .populate('searches');
+
+      console.log("perk user... " + perkUser);
+
+      const perks = await Perk.find({'users': perkUser})
+      .populate('users')
+      .populate('groups')
+      .populate('content');
+
       return perks.map(perk => {
         return transformPerk(perk);
       });
@@ -129,8 +164,21 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
-      const perks = await Perk.find({'groups.name': args.groupRefInput.name});
+      const perkGroup = await Group.findById({_id:args.groupId})
+      .populate('users')
+      .populate('creator')
+      .populate('content')
+      .populate('perks');
+
+      console.log("perk group... " + perkGroup);
+
+      const perks = await Perk.find({'groups': perkGroup})
+      .populate('users')
+      .populate('groups')
+      .populate('content');
+
       return perks.map(perk => {
         return transformPerk(perk);
       });
@@ -151,12 +199,26 @@ module.exports = {
       throw err;
     }
   },
-  getPerkContentTitle: async (args, req) => {
+  getPerkContent: async (args, req) => {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
-      const perks = await Perk.find({'content.title': args.contentRefInput.title});
+      const perkContent = await Content.findById({_id:args.contentId})
+      .populate('creator')
+      .populate('users')
+      .populate('perks')
+      .populate('actions')
+      .populate('comments.user');
+
+      console.log("perk content... " + perkContent);
+
+      const perks = await Perk.find({'content': perkContent})
+      .populate('users')
+      .populate('groups')
+      .populate('content');
+
       return perks.map(perk => {
         return transformPerk(perk);
       });
@@ -181,8 +243,13 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
-      const perks = await Perk.find({tags: args.tag});
+      const perks = await Perk.find({tags: args.tag})
+      .populate('users')
+      .populate('groups')
+      .populate('content');
+
       return perks.map(perk => {
         return transformPerk(perk);
       });
@@ -207,6 +274,7 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     // check if admin
     try {
       const perk = await Perk.findOneAndUpdate({_id:args.perkId},{
@@ -219,7 +287,11 @@ module.exports = {
         groups: args.perkInput.groups,
         content: args.perkInput.content,
         tags: args.perkInput.tags
-      },{new: true});
+      },{new: true})
+      .populate('users')
+      .populate('groups')
+      .populate('content');
+
         return {
           ...perk._doc,
           _id: perk.id,
@@ -241,8 +313,13 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
-      const perk = await Perk.findOneAndUpdate({_id:args.perkId},{subtype:args.perkSubtypeInput},{new: true});
+      const perk = await Perk.findOneAndUpdate({_id:args.perkId},{subtype:args.perkSubtypeInput},{new: true})
+      .populate('users')
+      .populate('groups')
+      .populate('content');
+
         return {
           ...perk._doc,
           _id: perk.id,
@@ -264,8 +341,23 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
-      const perk= await Perk.findOneAndUpdate({_id:args.perkId},{$addToSet: {users:args.userRefInput}},{new: true});
+      const perkUser = await User.findById({_id:args.perkUserId})
+      .populate('groups')
+      .populate('friends')
+      .populate('content')
+      .populate('actions')
+      .populate('perks')
+      .populate('searches');
+
+      console.log("perk user... " + perkUser);
+
+      const perk= await Perk.findOneAndUpdate({_id:args.perkId},{$addToSet: {users:perkUser}},{new: true})
+      .populate('users')
+      .populate('groups')
+      .populate('content');
+
         return {
           ...perk._doc,
           _id: perk.id,
@@ -287,8 +379,13 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
-      const perk = await Perk.findOneAndUpdate({_id:args.perkId},{$addToSet: {data:args.perkDataInput}},{new: true});
+      const perk = await Perk.findOneAndUpdate({_id:args.perkId},{$addToSet: {data:args.perkDataInput}},{new: true})
+      .populate('users')
+      .populate('groups')
+      .populate('content');
+
         return {
           ...perk._doc,
           _id: perk.id,
@@ -310,8 +407,22 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
-      const perk = await Perk.findOneAndUpdate({_id:args.perkId},{$addToSet: {content:args.contentRefInput}},{new: true});
+      const perkContent = await Content.findById({_id:args.contentId})
+      .populate('creator')
+      .populate('users')
+      .populate('perks')
+      .populate('actions')
+      .populate('comments.user');
+
+      console.log("perk content... " + perkContent);
+
+      const perk = await Perk.findOneAndUpdate({_id:args.perkId},{$addToSet: {content:perkContent}},{new: true})
+      .populate('users')
+      .populate('groups')
+      .populate('content');
+
         return {
           ...perk._doc,
           _id: perk.id,
@@ -333,8 +444,22 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
-      const perk = await Perk.findOneAndUpdate({_id:args.perkId},{$addToSet: {groups:args.groupRefInput}},{new: true});
+
+      const perkGroup = await Group.findById({_id:args.groupId})
+      .populate('users')
+      .populate('creator')
+      .populate('content')
+      .populate('perks');
+
+      console.log("perk group... " + perkGroup);
+
+      const perk = await Perk.findOneAndUpdate({_id:args.perkId},{$addToSet: {groups:perkGroup}},{new: true})
+      .populate('users')
+      .populate('groups')
+      .populate('content');
+
         return {
           ...perk._doc,
           _id: perk.id,
@@ -356,8 +481,13 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
-      const perk = await Perk.findOneAndUpdate({_id:args.perkId},{$addToSet: {tags:args.tags}},{new: true});
+      const perk = await Perk.findOneAndUpdate({_id:args.perkId},{$addToSet: {tags:args.tags}},{new: true})
+      .populate('users')
+      .populate('groups')
+      .populate('content');
+
         return {
           ...perk._doc,
           _id: perk.id,
@@ -379,8 +509,13 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
-      const perk = await Perk.findByIdAndRemove(args.perkId);
+      const perk = await Perk.findByIdAndRemove(args.perkId)
+      .populate('users')
+      .populate('groups')
+      .populate('content');
+
         return {
           ...perk._doc,
           _id: perk.id,
@@ -402,6 +537,7 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
       const existingPerk = await Perk.findOne({ name: args.perkInput.name });
       if (existingPerk) {

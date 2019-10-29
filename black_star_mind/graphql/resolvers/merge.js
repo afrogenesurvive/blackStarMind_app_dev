@@ -199,7 +199,7 @@ const transformContent = content => {
     _id: content.id,
     createdAt: content.createdAt,
     updatedAt: content.updatedAt,
-    type: content.type,
+    contentType: content.contentType,
     subtype: content.subtype,
     name: content.name,
     description: content.description,
