@@ -19,7 +19,6 @@
     "express-session": "^1.17.0",
     "graphql": "^14.5.8",
     "graphql-scalar-objectid": "^0.1.1",
-    "graphql-subscriptions": "^1.1.0",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^3.3.2",
     "mongoose": "^5.7.1"

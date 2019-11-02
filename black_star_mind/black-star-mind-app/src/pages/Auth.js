@@ -8,7 +8,7 @@ class AuthPage extends Component {
   //   isLogin: true
   // };
 
-  // static contextType = AuthContext;
+  static contextType = AuthContext;
 
   constructor(props) {
     super(props);
@@ -31,20 +31,24 @@ class AuthPage extends Component {
       return;
     }
 
-    const requestBody = {
+    let requestBody = {
       query: `
-        query Login($email: $email, $password: $password) {
+        query Login($email: String!, $password: String!) {
           login(email: $email, password: $password) {
             userId
             token
             tokenExpiration
           }
         }
-      `
+      `,
+      variables: {
+        email: email,
+        password: password
+      }
     };
 
 
-    fetch('http://localhost:8000/graphql', {
+    fetch('http://localhost:5000/graphql', {
       method: 'POST',
       body: JSON.stringify(requestBody),
       headers: {
@@ -58,7 +62,14 @@ class AuthPage extends Component {
         return res.json();
       })
       .then(resData => {
-        console.log("your data... " + resData);
+        console.log("your data... " + JSON.stringify(resData));
+        if (resData.data.login.token) {
+          this.context.login(
+            resData.data.login.token,
+            resData.data.login.userId,
+            resData.data.login.tokenExpiration
+          );
+        }
       })
       .catch(err => {
         console.log(err);
@@ -78,7 +89,6 @@ class AuthPage extends Component {
         </div>
         <div className="form-actions">
           <button type="submit">Submit</button>
-          <button type="button">Switch to login</button>
         </div>
       </form>
     );

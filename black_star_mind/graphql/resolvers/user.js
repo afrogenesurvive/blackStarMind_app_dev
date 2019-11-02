@@ -20,6 +20,7 @@ const { pocketVariables } = require('../../helpers/pocketVars');
 
 module.exports = {
   users: async (args, req) => {
+    console.log(JSON.stringify(args));
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }

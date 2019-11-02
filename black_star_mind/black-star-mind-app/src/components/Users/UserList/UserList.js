@@ -1,25 +1,22 @@
 import React from 'react';
 
-import EventItem from './EventItem/EventItem';
-import './EventList.css';
+import UserItem from './UserItem/UserItem';
+import './UserList.css';
 
-const eventList = props => {
-  const events = props.events.map(event => {
+const userList = props => {
+  const users = props.users.map(user => {
     return (
-      <EventItem
-        key={event._id}
-        eventId={event._id}
-        title={event.title}
-        price={event.price}
-        date={event.date}
-        userId={props.authUserId}
-        creatorId={event.creator._id}
+      <UserItem
+        key={user._id}
+        name={user.name}
+        username={user.username}
+        email={user.email}
         onDetail={props.onViewDetail}
       />
     );
   });
 
-  return <ul className="event__list">{events}</ul>;
+  return <ul className="user__list">{users}</ul>;
 };
 
-export default eventList;
+export default userList;
