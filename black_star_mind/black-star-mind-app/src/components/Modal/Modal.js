@@ -14,7 +14,11 @@ const modal = props => (
           Cancel
         </button>
       )}
-      
+      {props.canConfirm && (
+        <button className="btn" onClick={props.onConfirm}>
+          {props.confirmText}
+        </button>
+      )}
     </section>
   </div>
 );

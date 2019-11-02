@@ -226,6 +226,10 @@ class UsersPage extends Component {
                 <input type="text" id="username" ref={this.usernameElRef} />
               </div>
               <div className="form-control">
+                <label htmlFor="address">Address</label>
+                <input type="text" id="address" ref={this.addressElRef} />
+              </div>
+              <div className="form-control">
                 <label htmlFor="phone">Phone</label>
                 <input type="number" id="phone" ref={this.phoneElRef} />
               </div>
