@@ -8,9 +8,15 @@ const userList = props => {
     return (
       <UserItem
         key={user._id}
+        userId={props.authUserId}
+        id={user._id}
         name={user.name}
         username={user.username}
         email={user.email}
+        dob={user.dob}
+        address={user.address}
+        phone={user.phone}
+        socialMedia={user.socialMedia}
         onDetail={props.onViewDetail}
       />
     );
