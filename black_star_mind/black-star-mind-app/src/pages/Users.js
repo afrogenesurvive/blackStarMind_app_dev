@@ -7,75 +7,91 @@ import Spinner from '../components/Spinner/Spinner';
 import AuthContext from '../context/auth-context';
 import './Users.css';
 
-class EventsPage extends Component {
+class UsersPage extends Component {
   state = {
     creating: false,
-    events: [],
+    users: [],
     isLoading: false,
-    selectedEvent: null
+    selectedUser: null
   };
   isActive = true;
 
   static contextType = AuthContext;
 
+
   constructor(props) {
     super(props);
-    this.titleElRef = React.createRef();
-    this.priceElRef = React.createRef();
-    this.dateElRef = React.createRef();
-    this.descriptionElRef = React.createRef();
+    this.emailElRef = React.createRef();
+    this.passwordElRef = React.createRef();
+    this.nameElRef = React.createRef();
+    this.usernameElRef = React.createRef();
+    this.dobElRef = React.createRef();
+    this.phoneElRef = React.createRef();
+    this.addressElRef = React.createRef();
   }
 
   componentDidMount() {
-    this.fetchEvents();
+    this.fetchUsers();
   }
 
-  startCreateEventHandler = () => {
+  startCreateUserHandler = () => {
     this.setState({ creating: true });
   };
 
   modalConfirmHandler = () => {
     this.setState({ creating: false });
-    const title = this.titleElRef.current.value;
-    const price = +this.priceElRef.current.value;
-    const date = this.dateElRef.current.value;
-    const description = this.descriptionElRef.current.value;
+    const email = this.emailElRef.current.value;
+    const password = this.passwordElRef.current.value;
+    const name = this.nameElRef.current.value;
+    const username = this.usernameElRef.current.value;
+    const dob = this.dobElRef.current.value;
+    const phone = this.phoneElRef.current.value;
+    const address = this.addressElRef.current.value;
 
     if (
-      title.trim().length === 0 ||
-      price <= 0 ||
-      date.trim().length === 0 ||
-      description.trim().length === 0
+      email.trim().length === 0 ||
+      password.trim().length === 0 ||
+      name.trim().length === 0 ||
+      username.trim().length === 0 ||
+      dob.trim().length === 0 ||
+      phone.trim().length === 0 ||
+      address.trim().length === 0
     ) {
       return;
     }
 
-    const event = { title, price, date, description };
-    console.log(event);
+    const user = { email, password, name, username, dob, phone, address };
+    console.log(user);
 
     const requestBody = {
       query: `
-          mutation CreateEvent($title: String!, $desc: String!, $price: Float!, $date: String!) {
-            createEvent(eventInput: {title: $title, description: $desc, price: $price, date: $date}) {
+          mutation CreateUser($email: String!, $password: String!, $name: String!, $username: String!, $dob: String!, $phone: String!, $address: String!) {
+            createUser(userInput: {email: $email, password: $password, name: $name, username: $username, dob: $dob, phone: $phone, address: $address}) {
               _id
-              title
-              description
-              date
-              price
+              email
+              password
+              name
+              username
+              dob
+              phone
+              address
             }
           }
         `,
         variables: {
-          title: title,
-          desc: description,
-          price: price,
-          date: date
+          email: email,
+          password: password,
+          name: name,
+          username: username,
+          dob: dob,
+          phone: phone,
+          address: address
         }
     };
 
     const token = this.context.token;
 
-    fetch('http://localhost:8000/graphql', {
+    fetch('http://localhost:5000/graphql', {
       method: 'POST',
       body: JSON.stringify(requestBody),
       headers: {
@@ -91,18 +107,17 @@ class EventsPage extends Component {
       })
       .then(resData => {
         this.setState(prevState => {
-          const updatedEvents = [...prevState.events];
-          updatedEvents.push({
-            _id: resData.data.createEvent._id,
-            title: resData.data.createEvent.title,
-            description: resData.data.createEvent.description,
-            date: resData.data.createEvent.date,
-            price: resData.data.createEvent.price,
-            creator: {
-              _id: this.context.userId
-            }
+          const updatedUsers = [...prevState.users];
+          updatedUsers.push({
+            _id: resData.data.createUser._id,
+            email: resData.data.createUser.email,
+            name: resData.data.createUser.name,
+            username: resData.data.createUser.username,
+            dob: resData.data.createUser.dob,
+            phone: resData.data.createUser.phone,
+            address: resData.data.createUser.address,
           });
-          return { events: updatedEvents };
+          return { users: updatedUsers };
         });
       })
       .catch(err => {
@@ -111,85 +126,35 @@ class EventsPage extends Component {
   };
 
   modalCancelHandler = () => {
-    this.setState({ creating: false, selectedEvent: null });
+    this.setState({ creating: false, selectedUser: null });
   };
 
-  fetchEvents() {
+  fetchUsers() {
+    console.log("this user... " + this.context.userId, this.context.token);
+    const userId = this.context.userId;
+
     this.setState({ isLoading: true });
     const requestBody = {
       query: `
-          query {
-            events {
+          query users($userId: ID!) {
+            users(userId: $userId) {
               _id
-              title
-              description
-              date
-              price
-              creator {
-                _id
-                email
-              }
-            }
-          }
-        `
-    };
-
-    fetch('http://localhost:8000/graphql', {
-      method: 'POST',
-      body: JSON.stringify(requestBody),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then(res => {
-        if (res.status !== 200 && res.status !== 201) {
-          throw new Error('Failed!');
-        }
-        return res.json();
-      })
-      .then(resData => {
-        const events = resData.data.events;
-        if (this.isActive) {
-          this.setState({ events: events, isLoading: false });
-        }
-      })
-      .catch(err => {
-        console.log(err);
-        if (this.isActive) {
-          this.setState({ isLoading: false });
-        }
-      });
-  }
-
-  showDetailHandler = eventId => {
-    this.setState(prevState => {
-      const selectedEvent = prevState.events.find(e => e._id === eventId);
-      return { selectedEvent: selectedEvent };
-    });
-  };
-
-  bookEventHandler = () => {
-    if (!this.context.token) {
-      this.setState({ selectedEvent: null });
-      return;
-    }
-    console.log(this.state.selectedEvent)
-    const requestBody = {
-      query: `
-          mutation BookEvent($id: ID!) {
-            bookEvent(eventId: $id) {
-              _id
-             createdAt
-             updatedAt
+              email
+              password
+              name
+              username
+              dob
+              phone
+              address
             }
           }
         `,
         variables: {
-          id: this.state.selectedEvent._id
+          userId: userId
         }
     };
 
-    fetch('http://localhost:8000/graphql', {
+    fetch('http://localhost:5000/graphql', {
       method: 'POST',
       body: JSON.stringify(requestBody),
       headers: {
@@ -204,13 +169,27 @@ class EventsPage extends Component {
         return res.json();
       })
       .then(resData => {
-        console.log(resData);
-        this.setState({ selectedEvent: null });
+        const users = resData.data.users;
+        console.log(users);
+        if (this.isActive) {
+          this.setState({ users: users, isLoading: false });
+        }
       })
       .catch(err => {
         console.log(err);
+        if (this.isActive) {
+          this.setState({ isLoading: false });
+        }
       });
+  }
+
+  showDetailHandler = userId => {
+    this.setState(prevState => {
+      const selectedUser = prevState.users.find(e => e._id === userId);
+      return { selectedUser: selectedUser };
+    });
   };
+
 
   componentWillUnmount() {
     this.isActive = false;
@@ -219,10 +198,10 @@ class EventsPage extends Component {
   render() {
     return (
       <React.Fragment>
-        {(this.state.creating || this.state.selectedEvent) && <Backdrop />}
+        {(this.state.creating || this.state.selectedUser) && <Backdrop />}
         {this.state.creating && (
           <Modal
-            title="Add Event"
+            title="Create Profile"
             canCancel
             canConfirm
             onCancel={this.modalCancelHandler}
@@ -231,16 +210,20 @@ class EventsPage extends Component {
           >
             <form>
               <div className="form-control">
-                <label htmlFor="title">Title</label>
-                <input type="text" id="title" ref={this.titleElRef} />
+                <label htmlFor="email">Email</label>
+                <input type="text" id="title" ref={this.emailElRef} />
               </div>
               <div className="form-control">
-                <label htmlFor="price">Price</label>
-                <input type="number" id="price" ref={this.priceElRef} />
+                <label htmlFor="password">Password</label>
+                <input type="password" id="title" ref={this.passwordElRef} />
               </div>
               <div className="form-control">
-                <label htmlFor="date">Date</label>
-                <input type="datetime-local" id="date" ref={this.dateElRef} />
+                <label htmlFor="password">Phone</label>
+                <input type="number" id="price" ref={this.phoneElRef} />
+              </div>
+              <div className="form-control">
+                <label htmlFor="date">Date of Birth</label>
+                <input type="datetime-local" id="date" ref={this.dobElRef} />
               </div>
               <div className="form-control">
                 <label htmlFor="description">Description</label>
@@ -253,36 +236,19 @@ class EventsPage extends Component {
             </form>
           </Modal>
         )}
-        {this.state.selectedEvent && (
-          <Modal
-            title={this.state.selectedEvent.title}
-            canCancel
-            canConfirm
-            onCancel={this.modalCancelHandler}
-            onConfirm={this.bookEventHandler}
-            confirmText={this.context.token ? 'Book' : 'Confirm'}
-          >
-            <h1>{this.state.selectedEvent.title}</h1>
-            <h2>
-              ${this.state.selectedEvent.price} -{' '}
-              {new Date(this.state.selectedEvent.date).toLocaleDateString()}
-            </h2>
-            <p>{this.state.selectedEvent.description}</p>
-          </Modal>
-        )}
         {this.context.token && (
-          <div className="events-control">
-            <p>Share your own Events!</p>
-            <button className="btn" onClick={this.startCreateEventHandler}>
-              Create Event
+          <div className="users-control">
+            <p>Create a Profile!</p>
+            <button className="btn" onClick={this.startCreateUserHandler}>
+              Sign-Up
             </button>
           </div>
         )}
         {this.state.isLoading ? (
           <Spinner />
         ) : (
-          <EventList
-            events={this.state.events}
+          <UserList
+            users={this.state.users}
             authUserId={this.context.userId}
             onViewDetail={this.showDetailHandler}
           />
@@ -292,4 +258,4 @@ class EventsPage extends Component {
   }
 }
 
-export default EventsPage;
+export default UsersPage;

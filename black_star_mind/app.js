@@ -3,11 +3,6 @@ const bodyParser = require('body-parser');
 const graphqlHttp = require('express-graphql');
 const graphQlSchema = require('./graphql/schema/index');
 const graphQlResolvers = require('./graphql/resolvers/index');
-const {PubSub} = require('graphql-subscriptions');
-
-// import { PubSub } from 'graphql-subscriptions';
-// export const pubsub = new PubSub();
-const pubsub = new PubSub();
 
 const mongoose = require('mongoose');
 const mongodb = require('mongodb');
@@ -51,16 +46,10 @@ app.use(isAuth);
 
 app.use(
   '/graphql',
-  // bodyParser.json(),
-  // (req, res, next) => {
-  //   console.log("front page session... " + JSON.stringify(req.session));
-  //   return next();
-  // },
   graphqlHttp({
     schema: graphQlSchema,
     rootValue: graphQlResolvers,
-    graphiql: true,
-    context: pubsub
+    graphiql: true
   })
 );
 

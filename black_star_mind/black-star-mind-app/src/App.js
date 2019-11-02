@@ -38,18 +38,15 @@ class App extends Component {
             <main className="main-content">
               <Switch>
 
-              //logged in -> pages
-                {this.state.token && <Redirect from="/" to="/users" exact />}
+                { // logged in -> pages
+                  this.state.token && <Redirect from="/" to="/users" exact />}
                 {this.state.token && (<Route path="/users" component={UsersPage} />)}
 
+                { // logged in -> users page from login page
+                  this.state.token && (<Redirect from="/auth" to="/users" exact />)}
 
-                // logged in -> users page from login page
-                {this.state.token && (<Redirect from="/auth" to="/users" exact />)}
-
-                //logged out -> pages
-
-                //if not logged in -> go to login page
-                {!this.state.token && (<Route path="/auth" component={AuthPage} />)}
+                { //if not logged in -> go to login page
+                  !this.state.token && (<Route path="/auth" component={AuthPage} />)}
                 {!this.state.token && <Redirect to="/auth" exact />}
               </Switch>
             </main>
