@@ -7,11 +7,31 @@ const userItem = props => (
     <div>
       <h1>{props.name}</h1>
       <p>
+        ${props.id}
+      </p>
+      <p>
         ${props.username}
       </p>
       <p>
         ${props.email}
       </p>
+      <p>
+        ${props.dob}
+      </p>
+      <p>
+        ${props.address}
+      </p>
+      <p>
+        ${props.phone}
+      </p>
+      <p>
+        ${props.socialMedia}
+      </p>
+    </div>
+    <div>
+    <button className="btn" onClick={props.onDetail.bind(this, props.id)}>
+          View Details
+        </button>
     </div>
   </li>
 );

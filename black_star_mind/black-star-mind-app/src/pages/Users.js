@@ -215,25 +215,40 @@ class UsersPage extends Component {
               </div>
               <div className="form-control">
                 <label htmlFor="password">Password</label>
-                <input type="password" id="title" ref={this.passwordElRef} />
+                <input type="password" id="password" ref={this.passwordElRef} />
               </div>
               <div className="form-control">
-                <label htmlFor="password">Phone</label>
-                <input type="number" id="price" ref={this.phoneElRef} />
+                <label htmlFor="name">Name</label>
+                <input type="text" id="name" ref={this.nameElRef} />
+              </div>
+              <div className="form-control">
+                <label htmlFor="username">Username</label>
+                <input type="text" id="username" ref={this.usernameElRef} />
+              </div>
+              <div className="form-control">
+                <label htmlFor="phone">Phone</label>
+                <input type="number" id="phone" ref={this.phoneElRef} />
               </div>
               <div className="form-control">
                 <label htmlFor="date">Date of Birth</label>
                 <input type="datetime-local" id="date" ref={this.dobElRef} />
               </div>
-              <div className="form-control">
-                <label htmlFor="description">Description</label>
-                <textarea
-                  id="description"
-                  rows="4"
-                  ref={this.descriptionElRef}
-                />
-              </div>
+
             </form>
+          </Modal>
+        )}
+        {this.state.selectedUser && (
+          <Modal
+            username={this.state.selectedUser.username}
+            canCancel
+            onCancel={this.modalCancelHandler}
+          >
+            <h1>{this.state.selectedUser.name}</h1>
+            <h2>
+              ${this.state.selectedUser.email} -{' dob '}
+              {new Date(this.state.selectedUser.dob).toLocaleDateString()}
+            </h2>
+            <p>{this.state.selectedUser.username}</p>
           </Modal>
         )}
         {this.context.token && (
