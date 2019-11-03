@@ -7,7 +7,7 @@ const userItem = props => (
     <div>
       <h1>{props.name}</h1>
       <p>
-        ${props.id}
+        ${props._id}
       </p>
       <p>
         ${props.username}

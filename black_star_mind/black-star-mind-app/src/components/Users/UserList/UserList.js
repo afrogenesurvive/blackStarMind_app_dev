@@ -9,7 +9,7 @@ const userList = props => {
       <UserItem
         key={user._id}
         userId={props.authUserId}
-        id={user._id}
+        _id={user._id}
         name={user.name}
         username={user.username}
         email={user.email}

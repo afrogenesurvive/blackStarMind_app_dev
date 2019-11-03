@@ -61,7 +61,7 @@ class UsersPage extends Component {
     }
 
     const user = { email, password, name, username, dob, phone, address };
-    console.log(user);
+    console.log("creating user.. " + JSON.stringify(user));
 
     const requestBody = {
       query: `
@@ -106,6 +106,7 @@ class UsersPage extends Component {
         return res.json();
       })
       .then(resData => {
+        console.log("response data... " + JSON.stringify(resData));
         this.setState(prevState => {
           const updatedUsers = [...prevState.users];
           updatedUsers.push({
