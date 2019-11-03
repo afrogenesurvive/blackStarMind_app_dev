@@ -3,8 +3,10 @@ import { BrowserRouter, Route, Redirect, Switch } from 'react-router-dom';
 
 import AuthPage from './pages/Auth';
 import UsersPage from './pages/Users';
+import ThisUserPage from './pages/thisUser';
 import MainNavigation from './components/Navigation/MainNavigation';
 import AuthContext from './context/auth-context';
+import ThisUserContext from './context/thisUser-context';
 
 import './App.css';
 
@@ -34,6 +36,14 @@ class App extends Component {
               logout: this.logout
             }}
           >
+          <ThisUserContext.Provider
+            value={{
+              token: this.state.token,
+              userId: this.state.userId,
+              login: this.login,
+              logout: this.logout
+            }}
+          >
             <MainNavigation />
             <main className="main-content">
               <Switch>
@@ -41,6 +51,7 @@ class App extends Component {
                 { // logged in -> pages
                   this.state.token && <Redirect from="/" to="/users" exact />}
                 {this.state.token && (<Route path="/users" component={UsersPage} />)}
+                {this.state.token && (<Route path="/profile" component={ThisUserPage} />)}
 
                 { // logged in -> users page from login page
                   this.state.token && (<Redirect from="/auth" to="/users" exact />)}
@@ -50,6 +61,7 @@ class App extends Component {
                 {!this.state.token && <Redirect to="/auth" exact />}
               </Switch>
             </main>
+          </ThisUserContext.Provider>
           </AuthContext.Provider>
         </React.Fragment>
       </BrowserRouter>

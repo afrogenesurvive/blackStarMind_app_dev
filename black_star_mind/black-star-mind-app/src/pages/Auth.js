@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import './Auth.css';
 import AuthContext from '../context/auth-context';
+import ThisUserContext from '../context/thisUser-context';
 
 class AuthPage extends Component {
   // state = {
@@ -9,6 +10,7 @@ class AuthPage extends Component {
   // };
 
   static contextType = AuthContext;
+  static contextType = ThisUserContext;
 
   constructor(props) {
     super(props);

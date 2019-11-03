@@ -704,13 +704,14 @@ module.exports = {
     }
   },
   createUser: async args => {
+    console.log(JSON.stringify(args));
     try {
       const existingUserEmail = await User.findOne({ email: args.userInput.email });
-      if (existingUser) {
+      if (existingUserEmail) {
         throw new Error('User exists already.');
       }
-      const existingUsername = await User.findOne({ username: args.userInput.username });
-      if (existingUser) {
+      const existingUserUsername = await User.findOne({ username: args.userInput.username });
+      if (existingUserUsername) {
         throw new Error('User exists already.');
       }
       const hashedPassword = await bcrypt.hash(args.userInput.password, 12);
