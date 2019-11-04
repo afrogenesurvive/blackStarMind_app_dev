@@ -18,7 +18,6 @@ class UsersPage extends Component {
 
   static contextType = AuthContext;
 
-
   constructor(props) {
     super(props);
     this.emailElRef = React.createRef();
@@ -186,6 +185,13 @@ class UsersPage extends Component {
       .then(resData => {
         const users = resData.data.users;
         console.log(users);
+
+        console.log("req body for log..." + JSON.stringify(requestBody));
+        this.context.activity.push(JSON.stringify(requestBody));
+        console.log("this context object..." + JSON.stringify(this.context));
+        console.log("this context user object..." + JSON.stringify(this.context.user));
+        console.log("this context activity..." + this.context.activity);
+
         if (this.isActive) {
           this.setState({ users: users, isLoading: false });
         }

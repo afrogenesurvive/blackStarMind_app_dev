@@ -33,6 +33,10 @@ class App extends Component {
             value={{
               token: this.state.token,
               userId: this.state.userId,
+              user: {},
+              activity: [],
+              prevAction1: null,
+              prevAction2: null,
               login: this.login,
               logout: this.logout
             }}
