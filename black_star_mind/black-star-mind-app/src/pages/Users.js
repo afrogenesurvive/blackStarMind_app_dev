@@ -25,6 +25,8 @@ class UsersPage extends Component {
     this.passwordElRef = React.createRef();
     this.nameElRef = React.createRef();
     this.usernameElRef = React.createRef();
+    this.descriptionElRef = React.createRef();
+    this.avatarElRef = React.createRef();
     this.dobElRef = React.createRef();
     this.phoneElRef = React.createRef();
     this.addressElRef = React.createRef();
@@ -44,6 +46,8 @@ class UsersPage extends Component {
     const password = this.passwordElRef.current.value;
     const name = this.nameElRef.current.value;
     const username = this.usernameElRef.current.value;
+    const description = this.descriptionElRef.current.value;
+    const avatar = this.avatarElRef.current.value;
     const dob = this.dobElRef.current.value;
     const phone = this.phoneElRef.current.value;
     const address = this.addressElRef.current.value;
@@ -53,6 +57,8 @@ class UsersPage extends Component {
       password.trim().length === 0 ||
       name.trim().length === 0 ||
       username.trim().length === 0 ||
+      description.trim().length === 0 ||
+      avatar.trim().length === 0 ||
       dob.trim().length === 0 ||
       phone.trim().length === 0 ||
       address.trim().length === 0
@@ -60,18 +66,20 @@ class UsersPage extends Component {
       return;
     }
 
-    const user = { email, password, name, username, dob, phone, address };
+    const user = { email, password, name, username, description, avatar, dob, phone, address };
     console.log("creating user.. " + JSON.stringify(user));
 
     const requestBody = {
       query: `
-          mutation CreateUser($email: String!, $password: String!, $name: String!, $username: String!, $dob: String!, $phone: String!, $address: String!) {
-            createUser(userInput: {email: $email, password: $password, name: $name, username: $username, dob: $dob, phone: $phone, address: $address}) {
+          mutation CreateUser($email: String!, $password: String!, $name: String!, $username: String!, $description: String!, $avatar: String!, $dob: String!, $phone: String!, $address: String!) {
+            createUser(userInput: {email: $email, password: $password, name: $name, username: $username, description: $description, avatar: $avatar, dob: $dob, phone: $phone, address: $address}) {
               _id
               email
               password
               name
               username
+              description
+              avatar
               dob
               phone
               address
@@ -83,6 +91,8 @@ class UsersPage extends Component {
           password: password,
           name: name,
           username: username,
+          description: description,
+          avatar: avatar,
           dob: dob,
           phone: phone,
           address: address
@@ -114,6 +124,8 @@ class UsersPage extends Component {
             email: resData.data.createUser.email,
             name: resData.data.createUser.name,
             username: resData.data.createUser.username,
+            description: resData.data.createUser.description,
+            avatar: resData.data.createUser.avatar,
             dob: resData.data.createUser.dob,
             phone: resData.data.createUser.phone,
             address: resData.data.createUser.address,
@@ -145,6 +157,8 @@ class UsersPage extends Component {
               name
               username
               dob
+              description
+              avatar
               phone
               address
             }
@@ -225,6 +239,14 @@ class UsersPage extends Component {
               <div className="form-control">
                 <label htmlFor="username">Username</label>
                 <input type="text" id="username" ref={this.usernameElRef} />
+              </div>
+              <div className="form-control">
+                <label htmlFor="description">Bio</label>
+                <input type="text" id="description" ref={this.descriptionElRef} />
+              </div>
+              <div className="form-control">
+                <label htmlFor="description">Avatar Link</label>
+                <input type="text" id="avatar" ref={this.avatarElRef} />
               </div>
               <div className="form-control">
                 <label htmlFor="address">Address</label>

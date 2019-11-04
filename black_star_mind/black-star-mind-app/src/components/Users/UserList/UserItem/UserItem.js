@@ -7,25 +7,31 @@ const userItem = props => (
     <div>
       <h1>{props.name}</h1>
       <p>
-        ${props._id}
+        {props._id}
       </p>
       <p>
-        ${props.username}
+        {props.username}
       </p>
       <p>
-        ${props.email}
+        {props.email}
       </p>
       <p>
-        ${props.dob}
+        {props.dob}
       </p>
       <p>
-        ${props.address}
+        {props.description}
       </p>
       <p>
-        ${props.phone}
+        {props.avatar}
       </p>
       <p>
-        ${props.socialMedia}
+        {props.address}
+      </p>
+      <p>
+        {props.phone}
+      </p>
+      <p>
+        {props.socialMedia}
       </p>
     </div>
     <div>

@@ -26,6 +26,8 @@ type User {
   dob: String
   username: String
   phone: String
+  description: String
+  avatar: String
   address: String
   socialMedia: [String]
   demographics: [UserGraphics]
@@ -241,6 +243,8 @@ input UserInput {
   name: String
   dob: String
   username: String
+  description: String
+  avatar: String
   phone: String
   address: String
   socialMedia: [String]

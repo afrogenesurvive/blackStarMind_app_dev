@@ -14,6 +14,8 @@ const userList = props => {
         username={user.username}
         email={user.email}
         dob={user.dob}
+        description={user.description}
+        avatar={user.avatar}
         address={user.address}
         phone={user.phone}
         socialMedia={user.socialMedia}
