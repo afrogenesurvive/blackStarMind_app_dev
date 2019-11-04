@@ -5,7 +5,6 @@ import Backdrop from '../components/Backdrop/Backdrop';
 import ThisUserProfile from '../components/Users/thisUserProfile';
 import Spinner from '../components/Spinner/Spinner';
 import AuthContext from '../context/auth-context';
-import ThisUserContext from '../context/thisUser-context';
 import './Users.css';
 
 class UsersPage extends Component {
@@ -16,7 +15,6 @@ class UsersPage extends Component {
   isActive = true;
 
   static contextType = AuthContext;
-  static contextType = ThisUserContext;
 
   constructor(props) {
     super(props);
