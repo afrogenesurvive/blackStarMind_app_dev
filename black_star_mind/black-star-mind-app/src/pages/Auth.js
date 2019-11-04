@@ -71,6 +71,7 @@ class AuthPage extends Component {
             resData.data.login.userId,
             resData.data.login.tokenExpiration
           );
+          sessionStorage.setItem('login info', this.context.login )
         }
       })
       .catch(err => {

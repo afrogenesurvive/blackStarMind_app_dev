@@ -24,6 +24,8 @@ class UsersPage extends Component {
     this.passwordElRef = React.createRef();
     this.nameElRef = React.createRef();
     this.usernameElRef = React.createRef();
+    this.descriptionElRef = React.createRef();
+    this.avatarElRef = React.createRef();
     this.dobElRef = React.createRef();
     this.phoneElRef = React.createRef();
     this.addressElRef =  React.createRef();
@@ -44,6 +46,8 @@ class UsersPage extends Component {
     const password = this.passwordElRef.current.value;
     const name = this.nameElRef.current.value;
     const username = this.usernameElRef.current.value;
+    const description = this.descriptionElRef.current.value;
+    const avatar = this.avatarElRef.current.value;
     const dob = this.dobElRef.current.value;
     const phone = this.phoneElRef.current.value;
     const address = this.addressElRef.current.value;
@@ -53,6 +57,8 @@ class UsersPage extends Component {
       password.trim().length === 0 ||
       name.trim().length === 0 ||
       username.trim().length === 0 ||
+      description.trim().length === 0 ||
+      avatar.trim().length === 0 ||
       dob.trim().length === 0 ||
       phone.trim().length === 0 ||
       address.trim().length === 0
@@ -60,18 +66,20 @@ class UsersPage extends Component {
       return;
     }
 
-    const user = { email, password, name, username, dob, phone, address };
+    const user = { email, password, name, username, description, avatar, dob, phone, address };
     console.log("creating user.. " + JSON.stringify(user));
 
     const requestBody = {
       query: `
-          mutation UpdateUser($email: String!, $password: String!, $name: String!, $username: String!, $dob: String!, $phone: String!, $address: String!) {
-            updateUser(userInput: {email: $email, password: $password, name: $name, username: $username, dob: $dob, phone: $phone, address: $address}) {
+          mutation UpdateUser($email: String!, $password: String!, $name: String!, $username: String!, $description: String!, $avatar: String!, $dob: String!, $phone: String!, $address: String!) {
+            updateUser(userInput: {email: $email, password: $password, name: $name, username: $username, description: $description, avatar: $avatar, dob: $dob, phone: $phone, address: $address}) {
               _id
               email
               password
               name
               username
+              description
+              avatar
               dob
               phone
               address
@@ -83,6 +91,8 @@ class UsersPage extends Component {
           password: password,
           name: name,
           username: username,
+          description: description,
+          avatar: avatar,
           dob: dob,
           phone: phone,
           address: address
@@ -130,6 +140,8 @@ class UsersPage extends Component {
               password
               name
               username
+              description
+              avatar
               dob
               phone
               address
@@ -158,6 +170,7 @@ class UsersPage extends Component {
           this.setState({ user: thisUser, isLoading: false });
           this.context.user = thisUser;
           console.log("thisUser context, user object.name ..." + this.context.user.name);
+          sessionStorage.setItem('thisUser', JSON.stringify(thisUser));
         }
         this.user = thisUser;
       })
@@ -187,37 +200,45 @@ class UsersPage extends Component {
             onConfirm={this.modalConfirmHandler}
             confirmText="Confirm"
           >
-            <form>
-              <div className="form-control">
-                <label htmlFor="email">Email</label>
-                <input type="text" id="title" ref={this.emailElRef} />
-              </div>
-              <div className="form-control">
-                <label htmlFor="password">Password</label>
-                <input type="password" id="password" ref={this.passwordElRef} />
-              </div>
-              <div className="form-control">
-                <label htmlFor="name">Name</label>
-                <input type="text" id="name" ref={this.nameElRef} />
-              </div>
-              <div className="form-control">
-                <label htmlFor="username">Username</label>
-                <input type="text" id="username" ref={this.usernameElRef} />
-              </div>
-              <div className="form-control">
-                <label htmlFor="address">Address</label>
-                <input type="text" id="address" ref={this.addressElRef} />
-              </div>
-              <div className="form-control">
-                <label htmlFor="phone">Phone</label>
-                <input type="number" id="phone" ref={this.phoneElRef} />
-              </div>
-              <div className="form-control">
-                <label htmlFor="date">Date of Birth</label>
-                <input type="datetime-local" id="date" ref={this.dobElRef} />
-              </div>
+          <form>
+            <div className="form-control">
+              <label htmlFor="email">Email</label>
+              <input type="text" id="title" ref={this.emailElRef} />
+            </div>
+            <div className="form-control">
+              <label htmlFor="password">Password</label>
+              <input type="password" id="password" ref={this.passwordElRef} />
+            </div>
+            <div className="form-control">
+              <label htmlFor="name">Name</label>
+              <input type="text" id="name" ref={this.nameElRef} />
+            </div>
+            <div className="form-control">
+              <label htmlFor="username">Username</label>
+              <input type="text" id="username" ref={this.usernameElRef} />
+            </div>
+            <div className="form-control">
+              <label htmlFor="description">Bio</label>
+              <input type="text" id="description" ref={this.descriptionElRef} />
+            </div>
+            <div className="form-control">
+              <label htmlFor="avatar">Avatar Link</label>
+              <input type="text" id="avatar" ref={this.avatarElRef} />
+            </div>
+            <div className="form-control">
+              <label htmlFor="address">Address</label>
+              <input type="text" id="address" ref={this.addressElRef} />
+            </div>
+            <div className="form-control">
+              <label htmlFor="phone">Phone</label>
+              <input type="number" id="phone" ref={this.phoneElRef} />
+            </div>
+            <div className="form-control">
+              <label htmlFor="date">Date of Birth</label>
+              <input type="datetime-local" id="date" ref={this.dobElRef} />
+            </div>
 
-            </form>
+          </form>
           </Modal>
         )}
 

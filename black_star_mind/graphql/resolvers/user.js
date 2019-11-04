@@ -268,6 +268,8 @@ module.exports = {
         name: args.userInput.name,
         dob: new Date(args.userInput.dob),
         username: args.userInput.username,
+        description: args.userInput.description,
+        avatar: args.userInput.avatar,
         phone: args.userInput.phone,
         address: args.userInput.address
       },{new: true}).populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches');
@@ -722,6 +724,8 @@ module.exports = {
         name: args.userInput.name,
         dob: new Date(args.userInput.dob),
         username: args.userInput.username,
+        description: args.userInput.description,
+        avatar: args.userInput.avatar,
         phone: args.userInput.phone,
         address: args.userInput.address,
         socialMedia: args.userInput.socialMedia,
@@ -746,6 +750,8 @@ module.exports = {
         name: result.name,
         dob: result.dob,
         username: result.username,
+        description: result.description,
+        avatar: result.avatar,
         phone: result.phone,
         address: result.address,
         socialMedia: result.socialMedia
