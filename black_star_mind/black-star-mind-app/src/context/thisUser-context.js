@@ -5,6 +5,7 @@ export default React.createContext({
     userId: null,
     username: null,
     email: null,
+    user: null,
     activity: null,
     prevAction1: null,
     prevAction2: null,

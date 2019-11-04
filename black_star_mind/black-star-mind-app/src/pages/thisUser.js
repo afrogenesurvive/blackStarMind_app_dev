@@ -26,7 +26,8 @@ class UsersPage extends Component {
     this.usernameElRef = React.createRef();
     this.dobElRef = React.createRef();
     this.phoneElRef = React.createRef();
-    this.addressElRef = React.createRef();
+    this.addressElRef =  React.createRef();
+    this.user = null;
   }
 
   componentDidMount() {
@@ -118,7 +119,6 @@ class UsersPage extends Component {
   };
 
   getThisUser() {
-    console.log("this user... " + this.context.userId, this.context.token);
 
     this.setState({ isLoading: true });
     const requestBody = {
@@ -153,12 +153,13 @@ class UsersPage extends Component {
         return res.json();
       })
       .then(resData => {
-        const thisUser = resData.data;
+        const thisUser = resData.data.getThisUser;
         if (this.isActive) {
-          this.setState({ user: thisUser.getThisUser, isLoading: false });
+          this.setState({ user: thisUser, isLoading: false });
+          this.context.user = thisUser;
+          console.log("thisUser context, user object.name ..." + this.context.user.name);
         }
-        console.log("this.state.user_id..." + this.state.user._id);
-        console.log("this.state.user.name..." + this.state.user.name);
+        this.user = thisUser;
       })
       .catch(err => {
         console.log(err);
@@ -233,7 +234,6 @@ class UsersPage extends Component {
         ) : (
           <ThisUserProfile
             user={this.state.user}
-            name={this.state.user.name}
             authUserId={this.context.userId}
           />
         )}
