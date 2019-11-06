@@ -4,6 +4,8 @@ import { NavLink } from 'react-router-dom';
 import AuthContext from '../../context/auth-context';
 import './MainNavigation.css';
 
+// call createAction on logout???
+
 const mainNavigation = props => (
   <AuthContext.Consumer>
     {context => {

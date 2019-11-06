@@ -34,6 +34,57 @@ class UsersPage extends Component {
     this.getThisUser();
   }
 
+  createAction(creatorId,type,body) {
+
+    console.log("'create actions function' context object... " + JSON.stringify(this.context));
+    console.log("args.creatorId..." + creatorId, "action type..." + type, "action body..." + body);
+    const userId = creatorId;
+    const token = this.context.token;
+
+    const requestBody = {
+      query: `
+          mutation createAction($userId: ID!, $type: String!, $body: String!) {
+            createAction(userId: $userId, actionInput: {type: $type, body: $body}) {
+              _id
+              creator
+              {_id,username}
+              body
+            }
+          }
+        `,
+        variables: {
+          userId: userId,
+          type: type,
+          body: body
+        }
+    };
+
+    fetch('http://localhost:5000/graphql', {
+      method: 'POST',
+      body: JSON.stringify(requestBody),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token
+      }
+    })
+      .then(res => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Failed!');
+        }
+        return res.json();
+      })
+      .then(resData => {
+
+        console.log("response data... " + JSON.stringify(resData));
+        this.context.action1 = null;
+
+          })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
+
   startCreateUserHandler = () => {
     this.setState({ creating: true });
   };
@@ -119,7 +170,8 @@ class UsersPage extends Component {
         this.context.action1 = JSON.stringify(requestBody);
         console.log("this context object..." + JSON.stringify(this.context));
         console.log("this context action1..." + this.context.action1);
-        // createAction function(creatorId,type,body);
+
+        this.createAction(this.context.id,"mutation",this.context.action1);
 
       })
       .catch(err => {
@@ -181,7 +233,8 @@ class UsersPage extends Component {
           this.context.action1 = JSON.stringify(requestBody);
           console.log("this context object..." + JSON.stringify(this.context));
           console.log("this context action1..." + this.context.action1);
-          // createAction function(creatorId,type,body);
+
+          this.createAction(this.context.userId,"mutation",this.context.action1);
 
         }
         this.user = thisUser;
