@@ -19,6 +19,7 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
       const actions = await Action.find()
       .populate('creator')
@@ -34,6 +35,7 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
       const action = await Action.findById(args.actionId).populate('creator');
         return {
@@ -53,6 +55,7 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
       const creator = await User.findById({_id: args.creatorId});
       console.log("content creator... " + creator);
@@ -78,6 +81,7 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
       const actions = await Action.find({type: args.type}).populate('creator');
       return actions.map(action => {
@@ -100,6 +104,7 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
       const actions = await Action.find({'body': args.body}).populate('creator');
       return actions.map(action => {
@@ -122,6 +127,7 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
       const action = await Action.findOneAndUpdate({_id:args.actionId},{
         type: args.actionInput.type,
@@ -145,6 +151,7 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("args..." + JSON.stringify(args));
     try {
       const action = await Action.findByIdAndRemove(args.actionId);
         return {
@@ -159,6 +166,8 @@ module.exports = {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    console.log("graphql creating action...");
+    console.log("args..." + JSON.stringify(args));
     try {
       const creator = await User.findById({_id:args.userId});
       const creatorId = creator.id
