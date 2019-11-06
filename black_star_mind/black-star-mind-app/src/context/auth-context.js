@@ -4,9 +4,8 @@ export default React.createContext({
     token: null,
     userId: null,
     user: null,
-    activity: [null],
-    prevAction1: null,
-    prevAction2: null,
+    action1: null,
+    action2: null,
     login: (token, userId, tokenExpiration) => {},
     logout: () => {}
 });

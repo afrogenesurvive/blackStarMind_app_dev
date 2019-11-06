@@ -34,19 +34,14 @@ class App extends Component {
               token: this.state.token,
               userId: this.state.userId,
               user: {},
-              activity: [],
-              prevAction1: null,
-              prevAction2: null,
+              action1: null,
+              action2: null,
               login: this.login,
               logout: this.logout
             }}
           >
           <ThisUserContext.Provider
             value={{
-              token: this.state.token,
-              userId: this.state.userId,
-              login: this.login,
-              logout: this.logout
             }}
           >
             <MainNavigation />

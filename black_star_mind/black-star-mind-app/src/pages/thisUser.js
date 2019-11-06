@@ -65,7 +65,7 @@ class UsersPage extends Component {
     }
 
     const user = { email, password, name, username, description, avatar, dob, phone, address };
-    console.log("creating user.. " + JSON.stringify(user));
+    console.log("updating user... " + JSON.stringify(user));
 
     const requestBody = {
       query: `
@@ -116,6 +116,11 @@ class UsersPage extends Component {
       .then(resData => {
         console.log("response data... " + JSON.stringify(resData));
 
+        this.context.action1 = JSON.stringify(requestBody);
+        console.log("this context object..." + JSON.stringify(this.context));
+        console.log("this context action1..." + this.context.action1);
+        // createAction function(creatorId,type,body);
+
       })
       .catch(err => {
         console.log(err);
@@ -165,10 +170,19 @@ class UsersPage extends Component {
       .then(resData => {
         const thisUser = resData.data.getThisUser;
         if (this.isActive) {
+
           this.setState({ user: thisUser, isLoading: false });
+
           this.context.user = thisUser;
           console.log("thisUser context, user object.name ..." + this.context.user.name);
+
           sessionStorage.setItem('thisUser', JSON.stringify(thisUser));
+
+          this.context.action1 = JSON.stringify(requestBody);
+          console.log("this context object..." + JSON.stringify(this.context));
+          console.log("this context action1..." + this.context.action1);
+          // createAction function(creatorId,type,body);
+
         }
         this.user = thisUser;
       })

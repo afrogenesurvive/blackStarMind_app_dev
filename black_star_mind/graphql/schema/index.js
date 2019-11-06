@@ -171,37 +171,11 @@ type Content {
   downvotes: Votes
 }
 
-type ActionSubtype {
-  key: String
-  value: String
-}
-
- type ActionData {
-  key01: String,
-  value01: String,
-  key02: String,
-  value02: String,
-  key03: String,
-  value03: [String]
-}
-
-type TargetRef {
-  _id: String!
-  username: String
-  name: String
-  title: String
-}
-
 type Action {
   _id: ID!
-  type: String
-  subtype: ActionSubtype
-  target: TargetRef
   creator: User
-  users: [User]
-  description: String
-  data: [ActionData]
-  tags: [String]
+  type: String
+  body: String
 }
 
 type SearchResponse {
@@ -368,35 +342,10 @@ input ContentInput {
   downvotes: String
 }
 
-input TargetRefInput {
-  _id: String!
-  user: String
-  name: String
-  title: String
-}
-
-input ActionSubtypeInput {
-  key: String!
-  value: String!
-}
-
-input ActionDataInput {
-  key01: String,
-  value01: String,
-  key02: String,
-  value02: String,
-  key03: String,
-  value03: [String]
-}
-
 input ActionInput {
-  type: String
-  subtype: ActionSubtypeInput
-  target: TargetRefInput
   creator: String
-  users: [String]
-  description: String
-  data: [ActionDataInput]
+  type: String
+  body: String
 }
 
 input SearchQueryInput {
@@ -476,8 +425,7 @@ type RootQuery {
     getActionId(userId: ID!, actionId: ID!): Action
     getActionCreator(userId: ID!, creatorId: ID!): [Action]
     getActionType(userId: ID!, type: String!): [Action]
-    getActionTargetTitle(userId: ID!, targetRefInput: TargetRefInput!): [Action]
-    getActionUser(userId: ID!, actionUserId: ID!): [Action]
+    getActionBody(userId: ID!, body: String!): [Action]
     getActionTag(userId: ID!, tag: String!): [Action]
 
     login(email: String!, password: String!): AuthData!
@@ -547,11 +495,6 @@ type RootMutation {
 
     createAction(userId: ID!, actionInput: ActionInput!): Action
     updateAction(userId: ID!, actionId: ID!, actionInput: ActionInput!): Action
-    updateActionSubtype(userId: ID!, actionId: ID!, actionSubtypeInput: ActionSubtypeInput!): Action
-    updateActionTarget(userId: ID!, actionId: ID!, contentId: ID!): Action
-    updateActionUser(userId: ID!, actionId: ID!, actionUserId: [ID!]): Action
-    updateActionData(userId: ID!, actionId: ID!, actionDataInput: [ActionDataInput!]): Action
-    updateActionTag(userId: ID!, actionId: ID!, tags:[String!]): Action
     deleteAction(userId: ID!, actionId: ID!): Action
 
     createSearch(userID: ID!, searchInput: SearchInput!): Search

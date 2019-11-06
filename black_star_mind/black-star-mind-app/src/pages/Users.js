@@ -129,6 +129,12 @@ class UsersPage extends Component {
             phone: resData.data.createUser.phone,
             address: resData.data.createUser.address,
           });
+
+          this.context.action1 = JSON.stringify(requestBody);
+          console.log("this context object..." + JSON.stringify(this.context));
+          console.log("this context action1..." + this.context.action1);
+          // createAction function(creatorId,type,body);
+
           return { users: updatedUsers };
         });
       })
@@ -186,11 +192,10 @@ class UsersPage extends Component {
         const users = resData.data.users;
         console.log(users);
 
-        console.log("req body for log..." + JSON.stringify(requestBody));
-        this.context.activity.push(JSON.stringify(requestBody));
+        this.context.action1 = JSON.stringify(requestBody);
         console.log("this context object..." + JSON.stringify(this.context));
-        console.log("this context user object..." + JSON.stringify(this.context.user));
-        console.log("this context activity..." + this.context.activity);
+        console.log("this context action1..." + this.context.action1);
+        // createAction function(creatorId,type,body);
 
         if (this.isActive) {
           this.setState({ users: users, isLoading: false });

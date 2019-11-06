@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import './Auth.css';
 import AuthContext from '../context/auth-context';
-import ThisUserContext from '../context/thisUser-context';
+// import ThisUserContext from '../context/thisUser-context';
 
 class AuthPage extends Component {
   // state = {
@@ -10,7 +10,7 @@ class AuthPage extends Component {
   // };
 
   static contextType = AuthContext;
-  static contextType = ThisUserContext;
+  // static contextType = ThisUserContext;
 
   constructor(props) {
     super(props);
@@ -71,7 +71,14 @@ class AuthPage extends Component {
             resData.data.login.userId,
             resData.data.login.tokenExpiration
           );
+
           sessionStorage.setItem('login info', this.context.login )
+
+          this.context.action1 = JSON.stringify(requestBody);
+          console.log("this context object..." + JSON.stringify(this.context));
+          console.log("this context action1..." + this.context.action1);
+          // createAction function(creatorId,type,body);
+
         }
       })
       .catch(err => {
