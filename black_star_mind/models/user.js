@@ -74,10 +74,10 @@ const userSchema = new Schema({
             ref: 'User'
     }
   ],
-  chats: [
+  messages: [
     {
       type: Schema.Types.ObjectId,
-            ref: 'Chat'
+            ref: 'Message'
     }
   ],
   groups: [

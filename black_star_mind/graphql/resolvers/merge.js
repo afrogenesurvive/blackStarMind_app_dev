@@ -6,7 +6,7 @@ const Perk = require('../../models/perk');
 const Content = require('../../models/content');
 const Action = require('../../models/action');
 const Search = require('../../models/search');
-const Chat = require('../../models/chat');
+const Message = require('../../models/message');
 
 const { dateToString } = require('../../helpers/date');
 
@@ -25,8 +25,8 @@ const actionLoader = new DataLoader(actionIds => {
 const perkLoader = new DataLoader(perkIds => {
   return perks(perkIds);
 });
-const chartLoader = new DataLoader(chartIds => {
-  return charts(chartIds);
+const messageLoader = new DataLoader(messageIds => {
+  return messages(messageIds);
 });
 const searchLoader = new DataLoader(searchIds => {
   return searches(searchIds);
@@ -111,16 +111,16 @@ const perks = async perkIds => {
     throw err;
   }
 };
-const chats = async chatIds => {
+const messages = async messageIds => {
   try {
-    const chats = await Chat.find({ _id: { $in: chatIds } });
-    chats.sort((a, b) => {
+    const messages = await Message.find({ _id: { $in: messageIds } });
+    messages.sort((a, b) => {
       return (
-        chatIds.indexOf(a._id.toString()) - chatIds.indexOf(b._id.toString())
+        messageIds.indexOf(a._id.toString()) - messageIds.indexOf(b._id.toString())
       );
     });
-    return chats.map(chat => {
-      return transformChat(chat);
+    return messages.map(message => {
+      return transformMessage(message);
     });
   } catch (err) {
     throw err;
@@ -182,10 +182,10 @@ const singlePerk = async perkId => {
     throw err;
   }
 };
-const singleChat = async chatId => {
+const singleMessage = async messageId => {
   try {
-    const chat = await chatLoader.load(chatId.toString());
-    return chat;
+    const message = await chatLoader.load(messageId.toString());
+    return message;
   } catch (err) {
     throw err;
   }
@@ -250,11 +250,9 @@ const transformAction = action => {
   return {
     ...action._doc,
     _id: action.id,
-    title: action.title,
-    domain: action.domain,
-    category: action.category,
     creator: action.creator,
-    description: action.description
+    type: action.type,
+    body: action.body
   };
 };
 const transformPerk = perk => {
@@ -272,17 +270,17 @@ const transformPerk = perk => {
     tags: perk.tags
   };
 };
-const transformChat = chat => {
+const transformMessage = message => {
   return {
-    ...chat._doc,
-    _id: chat.id,
-    title: perk.title,
-    date: perk.date,
-    type: perk.type,
-    sender: perk.sender,
-    receiver: perk.receiver,
-    message: perk.message,
-    tags: perk.tags
+    ...message._doc,
+    _id: message.id,
+    title: message.title,
+    date: message.date,
+    type: message.type,
+    sender: message.sender,
+    receiver: message.receiver,
+    body: message.body,
+    tags: message.tags
   };
 };
 const transformSearch = search => {
@@ -303,5 +301,5 @@ exports.transformContent = transformContent;
 exports.transformGroup = transformGroup;
 exports.transformAction = transformAction;
 exports.transformPerk = transformPerk;
-exports.transformChat = transformChat;
+exports.transformMessage = transformMessage;
 exports.transformSearch = transformSearch;
