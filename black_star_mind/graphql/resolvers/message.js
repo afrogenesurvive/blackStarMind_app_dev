@@ -14,6 +14,13 @@ const { transformMessage} = require('./merge');
 const { dateToString } = require('../../helpers/date');
 const { pocketVariables } = require('../../helpers/pocketVars');
 
+const { PubSub } = require ('graphql-subscriptions');
+const pubsub = new PubSub();
+// export const pubsub = new PubSub();
+
+console.log("message resolver pubsub instance" + JSON.stringify(pubsub));
+const MESSAGE_SENT = 'sentMessage';
+
 module.exports = {
   messages: async (args,req) => {
     // if (!req.isAuth) {
@@ -88,8 +95,10 @@ module.exports = {
 
       const result = await message.save();
 
-      const messageToReceiver = await User.findOneAndUpdate({_id:args.receiverId},{$addToSet: {'messages.received':message}},{new: true})
+      const messageToReceiver = await User.findOneAndUpdate({_id:args.receiverId},{$addToSet: {messages: message}},{new: true})
       console.log("messageToReceiver..." + messageToReceiver);
+
+      pubsub.publish(MESSAGE_SENT, { messageSent: message });  // publish to a topic
 
       return {
         ...message._doc,
@@ -102,8 +111,14 @@ module.exports = {
         body: message.body,
         tags: message.tags
       };
+
+
     } catch (err) {
       throw err;
     }
   },
+  messageSent: {  // create a channelAdded subscription resolver function.
+
+      subscribe: () => pubsub.asyncIterator(MESSAGE_SENT)  // subscribe to changes in a topic
+    }
 };

@@ -510,6 +510,7 @@ type RootMutation {
 type RootSubscription {
 
   messageSent: Message
+  messageReceived: Message
 
 }
 

@@ -1,6 +1,7 @@
 const pocketVariables = {
     token: null,
     userId: null,
-    isAuth: null
+    isAuth: null,
+    pubsub: null
 }
 exports.pocketVariables = pocketVariables;
