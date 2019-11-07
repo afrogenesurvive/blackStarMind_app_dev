@@ -3,7 +3,7 @@ const userResolver = require('./user');
 const groupResolver = require('./group');
 const contentResolver = require('./content');
 const perkResolver = require('./perk');
-const chatResolver = require('./chat');
+const messageResolver = require('./message');
 const actionResolver = require('./action');
 const searchResolver = require('./search');
 
@@ -14,7 +14,7 @@ const rootResolver = {
   ...groupResolver,
   ...contentResolver,
   ...perkResolver,
-  ...chatResolver,
+  ...messageResolver,
   ...actionResolver,
   ...searchResolver
 };

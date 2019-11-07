@@ -12,7 +12,7 @@ const Perk = require('../../models/perk');
 const Content = require('../../models/content');
 const Action = require('../../models/action');
 const Search = require('../../models/search');
-const Chat = require('../../models/chat');
+const Message = require('../../models/message');
 
 const util = require('util')
 
@@ -22,7 +22,7 @@ const { pocketVariables } = require('../../helpers/pocketVars');
 
 module.exports = {
   users: async (args, auth, req) => {
-    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + JSON.stringify(req));
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
 
     let decodedToken;
     try {
@@ -46,7 +46,14 @@ module.exports = {
     // action data for mutation here: userId + username --> user object from mongo,type:"get",subType{key:"query",value:get "all users"},
 
     try {
-      const users = await User.find().populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches');
+      const users = await User.find()
+      .populate('friends')
+      .populate('groups')
+      .populate('content')
+      .populate('perks')
+      .populate('actions')
+      .populate('messages')
+      .populate('searches');
       return users.map(user => {
         return transformUser(user);
       });

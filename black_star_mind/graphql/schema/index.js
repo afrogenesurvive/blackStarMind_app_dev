@@ -37,7 +37,7 @@ type User {
   actions: [Action]
   content: [Content]
   friends: [User]
-  chats: [Chat]
+  messages: [Message]
   groups: [Group]
   searches: [Search]
   perks: [Perk]
@@ -49,13 +49,14 @@ type AuthData {
   tokenExpiration: Int!
 }
 
-type Chat {
+type Message {
+  _id: ID!
   title: String
   date: String
   type: String
   sender: User
   receiver: User
-  message: String
+  body: String
   tags: [String]
 }
 
@@ -234,13 +235,13 @@ input UserInput {
   perks: [String]
 }
 
-input ChatInput {
+input MessageInput {
   title: String
   date: String
   type: String
   sender: String
   receiver: String
-  message: String
+  body: String
   tags: [String]
 }
 
@@ -382,8 +383,8 @@ type RootQuery {
     getUserSearchType(userId: ID!, searchType: String!): [User]
     getThisUser: User
 
-    chats(userId: ID!): [Chat]
-    getChatId(userId: ID!, chatId: ID!): Chat
+    messages(userId: ID!): [Message]
+    getMessageId(userId: ID!, chatId: ID!): Message
 
     groups(userId: ID!): [Group]
     getGroupId(userId: ID!, groupId: ID!): Group
@@ -456,8 +457,8 @@ type RootMutation {
     updateUserSearch(userId: ID!, searchId: [ID!]): User
     deleteUser(userId: ID!): User
 
-    createChat(userId: ID!, receiverId: ID!, chatInput: ChatInput!): Chat
-    deleteChat(userId: ID!, receiverId: ID!): Chat
+    sendMessage(userId: ID!, receiverId: ID!, messageInput: MessageInput!): Message
+    deleteMessage(userId: ID!, messageId: ID!): Message
 
     createGroup(userId: ID!, groupInput: GroupInput!): Group
     updateGroup(userId: ID!, groupId: ID, groupInput: GroupInput!): Group
@@ -508,7 +509,7 @@ type RootMutation {
 
 type RootSubscription {
 
-  messageSent: Chat
+  messageSent: Message
 
 }
 
