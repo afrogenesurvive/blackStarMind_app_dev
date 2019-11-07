@@ -486,7 +486,6 @@ module.exports = {
           users: content.users,
           data: content.data,
           comments: content.comments,
-          actions: content.actions,
           upvotes: content.upvotes,
           downvotes: content.downvotes,
           tags: content.tags
@@ -524,53 +523,9 @@ module.exports = {
           users: content.users,
           data: content.data,
           comments: content.comments,
-          actions: content.actions,
           upvotes: content.upvotes,
           downvotes: content.downvotes,
           tags: content.tags
-        };
-    } catch (err) {
-      throw err;
-    }
-  },
-  updateContentAction: async (args, req) => {
-    if (!req.isAuth) {
-      throw new Error('Unauthenticated!');
-    }
-    console.log("args..." + JSON.stringify(args));
-    try {
-      const owner = await Content.findById({_id:args.contentId});
-      console.log("owner..." + owner);
-      if (owner.creator._id != req.userId ) {
-        throw new Error('Not the creator! No edit permission');
-      }
-      const contentAction = await Action.findById({_id:args.actionId});
-      const contentActionId = contentAction.id
-      console.log("contentAction... " + contentAction);
-      console.log("contentActionId... " + contentActionId);
-
-      const content= await Content.findOneAndUpdate({_id:args.contentId},{$addToSet: {actions:contentAction}},{new: true})
-      .populate('creator')
-      .populate('users')
-      .populate('perks')
-      .populate('actions')
-      .populate('comments.user')
-
-        return {
-          ...content._doc,
-          _id: content.id,
-          title: content.title,
-          domain: content.domain,
-          category: content.category,
-          creator: content.creator,
-          users: content.users,
-          data: content.data,
-          comments: content.comments,
-          actions: content.actions,
-          upvotes: content.upvotes,
-          downvotes: content.downvotes,
-          tags: content.tags,
-          actions: content.actions
         };
     } catch (err) {
       throw err;
@@ -610,7 +565,6 @@ module.exports = {
           users: content.users,
           data: content.data,
           comments: content.comments,
-          actions: content.actions,
           upvotes: content.upvotes,
           downvotes: content.downvotes,
           tags: content.tags,
@@ -651,7 +605,6 @@ module.exports = {
           users: content.users,
           data: content.data,
           comments: content.comments,
-          actions: content.actions,
           upvotes: content.upvotes,
           downvotes: content.downvotes,
           tags: content.tags
@@ -694,7 +647,6 @@ module.exports = {
           users: content.users,
           data: content.data,
           comments: content.comments,
-          actions: content.actions,
           upvotes: content.upvotes,
           downvotes: content.downvotes,
           tags: content.tags
@@ -737,7 +689,6 @@ module.exports = {
           users: content.users,
           data: content.data,
           comments: content.comments,
-          actions: content.actions,
           upvotes: content.upvotes,
           downvotes: content.downvotes,
           tags: content.tags
@@ -774,7 +725,6 @@ module.exports = {
           users: content.users,
           data: content.data,
           comments: content.comments,
-          actions: content.actions,
           upvotes: content.upvotes,
           downvotes: content.downvotes,
           tags: content.tags

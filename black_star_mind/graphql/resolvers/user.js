@@ -14,16 +14,35 @@ const Action = require('../../models/action');
 const Search = require('../../models/search');
 const Chat = require('../../models/chat');
 
+const util = require('util')
+
 const { transformUser } = require('./merge');
 const { dateToString } = require('../../helpers/date');
 const { pocketVariables } = require('../../helpers/pocketVars');
 
 module.exports = {
-  users: async (args, req) => {
-    console.log(JSON.stringify(args));
-    if (!req.isAuth) {
+  users: async (args, auth, req) => {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + JSON.stringify(req));
+
+    let decodedToken;
+    try {
+      decodedToken = jwt.verify(pocketVariables.token, '5CleanStream');
+      pocketVariables.isAuth = true;
+      console.log("pocketVariables.isAuth..." + pocketVariables.isAuth);
+    } catch (err) {
+      console.log(err);
+      pocketVariables.isAuth = false;
+    }
+    if (!decodedToken) {
+      pocketVariables.isAuth = false;
+      console.log("no decodedToken..." + JSON.stringify(pocketVariables));
+    }
+    if (!pocketVariables.isAuth) {
       throw new Error('Unauthenticated!');
     }
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     // action data for mutation here: userId + username --> user object from mongo,type:"get",subType{key:"query",value:get "all users"},
 
     try {
