@@ -4,13 +4,18 @@ const graphqlHttp = require('express-graphql');
 const graphQlSchema = require('./graphql/schema/index');
 const graphQlResolvers = require('./graphql/resolvers/index');
 
+const { pocketVariables } = require('./helpers/pocketVars');
+
 const mongoose = require('mongoose');
 const mongodb = require('mongodb');
 // const session = require('express-session');
 // const MongoStore = require('connect-mongo')(session);
-
 // const sessionStore = require('./middleware/sessionStore');
 const isAuth = require('./middleware/is-auth');
+
+const { execute, subscribe } = require('graphql');
+const { createServer } = require('http');
+const { SubscriptionServer } = require('subscriptions-transport-ws');
 
 const app = express();
 
@@ -25,6 +30,22 @@ app.use((req, res, next) => {
     return res.sendStatus(200);
   }
   next();
+});
+
+const PORT = 9000;
+const ws = createServer(app);
+ws.listen(PORT, () => {
+  console.log(`GraphQL Server is now running on http://localhost:${PORT}`);
+
+  // Set up the WebSocket for handling GraphQL subscriptions.
+  new SubscriptionServer({
+    execute,
+    subscribe,
+    schema: graphQlSchema
+  }, {
+    server: ws,
+    path: '/subscriptions',
+  });
 });
 
 // app.use(session ({
@@ -52,6 +73,11 @@ app.use(
     graphiql: true
   })
 );
+
+app.use('/graphiql', graphqlHttp({
+  endpointURL: '/graphql',
+  subscriptionsEndpoint: `ws://localhost:${PORT}/subscriptions` // subscriptions endpoint.
+}));
 
 mongoose.connect(process.env.MONGO_URI,{useNewUrlParser: true, useUnifiedTopology: true})
   .then(() => {
