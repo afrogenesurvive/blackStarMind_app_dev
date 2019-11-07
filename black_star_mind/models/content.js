@@ -57,12 +57,6 @@ const contentSchema = new Schema({
       value10: String
     }
   ],
-  actions: [
-    {
-      type: Schema.Types.ObjectId,
-          ref: 'Action'
-    }
-  ],
   perks: [
     {
       type: Schema.Types.ObjectId,

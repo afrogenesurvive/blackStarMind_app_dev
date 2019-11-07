@@ -6,7 +6,6 @@ import UsersPage from './pages/Users';
 import ThisUserPage from './pages/thisUser';
 import MainNavigation from './components/Navigation/MainNavigation';
 import AuthContext from './context/auth-context';
-import ThisUserContext from './context/thisUser-context';
 
 import './App.css';
 
@@ -40,10 +39,6 @@ class App extends Component {
               logout: this.logout
             }}
           >
-          <ThisUserContext.Provider
-            value={{
-            }}
-          >
             <MainNavigation />
             <main className="main-content">
               <Switch>
@@ -61,7 +56,6 @@ class App extends Component {
                 {!this.state.token && <Redirect to="/auth" exact />}
               </Switch>
             </main>
-          </ThisUserContext.Provider>
           </AuthContext.Provider>
         </React.Fragment>
       </BrowserRouter>

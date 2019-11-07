@@ -375,7 +375,7 @@ type RootQuery {
     getUserEmail(userId: ID!, email: String!): User
     getUserDob(userId: ID!, dob: String!): User
     getUserGroup(userId: ID!, userGroupId: ID!): [User]
-    getUserActionType(userId: ID!, actionType: String!): [User]
+    getUserActionType(userId: ID!, actionId: ID!): [User]
     getUserFriend(userId: ID!, friendId: ID!): [User]
     getUserContent(userId: ID!, contentId: ID!): [User]
     getUserPerk(userId: ID!, perkId: ID!): [User]
@@ -475,7 +475,6 @@ type RootMutation {
     updateContent(userId: ID!, contentId: ID!, contentInput: ContentInput!): Content
     updateContentUser(userId: ID!, contentId: ID!, contentUserId: [ID!]): Content
     updateContentData(userId: ID!, contentId: ID!, contentDataInput: [ContentDataInput!]): Content
-    updateContentAction(userId: ID!, contentId: ID!, actionId: [ID!]): Content
     updateContentPerk(userId: ID!, contentId: ID!, perkId: [ID!]): Content
     updateContentComment(userId: ID!, contentId: ID!, comment: String!): Content
     updateContentUpvotes(userId: ID!, contentId: ID!): Content
