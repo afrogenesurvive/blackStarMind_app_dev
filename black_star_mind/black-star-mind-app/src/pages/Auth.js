@@ -125,7 +125,6 @@ class AuthPage extends Component {
             resData.data.login.tokenExpiration
           );
 
-
           sessionStorage.setItem('login info', JSON.stringify({token: resData.data.login.token, userId: resData.data.login.userId, tokenExpiration: resData.data.login.tokenExpiration}) )
 
           this.context.action1 = JSON.stringify(requestBody);

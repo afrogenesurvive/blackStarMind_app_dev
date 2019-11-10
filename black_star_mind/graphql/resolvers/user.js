@@ -20,24 +20,37 @@ const { transformUser } = require('./merge');
 const { dateToString } = require('../../helpers/date');
 const { pocketVariables } = require('../../helpers/pocketVars');
 
+
+function isAuth () {
+
+  let decodedToken;
+  try {
+    decodedToken = jwt.verify(pocketVariables.token, '5CleanStream');
+    pocketVariables.isAuth = true;
+    pocketVariables.userId = decodedToken.userId;
+    console.log("pocketVariables.isAuth..." + pocketVariables.isAuth);
+    console.log("pocketVariables.userId..." + pocketVariables.userId);
+  } catch (err) {
+    console.log(err);
+    pocketVariables.isAuth = false;
+  }
+  if (!decodedToken) {
+    pocketVariables.isAuth = false;
+    console.log("no decodedToken..." + JSON.stringify(pocketVariables));
+  }
+  if (!pocketVariables.isAuth) {
+    throw new Error('Unauthenticated!');
+  }
+
+}
+
 module.exports = {
   users: async (args, auth, req) => {
     console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
 
-    let decodedToken;
-    try {
-      decodedToken = jwt.verify(pocketVariables.token, '5CleanStream');
-      pocketVariables.isAuth = true;
-      console.log("pocketVariables.isAuth..." + pocketVariables.isAuth);
-    } catch (err) {
-      console.log(err);
-      pocketVariables.isAuth = false;
-    }
-    if (!decodedToken) {
-      pocketVariables.isAuth = false;
-      console.log("no decodedToken..." + JSON.stringify(pocketVariables));
-    }
-    if (!pocketVariables.isAuth) {
+    isAuth();
+
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
     // if (!req.isAuth) {
@@ -62,11 +75,19 @@ module.exports = {
     }
   },
   getThisUser: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
-      const user = await User.findById(req.userId).populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches');
+      const user = await User.findById(pocketVariables.userId).populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches');
         return {
             ...user._doc,
             _id: user.id,
@@ -78,9 +99,16 @@ module.exports = {
     }
   },
   getUserId: async (args, req) => {
-    if (!req.isAuth) {
+
+    isAuth();
+
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const user = await User.findById(args.otherUserId).populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches');
         return {
@@ -94,9 +122,16 @@ module.exports = {
     }
   },
   getUserUsername: async (args, req) => {
-    if (!req.isAuth) {
+
+    isAuth();
+
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const user = await User.findOne({username: args.username}).populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches');
         return {
@@ -110,9 +145,16 @@ module.exports = {
     }
   },
   getUserEmail: async (args, req) => {
-    if (!req.isAuth) {
+
+    isAuth();
+
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const user = await User.findOne({email: args.email}).populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches')
         return {
@@ -127,9 +169,16 @@ module.exports = {
     }
   },
   getUserFriend: async (args, req) => {
-    if (!req.isAuth) {
+
+    isAuth();
+
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const userFriendObj = await User.findById(args.friendId)
 
@@ -152,9 +201,16 @@ module.exports = {
     }
   },
   getUserGroup: async (args, req) => {
-    if (!req.isAuth) {
+
+    isAuth();
+
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const userGroupObj = await Group.findById(args.userGroupId)
 
@@ -177,9 +233,16 @@ module.exports = {
     }
   },
   getUserContent: async (args, req) => {
-    if (!req.isAuth) {
+
+    isAuth();
+
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const userContentObj = await Content.findById(args.contentId)
 
@@ -202,9 +265,16 @@ module.exports = {
     }
   },
   getUserPerk: async (args, req) => {
-    if (!req.isAuth) {
+
+    isAuth();
+
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const userPerkObj = await Perk.findById(args.perkId)
       console.log("user perk object... " + userPerkObj);
@@ -228,9 +298,16 @@ module.exports = {
     }
   },
   getUserActionType: async (args, req) => {
-    if (!req.isAuth) {
+
+    isAuth();
+
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const users = await User.find({'actions.type': args.actionType}).populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches');
       return users.map(user => {
@@ -251,9 +328,16 @@ module.exports = {
     }
   },
   getUserSearchType: async (args, req) => {
-    if (!req.isAuth) {
+
+    isAuth();
+
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const users = await User.find({'searches.type': args.searchType}).populate('friends').populate('groups').populate('content').populate('perks').populate('actions').populate('searches');
       return users.map(user => {
@@ -274,15 +358,22 @@ module.exports = {
     }
   },
   updateUser: async (args, req) => {
-    if (!req.isAuth) {
+
+    isAuth();
+
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
 
       const owner = await User.findById({_id:args.userId});
-      console.log("request user... " + req.userId);
+      console.log("request user... " + pocketVariables.userId);
       console.log("owner... " + owner._id)
-      if (owner._id != req.userId ) {
+      if (owner._id != pocketVariables.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       else {
@@ -313,14 +404,21 @@ module.exports = {
     }
   },
   updateUserSocial: async (args, req) => {
-    if (!req.isAuth) {
+
+    isAuth();
+
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const owner = await User.findById({_id:args.userId});
-      console.log("request user... " + req.userId);
+      console.log("request user... " + pocketVariables.userId);
       console.log("owner... " + owner._id)
-      if (owner._id != req.userId ) {
+      if (owner._id != pocketVariables.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       else {
@@ -340,14 +438,21 @@ module.exports = {
     }
   },
   updateUserDemographics: async (args, req) => {
-    if (!req.isAuth) {
+
+    isAuth();
+
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const owner = await User.findById({_id:args.userId});
-      console.log("request user... " + req.userId);
+      console.log("request user... " + pocketVariables.userId);
       console.log("owner... " + owner._id)
-      if (owner._id != req.userId ) {
+      if (owner._id != pocketVariables.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       else {
@@ -369,15 +474,22 @@ module.exports = {
     }
   },
   updateUserBiographics: async (args, req) => {
-    if (!req.isAuth) {
+
+    isAuth();
+
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
 
       const owner = await User.findById({_id:args.userId});
-      console.log("request user... " + req.userId);
+      console.log("request user... " + pocketVariables.userId);
       console.log("owner... " + owner._id)
-      if (owner._id != req.userId ) {
+      if (owner._id != pocketVariables.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       else {
@@ -399,15 +511,22 @@ module.exports = {
     }
   },
   updateUserPsychographics: async (args, req) => {
-    if (!req.isAuth) {
+
+    isAuth();
+
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
 
       const owner = await User.findById({_id:args.userId});
-      console.log("request user... " + req.userId);
+      console.log("request user... " + pocketVariables.userId);
       console.log("owner... " + owner._id)
-      if (owner._id != req.userId ) {
+      if (owner._id != pocketVariables.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       else {
@@ -429,15 +548,22 @@ module.exports = {
     }
   },
   updateUserConsumption: async (args, req) => {
-    if (!req.isAuth) {
+
+    isAuth();
+
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
 
       const owner = await User.findById({_id:args.userId});
-      console.log("request user... " + req.userId);
+      console.log("request user... " + pocketVariables.userId);
       console.log("owner... " + owner._id)
-      if (owner._id != req.userId ) {
+      if (owner._id != pocketVariables.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       else {
@@ -457,14 +583,21 @@ module.exports = {
     }
   },
   updateUserGroup: async (args, req) => {
-    if (!req.isAuth) {
+
+    isAuth();
+
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const owner = await User.findById({_id:args.userId});
-      console.log("request user... " + req.userId);
+      console.log("request user... " + pocketVariables.userId);
       console.log("owner... " + owner._id)
-      if (owner._id != req.userId ) {
+      if (owner._id != pocketVariables.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       else {
@@ -496,15 +629,22 @@ module.exports = {
     }
   },
   updateUserFriend: async (args, req) => {
-    if (!req.isAuth) {
+
+    isAuth();
+
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
 
       const owner = await User.findById({_id:args.userId});
-      console.log("request user... " + req.userId);
+      console.log("request user... " + pocketVariables.userId);
       console.log("owner... " + owner._id)
-      if (owner._id != req.userId ) {
+      if (owner._id != pocketVariables.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       else {
@@ -537,15 +677,22 @@ module.exports = {
     }
   },
   updateUserContent: async (args, req) => {
-    if (!req.isAuth) {
+
+    isAuth();
+
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
 
       const owner = await User.findById({_id:args.userId});
-      console.log("request user... " + req.userId);
+      console.log("request user... " + pocketVariables.userId);
       console.log("owner... " + owner._id)
-      if (owner._id != req.userId ) {
+      if (owner._id != pocketVariables.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       else {
@@ -583,16 +730,23 @@ module.exports = {
     }
   },
   updateUserAction: async (args, req) => {
-    if (!req.isAuth) {
+
+    isAuth();
+
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
 
       //check for admin
       // const owner = await User.findById({_id:args.userId});
-      // console.log("request user... " + req.userId);
+      // console.log("request user... " + pocketVariables.userId);
       // console.log("owner... " + owner._id)
-      // if (owner._id != req.userId ) {
+      // if (owner._id != pocketVariables.userId ) {
       //   throw new Error('Not the creator! No edit permission');
       // }
       // else {
@@ -624,16 +778,23 @@ module.exports = {
     }
   },
   updateUserPerk: async (args, req) => {
-    if (!req.isAuth) {
+
+    isAuth();
+
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
 
       //check for admin
       // const owner = await User.findById({_id:args.userId});
-      // console.log("request user... " + req.userId);
+      // console.log("request user... " + pocketVariables.userId);
       // console.log("owner... " + owner._id)
-      // if (owner._id != req.userId ) {
+      // if (owner._id != pocketVariables.userId ) {
       //   throw new Error('Not the creator! No edit permission');
       // }
       // else {
@@ -666,16 +827,23 @@ module.exports = {
     }
   },
   updateUserSearch: async (args, req) => {
-    if (!req.isAuth) {
+
+    isAuth();
+
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
 
       //check for admin
       // const owner = await User.findById({_id:args.userId});
-      // console.log("request user... " + req.userId);
+      // console.log("request user... " + pocketVariables.userId);
       // console.log("owner... " + owner._id)
-      // if (owner._id != req.userId ) {
+      // if (owner._id != pocketVariables.userId ) {
       //   throw new Error('Not the creator! No edit permission');
       // }
       // else {
@@ -707,15 +875,22 @@ module.exports = {
     }
   },
   deleteUser: async (args, req) => {
-    if (!req.isAuth) {
+
+    isAuth();
+
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
 
       const owner = await User.findById({_id:args.userId});
-      console.log("request user... " + req.userId);
+      console.log("request user... " + pocketVariables.userId);
       console.log("owner... " + owner._id)
-      if (owner._id != req.userId ) {
+      if (owner._id != pocketVariables.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       else {

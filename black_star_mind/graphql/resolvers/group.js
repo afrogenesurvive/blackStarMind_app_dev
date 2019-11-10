@@ -15,12 +15,43 @@ const Message = require('../../models/message');
 
 const { transformGroup } = require('./merge');
 const { dateToString } = require('../../helpers/date');
+const { pocketVariables } = require('../../helpers/pocketVars');
+const util = require('util');
+
+function isAuth () {
+
+  let decodedToken;
+  try {
+    decodedToken = jwt.verify(pocketVariables.token, '5CleanStream');
+    pocketVariables.isAuth = true;
+    pocketVariables.userId = decodedToken.userId;
+    console.log("pocketVariables.userId..." + pocketVariables.userId);
+    console.log("pocketVariables.isAuth..." + pocketVariables.isAuth);
+  } catch (err) {
+    console.log(err);
+    pocketVariables.isAuth = false;
+  }
+  if (!decodedToken) {
+    pocketVariables.isAuth = false;
+    console.log("no decodedToken..." + JSON.stringify(pocketVariables));
+  }
+  if (!pocketVariables.isAuth) {
+    throw new Error('Unauthenticated!');
+  }
+
+}
 
 module.exports = {
   groups: async (args,req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const groups = await Group.find().populate('creator').populate('users').populate('content').populate('perks');
 
@@ -32,10 +63,15 @@ module.exports = {
     }
   },
   getGroupId: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
-    }
-    console.log("args..." + JSON.stringify(args));
+    }gg
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const group = await Group.findById(args.groupId).populate('creator').populate('users').populate('content').populate('perks');
         return {
@@ -284,9 +320,9 @@ module.exports = {
     try {
       const owner = await Group.findById({_id:args.groupId});
       console.log("group object... " + owner );
-      console.log("request user... " + req.userId);
+      console.log("request user... " + pocketVariables.userId);
       console.log("owner... " + owner.creator)
-      if (owner.creator._id != req.userId ) {
+      if (owner.creator._id != pocketVariables.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       const group = await Group.findOneAndUpdate({_id:args.groupId},{
@@ -317,9 +353,9 @@ module.exports = {
     try {
       const owner = await Group.findById({_id:args.groupId});
       console.log("group object... " + owner );
-      console.log("request user... " + req.userId);
+      console.log("request user... " + pocketVariables.userId);
       console.log("owner... " + owner.creator)
-      if (owner.creator._id != req.userId ) {
+      if (owner.creator._id != pocketVariables.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       const group = await Group.findOneAndUpdate({_id:args.groupId},{subtype:args.groupSubtypeInput},{new: true}).populate('creator').populate('users').populate('content').populate('perks');
@@ -347,9 +383,9 @@ module.exports = {
     try {
       const owner = await Group.findById({_id:args.groupId});
       console.log("group object... " + owner );
-      console.log("request user... " + req.userId);
+      console.log("request user... " + pocketVariables.userId);
       console.log("owner... " + owner.creator)
-      if (owner.creator != req.userId ) {
+      if (owner.creator != pocketVariables.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
 
@@ -418,7 +454,7 @@ module.exports = {
       const owner = await Group.findById({_id:args.groupId});
       console.log("group object... " + owner );
       console.log("owner... " + owner.creator)
-      if (owner.creator != req.userId ) {
+      if (owner.creator != pocketVariables.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
 
@@ -460,9 +496,9 @@ module.exports = {
     try {
       const owner = await Group.findById({_id:args.groupId});
       console.log("group object... " + owner );
-      console.log("request user... " + req.userId);
+      console.log("request user... " + pocketVariables.userId);
       console.log("owner... " + owner.creator)
-      if (owner.creator._id != req.userId ) {
+      if (owner.creator._id != pocketVariables.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
 
@@ -499,16 +535,16 @@ module.exports = {
     try {
       // const owner = await Group.findById({_id:args.groupId});
       // console.log("owner..." + owner)
-      // if (owner.creator._id != req.userId ) {
+      // if (owner.creator._id != pocketVariables.userId ) {
       //   throw new Error('Not the creator! No edit permission');
       // }
 
       const voteGroup = await Group.findById({_id:args.groupId})
       console.log("vote group..." + voteGroup.upvotes.users);
-      if (voteGroup.upvotes.users.includes(req.userId)) {
+      if (voteGroup.upvotes.users.includes(pocketVariables.userId)) {
         throw new Error('Already Voted!');
       }
-      const group = await Group.findOneAndUpdate({_id:args.groupId},{$inc: {'upvotes.count':1},$addToSet:{'upvotes.users':req.userId}},{new: true})
+      const group = await Group.findOneAndUpdate({_id:args.groupId},{$inc: {'upvotes.count':1},$addToSet:{'upvotes.users':pocketVariables.userId}},{new: true})
       .populate('users')
       .populate('creator')
       .populate('content')
@@ -535,16 +571,16 @@ module.exports = {
     try {
       // const owner = await Group.findById({_id:args.groupId});
       // console.log("owner..." + owner)
-      // if (owner.creator._id != req.userId ) {
+      // if (owner.creator._id != pocketVariables.userId ) {
       //   throw new Error('Not the creator! No edit permission');
       // }
 
       const voteGroup = await Group.findById({_id:args.groupId})
       console.log("vote group..." + voteGroup.downvotes.users);
-      if (voteGroup.downvotes.users.includes(req.userId)) {
+      if (voteGroup.downvotes.users.includes(pocketVariables.userId)) {
         throw new Error('Already Voted!');
       }
-      const group = await Group.findOneAndUpdate({_id:args.groupId},{$inc: {'downvotes.count':1},$addToSet:{'downvotes.users':req.userId}},{new: true})
+      const group = await Group.findOneAndUpdate({_id:args.groupId},{$inc: {'downvotes.count':1},$addToSet:{'downvotes.users':pocketVariables.userId}},{new: true})
       .populate('users')
       .populate('creator')
       .populate('content')

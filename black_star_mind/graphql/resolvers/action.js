@@ -13,13 +13,41 @@ const Message = require('../../models/message');
 const { transformAction } = require('./merge');
 const { dateToString } = require('../../helpers/date');
 const { pocketVariables } = require('../../helpers/pocketVars');
+const util = require('util');
+
+function isAuth () {
+
+  let decodedToken;
+  try {
+    decodedToken = jwt.verify(pocketVariables.token, '5CleanStream');
+    pocketVariables.isAuth = true;
+    console.log("pocketVariables.isAuth..." + pocketVariables.isAuth);
+  } catch (err) {
+    console.log(err);
+    pocketVariables.isAuth = false;
+  }
+  if (!decodedToken) {
+    pocketVariables.isAuth = false;
+    console.log("no decodedToken..." + JSON.stringify(pocketVariables));
+  }
+  if (!pocketVariables.isAuth) {
+    throw new Error('Unauthenticated!');
+  }
+
+}
 
 module.exports = {
   actions: async (args,req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
-    console.log("args..." + JSON.stringify(args));
+
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const actions = await Action.find()
       .populate('creator')
@@ -32,9 +60,17 @@ module.exports = {
     }
   },
   getActionId: async (args, req) => {
-    if (!req.isAuth) {
+
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     console.log("args..." + JSON.stringify(args));
     try {
       const action = await Action.findById(args.actionId).populate('creator');
@@ -52,9 +88,17 @@ module.exports = {
     }
   },
   getActionCreator: async (args, req) => {
-    if (!req.isAuth) {
+
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     console.log("args..." + JSON.stringify(args));
     try {
       const creator = await User.findById({_id: args.creatorId});
@@ -78,9 +122,16 @@ module.exports = {
     }
   },
   getActionType: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     console.log("args..." + JSON.stringify(args));
     try {
       const actions = await Action.find({type: args.type}).populate('creator');
@@ -101,9 +152,16 @@ module.exports = {
     }
   },
   getActionBody: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     console.log("args..." + JSON.stringify(args));
     try {
       const actions = await Action.find({'body': args.body}).populate('creator');
@@ -124,9 +182,17 @@ module.exports = {
     }
   },
   updateAction: async (args, req) => {
-    if (!req.isAuth) {
+
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     console.log("args..." + JSON.stringify(args));
     try {
       const action = await Action.findOneAndUpdate({_id:args.actionId},{
@@ -148,9 +214,18 @@ module.exports = {
     }
   },
   deleteAction: async (args, req) => {
-    if (!req.isAuth) {
-      throw new Error('Unauthenticated!');
-    }
+
+  console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+  isAuth();
+
+  if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
+    throw new Error('Unauthenticated!');
+  }
+
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     console.log("args..." + JSON.stringify(args));
     try {
       const action = await Action.findByIdAndRemove(args.actionId);
@@ -163,9 +238,9 @@ module.exports = {
     }
   },
   createAction: async (args,req) => {
-    if (!req.isAuth) {
-      throw new Error('Unauthenticated!');
-    }
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     console.log("graphql creating action...");
     console.log("args..." + JSON.stringify(args));
     try {

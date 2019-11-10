@@ -13,9 +13,20 @@ const mongodb = require('mongodb');
 // const sessionStore = require('./middleware/sessionStore');
 const isAuth = require('./middleware/is-auth');
 
-const { execute, subscribe } = require('graphql');
-const { createServer } = require('http');
-const { SubscriptionServer } = require('subscriptions-transport-ws');
+// const { execute, subscribe } = require('graphql');
+// const { createServer } = require('http');
+// const { SubscriptionServer } = require('subscriptions-transport-ws');
+const { GraphQLServer } = require('graphql-yoga');
+const { PubSub } = require ('graphql-yoga');
+const pubsub = new PubSub();
+
+const server  = new GraphQLServer({
+  schema: graphQlSchema,
+  resolvers: graphQlResolvers,
+    context:{
+        pubsub
+    }
+})
 
 const app = express();
 
@@ -32,21 +43,21 @@ app.use((req, res, next) => {
   next();
 });
 
-const PORT = 9000;
-const ws = createServer(app);
-ws.listen(PORT, () => {
-  console.log(`GraphQL Server is now running on http://localhost:${PORT}`);
-
-  // Set up the WebSocket for handling GraphQL subscriptions.
-  new SubscriptionServer({
-    execute,
-    subscribe,
-    schema: graphQlSchema
-  }, {
-    server: ws,
-    path: '/subscriptions',
-  });
-});
+// const PORT = 9000;
+// const ws = createServer(app);
+// ws.listen(PORT, () => {
+//   console.log(`GraphQL Server is now running on http://localhost:${PORT}`);
+//
+//   // Set up the WebSocket for handling GraphQL subscriptions.
+//   new SubscriptionServer({
+//     execute,
+//     subscribe,
+//     graphQlSchema
+//   }, {
+//     server: ws,
+//     path: '/subscriptions',
+//   });
+// });
 
 // app.use(session ({
 //   name: "pouch",
@@ -74,10 +85,20 @@ app.use(
   })
 );
 
-app.use('/graphiql', graphqlHttp({
-  endpointURL: '/graphql',
-  subscriptionsEndpoint: `ws://localhost:${PORT}/subscriptions` // subscriptions endpoint.
-}));
+const options = {
+    port: 9000
+  }
+
+  server.start(options, ({ port }) =>
+    console.log(
+      `Server started, listening on port ${port} for incoming requests.`,
+    ),
+  )
+
+// app.use('/graphiql', graphqlHttp({
+//   endpointURL: '/graphql',
+//   subscriptionsEndpoint: `ws://localhost:${PORT}/subscriptions` // subscriptions endpoint.
+// }));
 
 mongoose.connect(process.env.MONGO_URI,{useNewUrlParser: true, useUnifiedTopology: true})
   .then(() => {
