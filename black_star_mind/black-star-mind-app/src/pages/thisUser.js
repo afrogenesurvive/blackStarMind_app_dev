@@ -220,6 +220,7 @@ class UsersPage extends Component {
         return res.json();
       })
       .then(resData => {
+        // console.log("resdata..." + JSON.stringify(resData));
         const thisUser = resData.data.getThisUser;
         if (this.isActive) {
 
@@ -237,7 +238,7 @@ class UsersPage extends Component {
           this.createAction(this.context.userId,"mutation",this.context.action1);
 
         }
-        this.user = thisUser;
+        // this.user = thisUser;
       })
       .catch(err => {
         console.log(err);

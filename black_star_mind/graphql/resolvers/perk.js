@@ -13,13 +13,43 @@ const Message = require('../../models/message');
 const { transformPerk } = require('./merge');
 const { dateToString } = require('../../helpers/date');
 const { pocketVariables } = require('../../helpers/pocketVars');
+const util = require('util');
+
+function isAuth () {
+
+  let decodedToken;
+  try {
+    decodedToken = jwt.verify(pocketVariables.token, '5CleanStream');
+    pocketVariables.isAuth = true;
+    pocketVariables.userId = decodedToken.userId;
+    console.log("pocketVariables.userId..." + pocketVariables.userId);
+    console.log("pocketVariables.isAuth..." + pocketVariables.isAuth);
+  } catch (err) {
+    console.log(err);
+    pocketVariables.isAuth = false;
+  }
+  if (!decodedToken) {
+    pocketVariables.isAuth = false;
+    console.log("no decodedToken..." + JSON.stringify(pocketVariables));
+  }
+  if (!pocketVariables.isAuth) {
+    throw new Error('Unauthenticated!');
+  }
+
+}
 
 module.exports = {
   perks: async (args,req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
-    console.log("args..." + JSON.stringify(args));
+
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const perks = await Perk.find()
       .populate('users')
@@ -34,10 +64,15 @@ module.exports = {
     }
   },
   getPerkId: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
-    console.log("args..." + JSON.stringify(args));
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const perk = await Perk.findById(args.perkId)
       .populate('users')
@@ -62,10 +97,15 @@ module.exports = {
     }
   },
   getPerkName: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
-    console.log("args..." + JSON.stringify(args));
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const perk = await Perk.findOne({name: args.name})
       .populate('users')
@@ -90,10 +130,15 @@ module.exports = {
     }
   },
   getPerkType: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
-    console.log("args..." + JSON.stringify(args));
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const perks = await Perk.find({type: args.type})
       .populate('users')
@@ -121,10 +166,15 @@ module.exports = {
     }
   },
   getPerkUser: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
-    console.log("args..." + JSON.stringify(args));
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const perkUser = await User.findById({_id:args.perkUserId})
       .populate('groups')
@@ -162,10 +212,15 @@ module.exports = {
     }
   },
   getPerkGroup: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
-    console.log("args..." + JSON.stringify(args));
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const perkGroup = await Group.findById({_id:args.groupId})
       .populate('users')
@@ -201,10 +256,15 @@ module.exports = {
     }
   },
   getPerkContent: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
-    console.log("args..." + JSON.stringify(args));
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const perkContent = await Content.findById({_id:args.contentId})
       .populate('creator')
@@ -241,10 +301,15 @@ module.exports = {
     }
   },
   getPerkTag: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
-    console.log("args..." + JSON.stringify(args));
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const perks = await Perk.find({tags: args.tag})
       .populate('users')
@@ -272,10 +337,15 @@ module.exports = {
     }
   },
   updatePerk: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
-    console.log("args..." + JSON.stringify(args));
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     // check if admin
     try {
       const perk = await Perk.findOneAndUpdate({_id:args.perkId},{
@@ -311,10 +381,15 @@ module.exports = {
     }
   },
   updatePerkSubtype: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
-    console.log("args..." + JSON.stringify(args));
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const perk = await Perk.findOneAndUpdate({_id:args.perkId},{subtype:args.perkSubtypeInput},{new: true})
       .populate('users')
@@ -339,10 +414,15 @@ module.exports = {
     }
   },
   updatePerkUser: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
-    console.log("args..." + JSON.stringify(args));
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const perkUser = await User.findById({_id:args.perkUserId})
       .populate('groups')
@@ -377,10 +457,15 @@ module.exports = {
     }
   },
   updatePerkData: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
-    console.log("args..." + JSON.stringify(args));
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const perk = await Perk.findOneAndUpdate({_id:args.perkId},{$addToSet: {data:args.perkDataInput}},{new: true})
       .populate('users')
@@ -405,10 +490,15 @@ module.exports = {
     }
   },
   updatePerkContent: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
-    console.log("args..." + JSON.stringify(args));
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const perkContent = await Content.findById({_id:args.contentId})
       .populate('creator')
@@ -442,10 +532,15 @@ module.exports = {
     }
   },
   updatePerkGroup: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
-    console.log("args..." + JSON.stringify(args));
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
 
       const perkGroup = await Group.findById({_id:args.groupId})
@@ -479,10 +574,15 @@ module.exports = {
     }
   },
   updatePerkTag: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
-    console.log("args..." + JSON.stringify(args));
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const perk = await Perk.findOneAndUpdate({_id:args.perkId},{$addToSet: {tags:args.tags}},{new: true})
       .populate('users')
@@ -507,10 +607,15 @@ module.exports = {
     }
   },
   deletePerk: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
-    console.log("args..." + JSON.stringify(args));
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const perk = await Perk.findByIdAndRemove(args.perkId)
       .populate('users')
@@ -535,10 +640,15 @@ module.exports = {
     }
   },
   createPerk: async (args,req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
-    console.log("args..." + JSON.stringify(args));
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const existingPerk = await Perk.findOne({ name: args.perkInput.name });
       if (existingPerk) {

@@ -13,12 +13,44 @@ const Message = require('../../models/message');
 const { transformContent } = require('./merge');
 const { dateToString } = require('../../helpers/date');
 const { pocketVariables } = require('../../helpers/pocketVars');
+const util = require('util');
+
+function isAuth () {
+
+  let decodedToken;
+  try {
+    decodedToken = jwt.verify(pocketVariables.token, '5CleanStream');
+    pocketVariables.isAuth = true;
+    pocketVariables.userId = decodedToken.userId;
+    console.log("pocketVariables.userId..." + pocketVariables.userId);
+    console.log("pocketVariables.isAuth..." + pocketVariables.isAuth);
+  } catch (err) {
+    console.log(err);
+    pocketVariables.isAuth = false;
+  }
+  if (!decodedToken) {
+    pocketVariables.isAuth = false;
+    console.log("no decodedToken..." + JSON.stringify(pocketVariables));
+  }
+  if (!pocketVariables.isAuth) {
+    throw new Error('Unauthenticated!');
+  }
+
+}
+
 
 module.exports = {
   content: async (args,req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const contents = await Content.find()
       .populate('creator')
@@ -35,9 +67,15 @@ module.exports = {
     }
   },
   getContentId: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const content = await Content.findById(args.contentId)
       .populate('creator')
@@ -63,10 +101,15 @@ module.exports = {
     }
   },
   getContentTypeMedium: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
-    console.log("args..." + JSON.stringify(args));
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const contents = await Content.find({'contentType.medium': args.medium})
       .populate('creator')
@@ -93,9 +136,15 @@ module.exports = {
     }
   },
   getContentTitle: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const content = await Content.findOne({title: args.title})
       .populate('creator')
@@ -119,9 +168,15 @@ module.exports = {
     }
   },
   getContentDomain: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const contents = await Content.find({domain: args.domain})
       .populate('creator')
@@ -146,9 +201,15 @@ module.exports = {
     }
   },
   getContentCategory: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const contents = await Content.find({category: args.category})
       .populate('creator')
@@ -173,9 +234,15 @@ module.exports = {
     }
   },
   getContentCreator: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const creator = await User.findById({_id: args.creatorId});
       console.log("content creator... " + creator);
@@ -203,9 +270,15 @@ module.exports = {
     }
   },
   getContentUser: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const contentUser = await User.findById({_id: args.contentUserId});
       console.log("content user... " + contentUser);
@@ -233,9 +306,15 @@ module.exports = {
     }
   },
   getContentPerk: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const contentPerkObj = await Perk.findById({_id:args.perkId})
       console.log("content perk object... " + contentPerkObj);
@@ -263,7 +342,13 @@ module.exports = {
     }
   },
   getContentCommentCreator: async (args, req) => {
-    if (!req.isAuth) {
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
     try {
@@ -293,9 +378,15 @@ module.exports = {
     }
   },
   getContentComment: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const contents = await Content.find({'comments.comment': args.comment})
       .populate('creator')
@@ -320,10 +411,15 @@ module.exports = {
     }
   },
   getContentUpvotes: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
-    console.log("args..." + JSON.stringify(args));
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const contents = await Content.find({'upvotes.count':args.upvotes})
       .populate('creator')
@@ -355,10 +451,15 @@ module.exports = {
     }
   },
   getContentDownvotes: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
-    console.log("args..." + JSON.stringify(args));
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const contents = await Content.find({'downvotes.count':args.downvotes})
       .populate('creator')
@@ -390,9 +491,15 @@ module.exports = {
     }
   },
   getContentTag: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const contents = await Content.find({tags: args.tag})
       .populate('creator')
@@ -424,14 +531,19 @@ module.exports = {
     }
   },
   updateContent: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
-    console.log(JSON.stringify(args));
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const owner = await Content.findById({_id:args.contentId});
       console.log("owner..." + owner);
-      if (owner.creator._id != req.userId ) {
+      if (owner.creator._id != pocketVariables.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       const content = await Content.findOneAndUpdate({_id:args.contentId},{
@@ -453,14 +565,19 @@ module.exports = {
     }
   },
   updateContentUser: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
-    console.log("args..." + JSON.stringify(args));
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const owner = await Content.findById({_id:args.contentId});
       console.log("owner..." + owner);
-      if (owner.creator._id != req.userId ) {
+      if (owner.creator._id != pocketVariables.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
 
@@ -495,15 +612,20 @@ module.exports = {
     }
   },
   updateContentData: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
-    console.log("args..." + JSON.stringify(args));
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const owner = await Content.findById({_id:args.contentId});
       console.log("owner..." + owner);
-      console.log("requester..." + req.userId);
-      if (owner.creator._id != req.userId ) {
+      console.log("requester..." + pocketVariables.userId);
+      if (owner.creator._id != pocketVariables.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       const content = await Content.findOneAndUpdate({_id:args.contentId},{$addToSet: {data:args.contentDataInput}},{new: true})
@@ -532,14 +654,19 @@ module.exports = {
     }
   },
   updateContentPerk: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
-    console.log("args..." + JSON.stringify(args));
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const owner = await Content.findById({_id:args.contentId});
       console.log("owner..." + owner);
-      if (owner.creator._id != req.userId ) {
+      if (owner.creator._id != pocketVariables.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
 
@@ -575,17 +702,22 @@ module.exports = {
     }
   },
   updateContentComment: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
-    console.log("args..." + JSON.stringify(args));
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const commenter = await User.findById({_id: args.userId});
       console.log("commenter... " + commenter);
 
       // const owner = await Content.findById({_id:args.contentId});
       // console.log("owner..." + owner);
-      // if (owner.creator._id != req.userId ) {
+      // if (owner.creator._id != pocketVariables.userId ) {
       //   throw new Error('Not the creator! No edit permission');
       // }
       const content = await Content.findOneAndUpdate({_id:args.contentId},{$addToSet: {comments:{comment:args.comment,user:commenter}}},{new: true})
@@ -614,23 +746,28 @@ module.exports = {
     }
   },
   updateContentUpvotes: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
-    console.log("args..." + JSON.stringify(args));
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       // const owner = await Group.findById({_id:args.groupId});
       // console.log("owner..." + owner)
-      // if (owner.creator._id != req.userId ) {
+      // if (owner.creator._id != pocketVariables.userId ) {
       //   throw new Error('Not the creator! No edit permission');
       // }
 
       const voteContent = await Content.findById({_id:args.contentId})
       console.log("vote content..." + voteContent.upvotes.users);
-      if (voteContent.upvotes.users.includes(req.userId)) {
+      if (voteContent.upvotes.users.includes(pocketVariables.userId)) {
         throw new Error('Already Voted!');
       }
-      const content = await Content.findOneAndUpdate({_id:args.contentId},{$inc: {'upvotes.count':1},$addToSet:{'upvotes.users':req.userId}},{new: true})
+      const content = await Content.findOneAndUpdate({_id:args.contentId},{$inc: {'upvotes.count':1},$addToSet:{'upvotes.users':pocketVariables.userId}},{new: true})
       .populate('creator')
       .populate('users')
       .populate('perks')
@@ -656,23 +793,28 @@ module.exports = {
     }
   },
   updateContentDownvotes: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
-    console.log("args..." + JSON.stringify(args));
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       // const owner = await Group.findById({_id:args.groupId});
       // console.log("owner..." + owner)
-      // if (owner.creator._id != req.userId ) {
+      // if (owner.creator._id != pocketVariables.userId ) {
       //   throw new Error('Not the creator! No edit permission');
       // }
 
       const voteContent = await Content.findById({_id:args.contentId})
       console.log("vote content..." + voteContent.downvotes.users);
-      if (voteContent.downvotes.users.includes(req.userId)) {
+      if (voteContent.downvotes.users.includes(pocketVariables.userId)) {
         throw new Error('Already Voted!');
       }
-      const content = await Content.findOneAndUpdate({_id:args.contentId},{$inc: {'downvotes.count':1},$addToSet:{'downvotes.users':req.userId}},{new: true})
+      const content = await Content.findOneAndUpdate({_id:args.contentId},{$inc: {'downvotes.count':1},$addToSet:{'downvotes.users':pocketVariables.userId}},{new: true})
       .populate('creator')
       .populate('users')
       .populate('perks')
@@ -698,14 +840,19 @@ module.exports = {
     }
   },
   updateContentTag: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
-    console.log("args..." + JSON.stringify(args));
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const owner = await Content.findById({_id:args.contentId});
       console.log("owner..." + owner);
-      if (owner.creator._id != req.userId ) {
+      if (owner.creator._id != pocketVariables.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       const content = await Content.findOneAndUpdate({_id:args.contentId},{$addToSet: {tags:args.tags}},{new: true})
@@ -734,14 +881,19 @@ module.exports = {
     }
   },
   deleteContent: async (args, req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
-    console.log("args..." + JSON.stringify(args));
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const owner = await Content.findById({_id:args.contentId});
       console.log("owner..." + owner);
-      if (owner.creator._id != req.userId ) {
+      if (owner.creator._id != pocketVariables.userId ) {
         throw new Error('Not the creator! No edit permission');
       }
       const content = await Content.findByIdAndRemove(args.contentId);
@@ -760,10 +912,15 @@ module.exports = {
     }
   },
   createContent: async (args,req) => {
-    if (!req.isAuth) {
+    console.log("args..." + JSON.stringify(args), "pocketVariables..." + JSON.stringify(pocketVariables), "req object..." + util.inspect(req));
+
+    isAuth();
+    if (!pocketVariables.isAuth || pocketVariables.isAuth == false) {
       throw new Error('Unauthenticated!');
     }
-    console.log("args..." + JSON.stringify(args));
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!');
+    // }
     try {
       const existingContent = await Content.findOne({ title: args.contentInput.title });
       if (existingContent) {

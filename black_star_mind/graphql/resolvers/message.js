@@ -14,12 +14,16 @@ const { transformMessage} = require('./merge');
 const { dateToString } = require('../../helpers/date');
 const { pocketVariables } = require('../../helpers/pocketVars');
 
-const { PubSub } = require ('graphql-subscriptions');
-const pubsub = new PubSub();
+// const { PubSub } = require ('graphql-subscriptions');
+// const pubsub = new PubSub();
 // export const pubsub = new PubSub();
+// const { PubSub } = require ('graphql-yoga');
+// const pubsub = new PubSub();
 
-console.log("message resolver pubsub instance" + JSON.stringify(pubsub));
-const MESSAGE_SENT = 'sentMessage';
+// console.log("message resolver pubsub instance" + JSON.stringify(pubsub));
+const CHANNEL_ADDED_TOPIC = 'messageSent';
+// const SOMETHING_CHANGED_TOPIC = 'something_changed';
+
 
 module.exports = {
   messages: async (args,req) => {
@@ -64,11 +68,11 @@ module.exports = {
       throw err;
     }
   },
-  sendMessage: async (args,req) => {
+  sendMessage: async (args, req, ctx, parent, info) => {
     // if (!req.isAuth) {
     //   throw new Error('Unauthenticated!');
     // }
-    console.log("send message args..." + JSON.stringify(args));
+    console.log("send message args..." + JSON.stringify(args), "ctx object..." + JSON.stringify(ctx));
     try {
     //   const existingPerk = await Perk.findOne({ name: args.perkInput.name });
     //   if (existingPerk) {
@@ -98,9 +102,14 @@ module.exports = {
       const messageToReceiver = await User.findOneAndUpdate({_id:args.receiverId},{$addToSet: {messages: message}},{new: true})
       console.log("messageToReceiver..." + messageToReceiver);
 
-      pubsub.publish(MESSAGE_SENT, { messageSent: message });  // publish to a topic
+      const pubsub = ctx;
+      pubsub.publish('messageSent', { messageSent: {...message} });
+      // pubsub.publish(CHANNEL_ADDED_TOPIC, { messageSent: {...message} });
+      // console.log({message});  // publish to a topic
+      console.log(ctx.pubsub);
+      console.log(ctx.pubsub.publish('messageSent', { messageSent: {...message} }));
 
-      return {
+      return{
         ...message._doc,
         _id: message.id,
         title: message.title,
@@ -117,8 +126,12 @@ module.exports = {
       throw err;
     }
   },
-  messageSent: {  // create a channelAdded subscription resolver function.
-
-      subscribe: () => pubsub.asyncIterator(MESSAGE_SENT)  // subscribe to changes in a topic
-    }
+  Subscriptions:{
+          messageSent:{
+              subscribe(parent, args, ctx, info){
+                console.log("here...");
+                  return ctx.pubsub.asyncIterator('post')
+              }
+          }
+      }
 };

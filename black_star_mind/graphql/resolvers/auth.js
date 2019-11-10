@@ -11,6 +11,7 @@ const { pocketVariables } = require('../../helpers/pocketVars');
 
 module.exports = {
   login: async ({ email, password }, req) => {
+    
     const user = await User.findOne({ email: email });
     if (!user) {
       throw new Error('User does not exist!');
@@ -20,6 +21,7 @@ module.exports = {
       throw new Error('Password is incorrect!');
     }
     const token = jwt.sign({ userId: user.id },'5CleanStream',{expiresIn: '5h'});
+
 
     // const loginUserInfo = await User.findById(user.id)
 
