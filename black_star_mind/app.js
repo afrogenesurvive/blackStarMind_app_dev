@@ -16,16 +16,13 @@ const isAuth = require('./middleware/is-auth');
 // const { execute, subscribe } = require('graphql');
 // const { createServer } = require('http');
 // const { SubscriptionServer } = require('subscriptions-transport-ws');
-const { GraphQLServer } = require('graphql-yoga');
-const { PubSub } = require ('graphql-yoga');
+const { GraphQLServer, PubSub } = require('graphql-yoga');
 const pubsub = new PubSub();
 
 const server  = new GraphQLServer({
   schema: graphQlSchema,
   resolvers: graphQlResolvers,
-    context:{
-        pubsub
-    }
+  context:{ pubsub  }
 })
 
 const app = express();
@@ -91,7 +88,7 @@ const options = {
 
   server.start(options, ({ port }) =>
     console.log(
-      `Server started, listening on port ${port} for incoming requests.`,
+      `Server started, listening on port ${port} for subscriptions.`,
     ),
   )
 
