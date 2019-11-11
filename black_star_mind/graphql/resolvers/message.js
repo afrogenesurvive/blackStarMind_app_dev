@@ -17,12 +17,13 @@ const { pocketVariables } = require('../../helpers/pocketVars');
 // const { PubSub } = require ('graphql-subscriptions');
 // const pubsub = new PubSub();
 // export const pubsub = new PubSub();
-// const { PubSub } = require ('graphql-yoga');
-// const pubsub = new PubSub();
+const { PubSub } = require ('graphql-yoga');
+const pubsub = new PubSub();
 
-// console.log("message resolver pubsub instance" + JSON.stringify(pubsub));
-const CHANNEL_ADDED_TOPIC = 'messageSent';
+// console.log("message resolver pubsub instance", {pubsub});
+// const CHANNEL_ADDED_TOPIC = 'messageSent';
 // const SOMETHING_CHANGED_TOPIC = 'something_changed';
+const CHAT_CHANNEL = 'messageSent';
 
 
 module.exports = {
@@ -68,11 +69,12 @@ module.exports = {
       throw err;
     }
   },
-  sendMessage: async (args, req, ctx, parent, info) => {
+  sendMessage: async (args, req, ctx, root) => {
+  // sendMessage: async (args, req, ctx, parent, info, {pubsub}) => {
     // if (!req.isAuth) {
     //   throw new Error('Unauthenticated!');
     // }
-    console.log("send message args..." + JSON.stringify(args), "ctx object..." + JSON.stringify(ctx));
+    console.log("send message args..." + JSON.stringify(args), "ctx object...", {ctx}, "pubsub object...", {pubsub});
     try {
     //   const existingPerk = await Perk.findOne({ name: args.perkInput.name });
     //   if (existingPerk) {
@@ -102,12 +104,16 @@ module.exports = {
       const messageToReceiver = await User.findOneAndUpdate({_id:args.receiverId},{$addToSet: {messages: message}},{new: true})
       console.log("messageToReceiver..." + messageToReceiver);
 
-      const pubsub = ctx;
-      pubsub.publish('messageSent', { messageSent: {...message} });
+      // const pubsub = ctx;
+      // pubsub.publish('messageSent', { messageSent: {...message} });
       // pubsub.publish(CHANNEL_ADDED_TOPIC, { messageSent: {...message} });
-      // console.log({message});  // publish to a topic
-      console.log(ctx.pubsub);
-      console.log(ctx.pubsub.publish('messageSent', { messageSent: {...message} }));
+
+      pubsub.publish(CHAT_CHANNEL, { messageSent: {...message} });
+      console.log("pubsub publish...",pubsub.publish(CHAT_CHANNEL, { messageSent: {...message} }));  // publish to a topic
+      // console.log(pubsub.publish());
+
+
+      // console.log(ctx.pubsub.publish('messageSent', { messageSent: {...message} }));
 
       return{
         ...message._doc,
@@ -126,11 +132,12 @@ module.exports = {
       throw err;
     }
   },
-  Subscriptions:{
+  Subscription:{
           messageSent:{
-              subscribe(parent, args, ctx, info){
+              subscribe(root, args, ctx){
+              // subscribe(parent, args, ctx, info, {pubsub}){
                 console.log("here...");
-                  return ctx.pubsub.asyncIterator('post')
+                  return ctx.pubsub.asyncIterator(CHAT_CHANNEL)
               }
           }
       }
