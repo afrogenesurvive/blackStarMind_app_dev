@@ -1,21 +1,16 @@
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
-const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
-const sessionStore = require('../middleware/sessionStore');
-
-const { pocketVariables } = require('../helpers/pocketVars');
+const { pocketVariables } = require("../helpers/pocketVars");
 
 module.exports = (req, res, next) => {
-  const authHeader = req.get('Authorization');
+  const authHeader = req.get("Authorization");
   if (!authHeader) {
-
     pocketVariables.isAuth = false;
     return next();
   }
-  const token = authHeader.split(' ')[1];
+  const token = authHeader.split(" ")[1];
   pocketVariables.token = token;
-  if (!token || token === '') {
+  if (!token || token === "") {
     req.isAuth = false;
     pocketVariables.isAuth = false;
 
@@ -52,5 +47,4 @@ module.exports = (req, res, next) => {
   //   req.isAuth = false;
   // }
   next();
-
 };

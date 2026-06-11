@@ -1,27 +1,21 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
-const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
-const sessionStore = require('../../middleware/sessionStore');
+const User = require("../../models/user");
 
-const User = require('../../models/user');
-
-const { pocketVariables } = require('../../helpers/pocketVars');
+const { pocketVariables } = require("../../helpers/pocketVars");
 
 module.exports = {
   login: async ({ email, password }, req) => {
-    
     const user = await User.findOne({ email: email });
     if (!user) {
-      throw new Error('User does not exist!');
+      throw new Error("User does not exist!");
     }
     const isEqual = await bcrypt.compare(password, user.password);
     if (!isEqual) {
-      throw new Error('Password is incorrect!');
+      throw new Error("Password is incorrect!");
     }
-    const token = jwt.sign({ userId: user.id },'5CleanStream',{expiresIn: '5h'});
-
+    const token = jwt.sign({ userId: user.id }, "5CleanStream", { expiresIn: "5h" });
 
     // const loginUserInfo = await User.findById(user.id)
 
@@ -36,5 +30,5 @@ module.exports = {
     // console.log("logged in!! Session info ... " + JSON.stringify(req.session));
 
     return { userId: user.id, token: token, tokenExpiration: 5 };
-  }
+  },
 };

@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js"
+    "start": "node app.js"
   },
   "author": "Professor Black",
   "license": "ISC",
@@ -14,17 +14,15 @@
     "body-parser": "^1.19.0",
     "connect-mongo": "^3.0.0",
     "dataloader": "^1.4.0",
+    "dotenv": "^17.4.2",
     "express": "^4.16.4",
     "express-graphql": "^0.9.0",
     "express-session": "^1.17.0",
     "graphql": "^14.5.8",
-    "graphql-yoga": "^1.17.4",
     "graphql-scalar-objectid": "^0.1.1",
+    "graphql-yoga": "^1.17.4",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^3.3.2",
     "mongoose": "^5.7.1"
-  },
-  "devDependencies": {
-    "nodemon": "^1.19.2"
   }
 }
